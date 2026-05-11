@@ -61,7 +61,24 @@ export function HomeScreen({ profile, setProfile, logs }: Props) {
       variation,
       prompt: promptText,
       feedback: f,
+      notes: todayLog?.notes,
     });
+  };
+
+  const currentNotes = noteDraft ?? todayLog?.notes ?? "";
+  const saveNotes = () => {
+    upsertLog({
+      date: today,
+      cycleDay: day,
+      phase,
+      variation,
+      prompt: promptText,
+      feedback: currentFeedback,
+      notes: currentNotes.trim() || undefined,
+    });
+    setNoteDraft(null);
+    setNoteSaved(true);
+    setTimeout(() => setNoteSaved(false), 1800);
   };
 
   const onReset = () => {
