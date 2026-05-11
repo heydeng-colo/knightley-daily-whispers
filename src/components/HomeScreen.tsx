@@ -29,6 +29,8 @@ export function HomeScreen({ profile, setProfile, logs }: Props) {
   const [resetOpen, setResetOpen] = useState(false);
   const [resetDate, setResetDate] = useState(todayISO());
   const [showAll, setShowAll] = useState(false);
+  const [noteDraft, setNoteDraft] = useState<string | null>(null);
+  const [noteSaved, setNoteSaved] = useState(false);
 
   const today = todayISO();
   const day = cycleDay(profile.lastPeriodStart, profile.cycleLength);
@@ -59,7 +61,24 @@ export function HomeScreen({ profile, setProfile, logs }: Props) {
       variation,
       prompt: promptText,
       feedback: f,
+      notes: todayLog?.notes,
     });
+  };
+
+  const currentNotes = noteDraft ?? todayLog?.notes ?? "";
+  const saveNotes = () => {
+    upsertLog({
+      date: today,
+      cycleDay: day,
+      phase,
+      variation,
+      prompt: promptText,
+      feedback: currentFeedback,
+      notes: currentNotes.trim() || undefined,
+    });
+    setNoteDraft(null);
+    setNoteSaved(true);
+    setTimeout(() => setNoteSaved(false), 1800);
   };
 
   const onReset = () => {
@@ -156,6 +175,34 @@ export function HomeScreen({ profile, setProfile, logs }: Props) {
           <FeedbackBtn label="Bad" active={currentFeedback === "x"} onClick={() => setFeedback("x")}>
             <XIcon className="h-5 w-5" />
           </FeedbackBtn>
+        </div>
+      </div>
+
+      {/* Notes / qualitative feedback */}
+      <div className="rounded-3xl bg-surface border border-border p-5 slide-up">
+        <div className="flex items-center justify-between mb-2">
+          <p className="text-xs uppercase tracking-widest text-gold font-medium">Your Notes</p>
+          {noteSaved && <span className="text-[10px] text-gold">Saved ✓</span>}
+        </div>
+        <p className="text-xs text-muted-foreground mb-3">
+          How did the prompt land? Did the action work? Anything to remember for next time.
+        </p>
+        <textarea
+          value={currentNotes}
+          onChange={(e) => setNoteDraft(e.target.value)}
+          placeholder="e.g. She lit up — said it was exactly what she needed."
+          rows={3}
+          className="w-full resize-none rounded-2xl bg-surface-elevated border border-border p-3 text-sm leading-relaxed placeholder:text-muted-foreground/60 focus:outline-none focus:border-gold/50 transition"
+        />
+        <div className="mt-3 flex justify-end">
+          <Button
+            size="sm"
+            className="gold-gradient text-gold-foreground"
+            onClick={saveNotes}
+            disabled={noteDraft === null || noteDraft === (todayLog?.notes ?? "")}
+          >
+            Save note
+          </Button>
         </div>
       </div>
 
