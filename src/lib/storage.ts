@@ -20,10 +20,12 @@ export interface Profile {
   cycleLength: number;
   lastPeriodStart: string; // ISO yyyy-mm-dd
   yourName?: string;
+  favoriteSnack?: string;
   goals: string[];
   loves: number[]; // indexes 1..50
   notifications: boolean;
   smsPolling: boolean;
+  activatedAt?: string; // ISO yyyy-mm-dd — set on first save
 }
 
 export interface PromptLog {
@@ -59,7 +61,22 @@ function write<T>(key: string, value: T) {
 }
 
 export function getProfile(): Profile | null { return read<Profile | null>(KEYS.profile, null); }
-export function setProfile(p: Profile | null) { write(KEYS.profile, p); }
+export function setProfile(p: Profile | null) {
+  if (p && !p.activatedAt) {
+    const existing = read<Profile | null>(KEYS.profile, null);
+    p = { ...p, activatedAt: existing?.activatedAt || new Date().toISOString().slice(0, 10) };
+  }
+  write(KEYS.profile, p);
+}
+
+export function nextPollDate(activatedAt?: string, today: Date = new Date()): Date {
+  const start = activatedAt ? new Date(activatedAt) : new Date();
+  const next = new Date(start);
+  while (next.getTime() <= today.getTime()) {
+    next.setDate(next.getDate() + 30);
+  }
+  return next;
+}
 
 export function getLogs(): PromptLog[] { return read<PromptLog[]>(KEYS.logs, []); }
 export function setLogs(l: PromptLog[]) { write(KEYS.logs, l); }

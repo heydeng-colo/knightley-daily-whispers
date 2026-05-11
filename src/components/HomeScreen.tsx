@@ -11,6 +11,7 @@ import {
 } from "@/lib/cycle";
 import {
   getOrAssignVariation,
+  nextPollDate,
   upsertLog,
   type Feedback,
   type Profile,
@@ -88,9 +89,17 @@ export function HomeScreen({ profile, setProfile, logs }: Props) {
     cur.setDate(cur.getDate() - 1);
   }
 
-  // Next SMS poll: first of next month
-  const now = new Date();
-  const nextSms = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+  // Next SMS poll: every 30 days from activation
+  const nextSms = nextPollDate(profile.activatedAt);
+
+  // Success rate by phase (positive = fire/thumb)
+  const phaseKeys: Array<keyof typeof PHASE_META> = ["M", "EF", "O", "EL", "LL"];
+  const phaseStats = phaseKeys.map((k) => {
+    const inPhase = rated.filter((l) => l.phase === k);
+    const pos = inPhase.filter((l) => l.feedback === "fire" || l.feedback === "thumb").length;
+    const rate = inPhase.length ? Math.round((pos / inPhase.length) * 100) : 0;
+    return { phase: k, meta: PHASE_META[k], rate, count: inPhase.length };
+  });
 
   const recent = (showAll ? logs : logs.slice(0, 5)).filter((l) => l.date <= today);
 
@@ -156,6 +165,34 @@ export function HomeScreen({ profile, setProfile, logs }: Props) {
         <Stat label="This Week" value={`${weekRate}%`} />
         <Stat label="Current Streak" value={`${streak}d`} />
         <Stat label="Total Prompts" value={`${totalPrompts}`} />
+      </div>
+
+      {/* Success by phase */}
+      <div className="rounded-3xl bg-surface border border-border p-5">
+        <p className="text-xs uppercase tracking-widest text-gold font-medium mb-4">Success by Phase</p>
+        <div className="space-y-3">
+          {phaseStats.map((s) => (
+            <div key={s.phase}>
+              <div className="flex items-center justify-between mb-1.5">
+                <div className="flex items-center gap-2">
+                  <span className="h-2 w-2 rounded-full" style={{ background: s.meta.color }} />
+                  <span className="text-xs font-medium">{s.meta.name}</span>
+                  <span className="text-[10px] text-muted-foreground">({s.count})</span>
+                </div>
+                <span className="text-xs font-medium tabular-nums">{s.count ? `${s.rate}%` : "—"}</span>
+              </div>
+              <div className="h-2 rounded-full bg-surface-elevated overflow-hidden">
+                <div
+                  className="h-full rounded-full transition-all"
+                  style={{ width: `${s.count ? s.rate : 0}%`, background: s.meta.color }}
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+        {rated.length === 0 && (
+          <p className="text-xs text-muted-foreground mt-3">Rate a few prompts to see your patterns emerge.</p>
+        )}
       </div>
 
       {/* SMS Card */}

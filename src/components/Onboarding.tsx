@@ -39,6 +39,7 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
       restaurant: data.restaurant || "",
       dateNight: data.dateNight || "",
       coffeeOrder: data.coffeeOrder || "",
+      favoriteSnack: data.favoriteSnack || "",
       herPhone: data.herPhone || "",
       cycleLength: data.cycleLength || 28,
       lastPeriodStart: data.lastPeriodStart || new Date().toISOString().slice(0, 10),
@@ -130,10 +131,19 @@ function Step1({ data, update }: { data: Partial<Profile>; update: (p: Partial<P
       </Field>
 
       <div className="space-y-2">
-        <Label className="text-sm text-muted-foreground">Kids' birthdays (optional)</Label>
+        <Label className="text-sm text-muted-foreground">Kids (optional)</Label>
         {children.map((c, i) => (
           <div key={i} className="flex gap-2 items-center">
-            <span className="text-xs text-muted-foreground w-16">Child {i + 1}</span>
+            <Input
+              className="w-28"
+              placeholder="First name"
+              value={c.name}
+              onChange={(e) => {
+                const arr = [...children];
+                arr[i] = { ...arr[i], name: e.target.value };
+                update({ children: arr });
+              }}
+            />
             <Input
               type="date"
               value={c.birthday}
@@ -156,7 +166,7 @@ function Step1({ data, update }: { data: Partial<Profile>; update: (p: Partial<P
           <Button
             variant="secondary"
             size="sm"
-            onClick={() => update({ children: [...children, { name: `Child ${children.length + 1}`, birthday: "" }] })}
+            onClick={() => update({ children: [...children, { name: "", birthday: "" }] })}
           >
             <Plus className="h-4 w-4 mr-1" /> Add child
           </Button>
@@ -181,19 +191,33 @@ function Step1({ data, update }: { data: Partial<Profile>; update: (p: Partial<P
         </div>
       </Field>
 
-      <Field label="Length of relationship (months)">
-        <Input
-          type="number"
-          min={0}
-          value={data.relLengthMonths ?? 0}
-          onChange={(e) => update({ relLengthMonths: parseInt(e.target.value) || 0 })}
-        />
-      </Field>
+      <div className="grid grid-cols-2 gap-3">
+        <Field label="Years together">
+          <Input
+            type="number"
+            min={0}
+            step="0.5"
+            value={data.relLengthMonths ? +(data.relLengthMonths / 12).toFixed(2) : 0}
+            onChange={(e) => update({ relLengthMonths: Math.round((parseFloat(e.target.value) || 0) * 12) })}
+          />
+        </Field>
+        <Field label="…or months">
+          <Input
+            type="number"
+            min={0}
+            value={data.relLengthMonths ?? 0}
+            onChange={(e) => update({ relLengthMonths: parseInt(e.target.value) || 0 })}
+          />
+        </Field>
+      </div>
 
       <Field label="Favorite flowers"><Input value={data.flowers || ""} onChange={(e) => update({ flowers: e.target.value })} /></Field>
       <Field label="Favorite cuisine"><Input value={data.cuisine || ""} onChange={(e) => update({ cuisine: e.target.value })} /></Field>
       <Field label="Favorite restaurant"><Input value={data.restaurant || ""} onChange={(e) => update({ restaurant: e.target.value })} /></Field>
       <Field label="Favorite date night"><Input value={data.dateNight || ""} onChange={(e) => update({ dateNight: e.target.value })} /></Field>
+      <Field label="Favorite snack or treat">
+        <Input value={data.favoriteSnack || ""} onChange={(e) => update({ favoriteSnack: e.target.value })} placeholder="e.g. dark chocolate, salt & vinegar chips" />
+      </Field>
       <Field label="Favorite coffee order">
         <Input value={data.coffeeOrder || ""} onChange={(e) => update({ coffeeOrder: e.target.value })} placeholder="e.g. oat milk latte" />
       </Field>

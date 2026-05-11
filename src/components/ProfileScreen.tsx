@@ -3,7 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { LOVES_PART_1, LOVES_PART_2 } from "@/lib/loves";
-import { clearAll, type Profile } from "@/lib/storage";
+import { clearAll, nextPollDate, type Profile } from "@/lib/storage";
 import { useState } from "react";
 
 export function ProfileScreen({ profile, setProfile }: { profile: Profile; setProfile: (p: Profile) => void }) {
@@ -31,6 +31,7 @@ export function ProfileScreen({ profile, setProfile }: { profile: Profile; setPr
         <Field label="Favorite restaurant"><Input value={p.restaurant} onChange={(e) => update({ restaurant: e.target.value })} /></Field>
         <Field label="Favorite date night"><Input value={p.dateNight} onChange={(e) => update({ dateNight: e.target.value })} /></Field>
         <Field label="Coffee order"><Input value={p.coffeeOrder} onChange={(e) => update({ coffeeOrder: e.target.value })} /></Field>
+        <Field label="Favorite snack or treat"><Input value={p.favoriteSnack || ""} onChange={(e) => update({ favoriteSnack: e.target.value })} /></Field>
         <Field label="Her cellphone"><Input type="tel" value={p.herPhone} onChange={(e) => update({ herPhone: e.target.value })} /></Field>
       </Section>
 
@@ -72,7 +73,7 @@ export function ProfileScreen({ profile, setProfile }: { profile: Profile; setPr
 
       <Section title="SMS Polling">
         <Toggle label="Monthly check-in poll" checked={p.smsPolling} onChange={(v) => update({ smsPolling: v })} />
-        <p className="text-xs text-muted-foreground">Next send: {new Date(new Date().getFullYear(), new Date().getMonth() + 1, 1).toLocaleDateString()}</p>
+        <p className="text-xs text-muted-foreground">Sends every 30 days. Next: {nextPollDate(p.activatedAt).toLocaleDateString()}</p>
         <div className="rounded-2xl bg-surface-elevated p-3 border border-border text-sm leading-relaxed">
           Hi {p.herName} 👋 Quick anonymous check-in from Attuned — how is he doing lately? Reply 1–5. Also — is he getting your coffee right? You take: {p.coffeeOrder || "—"}. Reply Y or N.
         </div>
