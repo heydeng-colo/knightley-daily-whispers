@@ -89,9 +89,17 @@ export function HomeScreen({ profile, setProfile, logs }: Props) {
     cur.setDate(cur.getDate() - 1);
   }
 
-  // Next SMS poll: first of next month
-  const now = new Date();
-  const nextSms = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+  // Next SMS poll: every 30 days from activation
+  const nextSms = nextPollDate(profile.activatedAt);
+
+  // Success rate by phase (positive = fire/thumb)
+  const phaseKeys: Array<keyof typeof PHASE_META> = ["M", "EF", "O", "EL", "LL"];
+  const phaseStats = phaseKeys.map((k) => {
+    const inPhase = rated.filter((l) => l.phase === k);
+    const pos = inPhase.filter((l) => l.feedback === "fire" || l.feedback === "thumb").length;
+    const rate = inPhase.length ? Math.round((pos / inPhase.length) * 100) : 0;
+    return { phase: k, meta: PHASE_META[k], rate, count: inPhase.length };
+  });
 
   const recent = (showAll ? logs : logs.slice(0, 5)).filter((l) => l.date <= today);
 
