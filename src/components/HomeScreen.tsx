@@ -18,6 +18,8 @@ import {
   type PromptLog,
 } from "@/lib/storage";
 import { RotateCcw, Flame, ThumbsUp, X as XIcon } from "lucide-react";
+import { ActionChips } from "@/components/ActionChips";
+import { getActionsForDay } from "@/lib/actions";
 
 interface Props {
   profile: Profile;
@@ -161,6 +163,12 @@ export function HomeScreen({ profile, setProfile, logs }: Props) {
           <span className="text-[10px] text-muted-foreground">v{variation}</span>
         </div>
         <p className="text-base leading-relaxed">{promptText}</p>
+
+        {getActionsForDay(day).length > 0 && (
+          <div className="mt-4">
+            <ActionChips actions={getActionsForDay(day)} profile={profile} />
+          </div>
+        )}
 
         <div className="mt-5 grid grid-cols-4 gap-2">
           <FeedbackBtn label="Excellent" active={currentFeedback === "fire"} onClick={() => setFeedback("fire")}>
