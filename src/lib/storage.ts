@@ -20,10 +20,12 @@ export interface Profile {
   cycleLength: number;
   lastPeriodStart: string; // ISO yyyy-mm-dd
   yourName?: string;
+  favoriteSnack?: string;
   goals: string[];
   loves: number[]; // indexes 1..50
   notifications: boolean;
   smsPolling: boolean;
+  activatedAt?: string; // ISO yyyy-mm-dd — set on first save
 }
 
 export interface PromptLog {
