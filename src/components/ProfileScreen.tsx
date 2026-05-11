@@ -3,7 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { LOVES_PART_1, LOVES_PART_2 } from "@/lib/loves";
-import { clearAll, type Profile } from "@/lib/storage";
+import { clearAll, nextPollDate, type Profile } from "@/lib/storage";
 import { useState } from "react";
 
 export function ProfileScreen({ profile, setProfile }: { profile: Profile; setProfile: (p: Profile) => void }) {
