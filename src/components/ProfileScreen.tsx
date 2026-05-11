@@ -73,7 +73,7 @@ export function ProfileScreen({ profile, setProfile }: { profile: Profile; setPr
 
       <Section title="SMS Polling">
         <Toggle label="Monthly check-in poll" checked={p.smsPolling} onChange={(v) => update({ smsPolling: v })} />
-        <p className="text-xs text-muted-foreground">Next send: {new Date(new Date().getFullYear(), new Date().getMonth() + 1, 1).toLocaleDateString()}</p>
+        <p className="text-xs text-muted-foreground">Sends every 30 days. Next: {nextPollDate(p.activatedAt).toLocaleDateString()}</p>
         <div className="rounded-2xl bg-surface-elevated p-3 border border-border text-sm leading-relaxed">
           Hi {p.herName} 👋 Quick anonymous check-in from Attuned — how is he doing lately? Reply 1–5. Also — is he getting your coffee right? You take: {p.coffeeOrder || "—"}. Reply Y or N.
         </div>
