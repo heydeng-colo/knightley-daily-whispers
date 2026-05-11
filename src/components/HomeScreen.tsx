@@ -164,6 +164,12 @@ export function HomeScreen({ profile, setProfile, logs }: Props) {
         </div>
         <p className="text-base leading-relaxed">{promptText}</p>
 
+        {getActionsForDay(day).length > 0 && (
+          <div className="mt-4">
+            <ActionChips actions={getActionsForDay(day)} profile={profile} />
+          </div>
+        )}
+
         <div className="mt-5 grid grid-cols-4 gap-2">
           <FeedbackBtn label="Excellent" active={currentFeedback === "fire"} onClick={() => setFeedback("fire")}>
             <Flame className="h-5 w-5" />
