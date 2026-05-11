@@ -29,6 +29,8 @@ export function HomeScreen({ profile, setProfile, logs }: Props) {
   const [resetOpen, setResetOpen] = useState(false);
   const [resetDate, setResetDate] = useState(todayISO());
   const [showAll, setShowAll] = useState(false);
+  const [noteDraft, setNoteDraft] = useState<string | null>(null);
+  const [noteSaved, setNoteSaved] = useState(false);
 
   const today = todayISO();
   const day = cycleDay(profile.lastPeriodStart, profile.cycleLength);
