@@ -1,0 +1,281 @@
+import { useMemo, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import {
+  PHASE_META,
+  cycleDay,
+  getPromptForDay,
+  phaseForDay,
+  todayISO,
+} from "@/lib/cycle";
+import {
+  getOrAssignVariation,
+  upsertLog,
+  type Feedback,
+  type Profile,
+  type PromptLog,
+} from "@/lib/storage";
+import { RotateCcw, Flame, ThumbsUp, X as XIcon } from "lucide-react";
+
+interface Props {
+  profile: Profile;
+  setProfile: (p: Profile) => void;
+  logs: PromptLog[];
+}
+
+export function HomeScreen({ profile, setProfile, logs }: Props) {
+  const [resetOpen, setResetOpen] = useState(false);
+  const [resetDate, setResetDate] = useState(todayISO());
+  const [showAll, setShowAll] = useState(false);
+
+  const today = todayISO();
+  const day = cycleDay(profile.lastPeriodStart, profile.cycleLength);
+  const phase = phaseForDay(day, profile.cycleLength);
+  const meta = PHASE_META[phase];
+  const variation = useMemo(() => getOrAssignVariation(today), [today]);
+  const promptText = getPromptForDay(day, variation, profile.cycleLength);
+
+  const todayLog = logs.find((l) => l.date === today);
+  const currentFeedback: Feedback | undefined = todayLog?.feedback;
+
+  // Ensure today's prompt is logged once visible
+  if (!todayLog) {
+    upsertLog({
+      date: today,
+      cycleDay: day,
+      phase,
+      variation,
+      prompt: promptText,
+    });
+  }
+
+  const setFeedback = (f: Feedback) => {
+    upsertLog({
+      date: today,
+      cycleDay: day,
+      phase,
+      variation,
+      prompt: promptText,
+      feedback: f,
+    });
+  };
+
+  const onReset = () => {
+    setProfile({ ...profile, lastPeriodStart: resetDate });
+    setResetOpen(false);
+  };
+
+  // Stats
+  const rated = logs.filter((l) => l.feedback);
+  const positive = rated.filter((l) => l.feedback === "fire" || l.feedback === "thumb").length;
+  const cumulativeRate = rated.length ? Math.round((positive / rated.length) * 100) : 0;
+  const weekAgo = new Date(); weekAgo.setDate(weekAgo.getDate() - 7);
+  const weekISO = todayISO(weekAgo);
+  const weekRated = rated.filter((l) => l.date >= weekISO);
+  const weekPositive = weekRated.filter((l) => l.feedback === "fire" || l.feedback === "thumb").length;
+  const weekRate = weekRated.length ? Math.round((weekPositive / weekRated.length) * 100) : 0;
+  const totalPrompts = logs.length;
+  // streak: count consecutive days going back from today with feedback
+  let streak = 0;
+  const sorted = [...logs].sort((a, b) => (a.date < b.date ? 1 : -1));
+  const cur = new Date();
+  for (;;) {
+    const iso = todayISO(cur);
+    const found = sorted.find((l) => l.date === iso && !!l.feedback);
+    if (!found) break;
+    streak++;
+    cur.setDate(cur.getDate() - 1);
+  }
+
+  // Next SMS poll: first of next month
+  const now = new Date();
+  const nextSms = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+
+  const recent = (showAll ? logs : logs.slice(0, 5)).filter((l) => l.date <= today);
+
+  return (
+    <div className="space-y-5">
+      {/* Top bar */}
+      <div className="flex items-center justify-between pt-2">
+        <div className="flex items-baseline gap-2">
+          <span className="text-2xl font-semibold tracking-tight">Attuned</span>
+          <span className="text-xs text-muted-foreground">·  daily</span>
+        </div>
+        <button
+          onClick={() => setResetOpen(true)}
+          className="rounded-full bg-surface border border-border p-2.5 text-muted-foreground hover:text-gold transition"
+          aria-label="Reset cycle"
+        >
+          <RotateCcw className="h-4 w-4" />
+        </button>
+      </div>
+
+      {/* Phase card */}
+      <div
+        className="rounded-3xl p-6 border border-border slide-up relative overflow-hidden"
+        style={{ background: `linear-gradient(160deg, color-mix(in oklab, ${meta.color} 28%, var(--surface)), var(--surface))` }}
+      >
+        <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full opacity-30 blur-3xl" style={{ background: meta.color }} />
+        <p className="text-sm text-muted-foreground">{profile.herName ? `${profile.herName}'s Cycle` : "Her Cycle"}</p>
+        <p className="text-5xl font-semibold mt-1">Day {day}</p>
+        <div className="flex items-center gap-2 mt-3">
+          <span className="h-2.5 w-2.5 rounded-full" style={{ background: meta.color }} />
+          <span className="text-sm font-medium">{meta.name}</span>
+        </div>
+        <p className="text-sm text-muted-foreground mt-2 leading-snug">{meta.description}</p>
+      </div>
+
+      {/* Daily prompt */}
+      <div className="rounded-3xl bg-surface border border-border p-5 slide-up">
+        <div className="flex items-center justify-between mb-3">
+          <p className="text-xs uppercase tracking-widest text-gold font-medium">Today's Prompt</p>
+          <span className="text-[10px] text-muted-foreground">v{variation}</span>
+        </div>
+        <p className="text-base leading-relaxed">{promptText}</p>
+
+        <div className="mt-5 grid grid-cols-4 gap-2">
+          <FeedbackBtn label="Excellent" active={currentFeedback === "fire"} onClick={() => setFeedback("fire")}>
+            <Flame className="h-5 w-5" />
+          </FeedbackBtn>
+          <FeedbackBtn label="Good" active={currentFeedback === "thumb"} onClick={() => setFeedback("thumb")}>
+            <ThumbsUp className="h-5 w-5" />
+          </FeedbackBtn>
+          <FeedbackBtn label="Neutral" active={currentFeedback === "shrug"} onClick={() => setFeedback("shrug")}>
+            <span className="text-lg leading-none">🤷</span>
+          </FeedbackBtn>
+          <FeedbackBtn label="Bad" active={currentFeedback === "x"} onClick={() => setFeedback("x")}>
+            <XIcon className="h-5 w-5" />
+          </FeedbackBtn>
+        </div>
+      </div>
+
+      {/* Stats */}
+      <div className="grid grid-cols-2 gap-3">
+        <Stat label="Cumulative Success" value={`${cumulativeRate}%`} />
+        <Stat label="This Week" value={`${weekRate}%`} />
+        <Stat label="Current Streak" value={`${streak}d`} />
+        <Stat label="Total Prompts" value={`${totalPrompts}`} />
+      </div>
+
+      {/* SMS Card */}
+      <div className="rounded-3xl bg-surface border border-border p-5">
+        <p className="text-xs uppercase tracking-widest text-gold font-medium mb-2">Monthly Check-In</p>
+        <p className="text-sm text-muted-foreground">Next poll sends on <span className="text-foreground font-medium">{nextSms.toLocaleDateString(undefined, { month: "long", day: "numeric" })}</span></p>
+        <div className="mt-4 rounded-2xl bg-surface-elevated p-4 border border-border">
+          <p className="text-xs text-muted-foreground mb-1">SMS preview</p>
+          <p className="text-sm leading-relaxed">
+            Hi {profile.herName || "Sarah"} 👋 Quick anonymous check-in from Attuned — how is {profile.yourName || "he"} doing lately? Reply 1–5. (5 = amazing) Also — is he getting your coffee right? You take: {profile.coffeeOrder || "—"}. Reply Y or N.
+          </p>
+        </div>
+      </div>
+
+      {/* Recent prompts */}
+      <div className="rounded-3xl bg-surface border border-border p-5">
+        <div className="flex items-center justify-between mb-3">
+          <p className="text-xs uppercase tracking-widest text-gold font-medium">Recent Prompts</p>
+        </div>
+        <div className="space-y-3">
+          {recent.length === 0 && <p className="text-sm text-muted-foreground">No history yet.</p>}
+          {recent.map((l) => (
+            <RecentRow key={l.date} log={l} />
+          ))}
+        </div>
+        {logs.length > 5 && (
+          <button
+            onClick={() => setShowAll((s) => !s)}
+            className="mt-4 text-xs text-gold tracking-wide"
+          >
+            {showAll ? "Show less ↑" : "See all prompts ↓"}
+          </button>
+        )}
+      </div>
+
+      {/* Reset Modal */}
+      <Dialog open={resetOpen} onOpenChange={setResetOpen}>
+        <DialogContent className="bg-surface border-border">
+          <DialogHeader>
+            <DialogTitle>She started her period today?</DialogTitle>
+          </DialogHeader>
+          <p className="text-sm text-muted-foreground">Confirm the start date — cycle restarts from Day 1.</p>
+          <Input
+            type="date"
+            value={resetDate}
+            min={todayISO(new Date(Date.now() - 7 * 86400000))}
+            max={todayISO()}
+            onChange={(e) => setResetDate(e.target.value)}
+          />
+          <DialogFooter>
+            <Button variant="secondary" onClick={() => setResetOpen(false)}>Cancel</Button>
+            <Button className="gold-gradient text-gold-foreground" onClick={onReset}>Confirm reset</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+}
+
+function FeedbackBtn({
+  active,
+  onClick,
+  label,
+  children,
+}: {
+  active?: boolean;
+  onClick: () => void;
+  label: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className={`flex flex-col items-center gap-1 rounded-2xl py-3 border transition ${
+        active
+          ? "bg-gold text-gold-foreground border-gold"
+          : "bg-surface-elevated border-border text-foreground hover:border-gold/40"
+      }`}
+    >
+      {children}
+      <span className="text-[10px] tracking-wide">{label}</span>
+    </button>
+  );
+}
+
+function Stat({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-2xl bg-surface border border-border p-4">
+      <p className="text-xs text-muted-foreground">{label}</p>
+      <p className="text-2xl font-semibold mt-1">{value}</p>
+    </div>
+  );
+}
+
+function RecentRow({ log }: { log: PromptLog }) {
+  const meta = PHASE_META[log.phase as keyof typeof PHASE_META];
+  const fb = log.feedback;
+  const icon = fb === "fire" ? "🔥" : fb === "thumb" ? "👍" : fb === "shrug" ? "🤷" : fb === "x" ? "❌" : "·";
+  return (
+    <div className="flex gap-3">
+      <div className="flex flex-col items-center pt-1 w-12 shrink-0">
+        <span className="text-xs text-muted-foreground">Day</span>
+        <span className="text-base font-semibold leading-none">{log.cycleDay}</span>
+      </div>
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center gap-2 mb-1">
+          <span
+            className="text-[10px] uppercase tracking-widest px-2 py-0.5 rounded-full"
+            style={{
+              background: `color-mix(in oklab, ${meta?.color || "var(--gold)"} 25%, transparent)`,
+              color: meta?.color || "var(--gold)",
+            }}
+          >
+            {meta?.name || log.phase}
+          </span>
+          <span className="text-xs text-muted-foreground">{log.date}</span>
+        </div>
+        <p className="text-sm text-foreground/90 leading-snug line-clamp-2">{log.prompt}</p>
+      </div>
+      <div className="text-lg">{icon}</div>
+    </div>
+  );
+}
