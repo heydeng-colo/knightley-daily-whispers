@@ -170,25 +170,33 @@ export function HomeScreen({ profile, setProfile, logs }: Props) {
       {/* Success by phase */}
       <div className="rounded-3xl bg-surface border border-border p-5">
         <p className="text-xs uppercase tracking-widest text-gold font-medium mb-4">Success by Phase</p>
-        <div className="space-y-3">
-          {phaseStats.map((s) => (
-            <div key={s.phase}>
-              <div className="flex items-center justify-between mb-1.5">
-                <div className="flex items-center gap-2">
-                  <span className="h-2 w-2 rounded-full" style={{ background: s.meta.color }} />
-                  <span className="text-xs font-medium">{s.meta.name}</span>
-                  <span className="text-[10px] text-muted-foreground">({s.count})</span>
+        <div className="flex items-end justify-between gap-2 h-44 px-1">
+          {phaseStats.map((s) => {
+            const h = s.count ? Math.max(s.rate, 4) : 2;
+            return (
+              <div key={s.phase} className="flex-1 flex flex-col items-center gap-2 h-full">
+                <span className="text-[10px] font-medium tabular-nums text-foreground/80">
+                  {s.count ? `${s.rate}%` : "—"}
+                </span>
+                <div className="flex-1 w-full flex items-end">
+                  <div
+                    className="w-full rounded-t-lg transition-all"
+                    style={{
+                      height: `${h}%`,
+                      background: s.count
+                        ? `linear-gradient(180deg, ${s.meta.color}, color-mix(in oklab, ${s.meta.color} 50%, transparent))`
+                        : "var(--surface-elevated)",
+                      boxShadow: s.count ? `0 0 12px -2px color-mix(in oklab, ${s.meta.color} 60%, transparent)` : undefined,
+                    }}
+                  />
                 </div>
-                <span className="text-xs font-medium tabular-nums">{s.count ? `${s.rate}%` : "—"}</span>
+                <div className="flex flex-col items-center gap-0.5">
+                  <span className="text-[10px] font-medium" style={{ color: s.meta.color }}>{s.phase}</span>
+                  <span className="text-[9px] text-muted-foreground tabular-nums">n={s.count}</span>
+                </div>
               </div>
-              <div className="h-2 rounded-full bg-surface-elevated overflow-hidden">
-                <div
-                  className="h-full rounded-full transition-all"
-                  style={{ width: `${s.count ? s.rate : 0}%`, background: s.meta.color }}
-                />
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
         {rated.length === 0 && (
           <p className="text-xs text-muted-foreground mt-3">Rate a few prompts to see your patterns emerge.</p>
