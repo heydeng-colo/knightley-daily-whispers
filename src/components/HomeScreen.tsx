@@ -18,6 +18,8 @@ import {
   type PromptLog,
 } from "@/lib/storage";
 import { RotateCcw, Flame, ThumbsUp, X as XIcon } from "lucide-react";
+import { ActionChips } from "@/components/ActionChips";
+import { getActionsForDay } from "@/lib/actions";
 
 interface Props {
   profile: Profile;
