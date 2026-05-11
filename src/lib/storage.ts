@@ -35,6 +35,7 @@ export interface PromptLog {
   variation: number;
   prompt: string;
   feedback?: Feedback;
+  notes?: string;
 }
 
 const KEYS = {
