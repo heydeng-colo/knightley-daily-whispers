@@ -31,6 +31,7 @@ export function ProfileScreen({ profile, setProfile }: { profile: Profile; setPr
         <Field label="Favorite restaurant"><Input value={p.restaurant} onChange={(e) => update({ restaurant: e.target.value })} /></Field>
         <Field label="Favorite date night"><Input value={p.dateNight} onChange={(e) => update({ dateNight: e.target.value })} /></Field>
         <Field label="Coffee order"><Input value={p.coffeeOrder} onChange={(e) => update({ coffeeOrder: e.target.value })} /></Field>
+        <Field label="Favorite snack or treat"><Input value={p.favoriteSnack || ""} onChange={(e) => update({ favoriteSnack: e.target.value })} /></Field>
         <Field label="Her cellphone"><Input type="tel" value={p.herPhone} onChange={(e) => update({ herPhone: e.target.value })} /></Field>
       </Section>
 
