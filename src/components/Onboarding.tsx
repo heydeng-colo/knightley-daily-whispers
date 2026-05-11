@@ -39,6 +39,7 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
       restaurant: data.restaurant || "",
       dateNight: data.dateNight || "",
       coffeeOrder: data.coffeeOrder || "",
+      favoriteSnack: data.favoriteSnack || "",
       herPhone: data.herPhone || "",
       cycleLength: data.cycleLength || 28,
       lastPeriodStart: data.lastPeriodStart || new Date().toISOString().slice(0, 10),
