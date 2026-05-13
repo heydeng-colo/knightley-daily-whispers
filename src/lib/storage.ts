@@ -126,6 +126,8 @@ export function currentMonthSpend(today: Date = new Date()): number {
     .filter((e) => { const d = new Date(e.date); return d.getFullYear() === y && d.getMonth() === m; })
     .reduce((s, e) => s + (e.cost || 0), 0);
 }
+
+export function getVariations(): Record<string, number> {
   return read<Record<string, number>>(KEYS.variations, {});
 }
 export function getOrAssignVariation(dateISO: string): number {
