@@ -4,6 +4,26 @@ export type Feedback = "fire" | "thumb" | "shrug" | "x";
 
 export interface Child { name: string; birthday: string }
 
+export type SpendTier = "free" | "25" | "50" | "100" | "150" | "150plus";
+
+export const SPEND_TIER_LABEL: Record<SpendTier, string> = {
+  free: "Free or low-effort gestures",
+  "25": "Up to $25/month",
+  "50": "Up to $50/month",
+  "100": "Up to $100/month",
+  "150": "Up to $150/month",
+  "150plus": "$150+/month",
+};
+
+export interface SpendEntry {
+  date: string;     // yyyy-mm-dd
+  cycleDay: number;
+  phase: string;
+  kind: string;
+  label: string;
+  cost: number;
+}
+
 export interface Profile {
   herName: string;
   herBirthday: string;
@@ -26,6 +46,8 @@ export interface Profile {
   notifications: boolean;
   smsPolling: boolean;
   activatedAt?: string; // ISO yyyy-mm-dd — set on first save
+  spendTier?: SpendTier;
+  monthlyBudgetCap?: number; // dollars; 0/undef = no cap
 }
 
 export interface PromptLog {
@@ -42,6 +64,7 @@ const KEYS = {
   profile: "attuned.profile",
   logs: "attuned.logs",
   variations: "attuned.variations", // map date -> variation
+  spend: "attuned.spend",
 };
 
 const isClient = typeof window !== "undefined";
@@ -88,6 +111,20 @@ export function upsertLog(log: PromptLog) {
   if (idx >= 0) logs[idx] = { ...logs[idx], ...log };
   else logs.unshift(log);
   setLogs(logs);
+}
+
+// --- Spend tracking ---
+export function getSpend(): SpendEntry[] { return read<SpendEntry[]>(KEYS.spend, []); }
+export function addSpend(e: SpendEntry) {
+  const arr = getSpend();
+  arr.unshift(e);
+  write(KEYS.spend, arr);
+}
+export function currentMonthSpend(today: Date = new Date()): number {
+  const y = today.getFullYear(), m = today.getMonth();
+  return getSpend()
+    .filter((e) => { const d = new Date(e.date); return d.getFullYear() === y && d.getMonth() === m; })
+    .reduce((s, e) => s + (e.cost || 0), 0);
 }
 
 export function getVariations(): Record<string, number> {
