@@ -17,7 +17,7 @@ import {
   type Profile,
   type PromptLog,
 } from "@/lib/storage";
-import { RotateCcw, Flame, ThumbsUp, X as XIcon } from "lucide-react";
+import { Droplet, Flame, ThumbsUp, X as XIcon, Gift } from "lucide-react";
 import { ActionChips } from "@/components/ActionChips";
 import { getActionGroupForDay, shouldSuppressPaid } from "@/lib/actions";
 import { getSpend, currentMonthSpend } from "@/lib/storage";
@@ -134,11 +134,32 @@ export function HomeScreen({ profile, setProfile, logs }: Props) {
           <span className="text-xs text-muted-foreground">·  daily</span>
         </div>
         <button
-          onClick={() => setResetOpen(true)}
-          className="rounded-full bg-surface border border-border p-2.5 text-muted-foreground hover:text-gold transition"
-          aria-label="Reset cycle"
+          onClick={() => {
+            const url = typeof window !== "undefined" ? window.location.origin : "https://attuned.app";
+            const text = `I've been using Attuned to show up better in my relationship — you should try it. ${url}`;
+            if (typeof navigator !== "undefined" && (navigator as any).share) {
+              (navigator as any).share({ title: "Attuned", text, url }).catch(() => {});
+            } else if (typeof navigator !== "undefined" && navigator.clipboard) {
+              navigator.clipboard.writeText(text);
+              alert("Invite link copied — share it with a friend to earn 2 months free!");
+            }
+          }}
+          className="inline-flex items-center gap-1.5 rounded-full bg-gold/10 border border-gold/40 text-gold px-3 py-1.5 text-[11px] font-medium hover:bg-gold/20 transition"
         >
-          <RotateCcw className="h-4 w-4" />
+          <Gift className="h-3.5 w-3.5" />
+          Refer a friend · 2 months free
+        </button>
+      </div>
+
+      {/* Reset cycle pill */}
+      <div className="flex justify-end -mt-2">
+        <button
+          onClick={() => setResetOpen(true)}
+          className="inline-flex items-center gap-1.5 rounded-full bg-surface border border-border px-3 py-1.5 text-[11px] text-muted-foreground hover:text-gold hover:border-gold/40 transition"
+          aria-label="Reset her cycle"
+        >
+          <Droplet className="h-3 w-3" />
+          Reset Her Cycle
         </button>
       </div>
 
@@ -304,6 +325,40 @@ export function HomeScreen({ profile, setProfile, logs }: Props) {
             {showAll ? "Show less ↑" : "See all prompts ↓"}
           </button>
         )}
+      </div>
+
+      {/* Days 1–5 preview */}
+      <div className="rounded-3xl bg-surface border border-border p-5 space-y-4">
+        <div>
+          <p className="text-xs uppercase tracking-widest text-gold font-medium">Days 1–5 Preview</p>
+          <p className="text-xs text-muted-foreground mt-1">A peek at how the next five days unfold.</p>
+        </div>
+        {[1, 2, 3, 4, 5].map((d) => {
+          const ph = phaseForDay(d, profile.cycleLength);
+          const m = PHASE_META[ph];
+          const text = getPromptForDay(d, variation, profile.cycleLength);
+          const group = getActionGroupForDay(d);
+          return (
+            <div
+              key={d}
+              className="rounded-2xl border border-border p-4"
+              style={{ background: `linear-gradient(160deg, color-mix(in oklab, ${m.color} 14%, var(--surface)), var(--surface))` }}
+            >
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-2">
+                  <span className="h-2 w-2 rounded-full" style={{ background: m.color }} />
+                  <span className="text-xs font-medium" style={{ color: m.color }}>Day {d} · {m.name}</span>
+                </div>
+              </div>
+              <p className="text-sm leading-relaxed text-foreground/90">{text}</p>
+              {group && (
+                <div className="mt-3">
+                  <ActionChips group={group} profile={profile} cycleDay={d} phase={ph} hidePaid={false} />
+                </div>
+              )}
+            </div>
+          );
+        })}
       </div>
 
       {/* Reset Modal */}
