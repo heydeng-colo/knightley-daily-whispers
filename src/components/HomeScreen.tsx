@@ -165,11 +165,25 @@ export function HomeScreen({ profile, setProfile, logs }: Props) {
         </div>
         <p className="text-base leading-relaxed">{promptText}</p>
 
-        {getActionsForDay(day).length > 0 && (
-          <div className="mt-4">
-            <ActionChips actions={getActionsForDay(day)} profile={profile} />
-          </div>
-        )}
+        {(() => {
+          const group = getActionGroupForDay(day);
+          if (!group) return null;
+          const spend = getSpend();
+          const monthTotal = currentMonthSpend();
+          const guard = shouldSuppressPaid({ day, profile, logs, spend, monthSpendTotal: monthTotal });
+          return (
+            <div className="mt-4">
+              <ActionChips
+                group={group}
+                profile={profile}
+                cycleDay={day}
+                phase={phase}
+                hidePaid={guard.suppress}
+                hidePaidReason={guard.reason}
+              />
+            </div>
+          );
+        })()}
 
         <div className="mt-5 grid grid-cols-4 gap-2">
           <FeedbackBtn label="Excellent" active={currentFeedback === "fire"} onClick={() => setFeedback("fire")}>
