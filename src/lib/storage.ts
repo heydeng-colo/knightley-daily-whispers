@@ -4,6 +4,26 @@ export type Feedback = "fire" | "thumb" | "shrug" | "x";
 
 export interface Child { name: string; birthday: string }
 
+export type SpendTier = "free" | "25" | "50" | "100" | "150" | "150plus";
+
+export const SPEND_TIER_LABEL: Record<SpendTier, string> = {
+  free: "Free or low-effort gestures",
+  "25": "Up to $25/month",
+  "50": "Up to $50/month",
+  "100": "Up to $100/month",
+  "150": "Up to $150/month",
+  "150plus": "$150+/month",
+};
+
+export interface SpendEntry {
+  date: string;     // yyyy-mm-dd
+  cycleDay: number;
+  phase: string;
+  kind: string;
+  label: string;
+  cost: number;
+}
+
 export interface Profile {
   herName: string;
   herBirthday: string;
