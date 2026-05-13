@@ -327,6 +327,40 @@ export function HomeScreen({ profile, setProfile, logs }: Props) {
         )}
       </div>
 
+      {/* Days 1–5 preview */}
+      <div className="rounded-3xl bg-surface border border-border p-5 space-y-4">
+        <div>
+          <p className="text-xs uppercase tracking-widest text-gold font-medium">Days 1–5 Preview</p>
+          <p className="text-xs text-muted-foreground mt-1">A peek at how the next five days unfold.</p>
+        </div>
+        {[1, 2, 3, 4, 5].map((d) => {
+          const ph = phaseForDay(d, profile.cycleLength);
+          const m = PHASE_META[ph];
+          const text = getPromptForDay(d, variation, profile.cycleLength);
+          const group = getActionGroupForDay(d);
+          return (
+            <div
+              key={d}
+              className="rounded-2xl border border-border p-4"
+              style={{ background: `linear-gradient(160deg, color-mix(in oklab, ${m.color} 14%, var(--surface)), var(--surface))` }}
+            >
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-2">
+                  <span className="h-2 w-2 rounded-full" style={{ background: m.color }} />
+                  <span className="text-xs font-medium" style={{ color: m.color }}>Day {d} · {m.name}</span>
+                </div>
+              </div>
+              <p className="text-sm leading-relaxed text-foreground/90">{text}</p>
+              {group && (
+                <div className="mt-3">
+                  <ActionChips group={group} profile={profile} cycleDay={d} phase={ph} />
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+
       {/* Reset Modal */}
       <Dialog open={resetOpen} onOpenChange={setResetOpen}>
         <DialogContent className="bg-surface border-border">
