@@ -64,6 +64,7 @@ const KEYS = {
   profile: "attuned.profile",
   logs: "attuned.logs",
   variations: "attuned.variations", // map date -> variation
+  spend: "attuned.spend",
 };
 
 const isClient = typeof window !== "undefined";
