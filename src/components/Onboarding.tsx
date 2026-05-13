@@ -19,6 +19,7 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
     loves: [],
     notifications: true,
     smsPolling: true,
+    spendTier: "50",
   });
 
   const update = (patch: Partial<Profile>) => setData((d) => ({ ...d, ...patch }));
