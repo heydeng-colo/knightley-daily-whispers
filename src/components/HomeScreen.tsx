@@ -353,7 +353,7 @@ export function HomeScreen({ profile, setProfile, logs }: Props) {
               <p className="text-sm leading-relaxed text-foreground/90">{text}</p>
               {group && (
                 <div className="mt-3">
-                  <ActionChips group={group} profile={profile} cycleDay={d} phase={ph} />
+                  <ActionChips group={group} profile={profile} cycleDay={d} phase={ph} hidePaid={false} />
                 </div>
               )}
             </div>
