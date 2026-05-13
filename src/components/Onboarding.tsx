@@ -245,6 +245,35 @@ function Step1({ data, update }: { data: Partial<Profile>; update: (p: Partial<P
           className="w-full accent-[var(--gold)]"
         />
       </Field>
+
+      <div className="space-y-2 pt-2">
+        <Label className="text-sm text-muted-foreground">Monthly spend comfort</Label>
+        <div className="grid grid-cols-2 gap-2">
+          {(Object.keys(SPEND_TIER_LABEL) as SpendTier[]).map((t) => (
+            <button
+              key={t}
+              onClick={() => update({ spendTier: t })}
+              className={`rounded-xl py-2.5 px-3 text-xs border transition text-left ${
+                (data.spendTier || "50") === t
+                  ? "bg-gold text-gold-foreground border-gold"
+                  : "bg-surface border-border text-foreground"
+              }`}
+            >
+              {SPEND_TIER_LABEL[t]}
+            </button>
+          ))}
+        </div>
+      </div>
+      <Field label="Monthly budget cap (optional)">
+        <Input
+          type="number"
+          min={0}
+          placeholder="e.g. 100"
+          value={data.monthlyBudgetCap ?? ""}
+          onChange={(e) => update({ monthlyBudgetCap: e.target.value ? parseInt(e.target.value) : undefined })}
+        />
+        <p className="text-xs text-muted-foreground mt-1">When you hit this, paid suggestions pause until next month.</p>
+      </Field>
     </div>
   );
 }
