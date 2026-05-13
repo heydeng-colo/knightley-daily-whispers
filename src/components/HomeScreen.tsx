@@ -134,11 +134,32 @@ export function HomeScreen({ profile, setProfile, logs }: Props) {
           <span className="text-xs text-muted-foreground">·  daily</span>
         </div>
         <button
-          onClick={() => setResetOpen(true)}
-          className="rounded-full bg-surface border border-border p-2.5 text-muted-foreground hover:text-gold transition"
-          aria-label="Reset cycle"
+          onClick={() => {
+            const url = typeof window !== "undefined" ? window.location.origin : "https://attuned.app";
+            const text = `I've been using Attuned to show up better in my relationship — you should try it. ${url}`;
+            if (typeof navigator !== "undefined" && (navigator as any).share) {
+              (navigator as any).share({ title: "Attuned", text, url }).catch(() => {});
+            } else if (typeof navigator !== "undefined" && navigator.clipboard) {
+              navigator.clipboard.writeText(text);
+              alert("Invite link copied — share it with a friend to earn 2 months free!");
+            }
+          }}
+          className="inline-flex items-center gap-1.5 rounded-full bg-gold/10 border border-gold/40 text-gold px-3 py-1.5 text-[11px] font-medium hover:bg-gold/20 transition"
         >
-          <RotateCcw className="h-4 w-4" />
+          <Gift className="h-3.5 w-3.5" />
+          Refer a friend · 2 months free
+        </button>
+      </div>
+
+      {/* Reset cycle pill */}
+      <div className="flex justify-end -mt-2">
+        <button
+          onClick={() => setResetOpen(true)}
+          className="inline-flex items-center gap-1.5 rounded-full bg-surface border border-border px-3 py-1.5 text-[11px] text-muted-foreground hover:text-gold hover:border-gold/40 transition"
+          aria-label="Reset her cycle"
+        >
+          <Droplet className="h-3 w-3" />
+          Reset Her Cycle
         </button>
       </div>
 
