@@ -67,6 +67,37 @@ export function ProfileScreen({ profile, setProfile }: { profile: Profile; setPr
         )}
       </Section>
 
+      <Section title="Monthly Spend Comfort">
+        <div className="grid grid-cols-2 gap-2">
+          {(Object.keys(SPEND_TIER_LABEL) as SpendTier[]).map((t) => (
+            <button
+              key={t}
+              onClick={() => update({ spendTier: t })}
+              className={`rounded-xl py-2.5 px-3 text-xs border transition text-left ${
+                (p.spendTier || "50") === t
+                  ? "bg-gold text-gold-foreground border-gold"
+                  : "bg-surface-elevated border-border text-foreground"
+              }`}
+            >
+              {SPEND_TIER_LABEL[t]}
+            </button>
+          ))}
+        </div>
+        <Field label="Monthly budget cap (optional)">
+          <Input
+            type="number"
+            min={0}
+            placeholder="No cap"
+            value={p.monthlyBudgetCap ?? ""}
+            onChange={(e) => update({ monthlyBudgetCap: e.target.value ? parseInt(e.target.value) : undefined })}
+          />
+        </Field>
+      </Section>
+
+      <Section title="Spend Dashboard">
+        <SpendDashboard cap={p.monthlyBudgetCap} />
+      </Section>
+
       <Section title="Notifications">
         <Toggle label="Daily morning prompt (8am)" checked={p.notifications} onChange={(v) => update({ notifications: v })} />
       </Section>
