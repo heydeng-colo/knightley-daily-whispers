@@ -2,7 +2,8 @@ import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { buildActionUrl, fillTemplate, isPaidAction, actionCost, type ActionDef, type DayActionGroup } from "@/lib/actions";
-import { addSpend, type Profile, type Phase } from "@/lib/storage";
+import { addSpend, type Profile } from "@/lib/storage";
+import type { Phase } from "@/lib/cycle";
 
 interface Props {
   group: DayActionGroup;
