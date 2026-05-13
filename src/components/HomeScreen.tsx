@@ -187,7 +187,7 @@ export function HomeScreen({ profile, setProfile, logs }: Props) {
         <p className="text-base leading-relaxed">{promptText}</p>
 
         {(() => {
-          const group = getActionGroupForDay(day);
+          const group = getActionGroupForDay(day, variation, profile.cycleLength);
           if (!group) return null;
           const spend = getSpend();
           const monthTotal = currentMonthSpend();
