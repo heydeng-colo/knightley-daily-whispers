@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { GOALS, LOVES_PART_1, LOVES_PART_2 } from "@/lib/loves";
-import { setProfile, type Profile, type Child } from "@/lib/storage";
+import { setProfile, SPEND_TIER_LABEL, type Profile, type SpendTier } from "@/lib/storage";
 import { ArrowLeft, ArrowRight, Plus, Trash2, Heart } from "lucide-react";
 
 const STEPS = ["About", "Cycle", "Goals", "Loves 1", "Loves 2"];
