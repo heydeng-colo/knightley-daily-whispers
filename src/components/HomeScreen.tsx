@@ -337,7 +337,7 @@ export function HomeScreen({ profile, setProfile, logs }: Props) {
           const ph = phaseForDay(d, profile.cycleLength);
           const m = PHASE_META[ph];
           const text = getPromptForDay(d, variation, profile.cycleLength);
-          const group = getActionGroupForDay(d);
+          const group = getActionGroupForDay(d, variation, profile.cycleLength);
           return (
             <div
               key={d}
