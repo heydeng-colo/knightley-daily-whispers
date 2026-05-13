@@ -76,148 +76,299 @@ export function actionCost(a: ActionDef): number {
 }
 export const isPaidAction = (a: ActionDef) => actionCost(a) > 0;
 
-// --- Day → action group mapping ---
-export const DAY_ACTIONS: Record<number, DayActionGroup> = {
-  1: { actions: [
-    { kind: "AMAZON_SEARCH", icon: "🛒", label: "Order Heat Pad", param: "electric heat pad" },
-    { kind: "GOOGLE_CALENDAR", icon: "📅", label: "Add Reminder", param: "Comfort day for {herName}" },
-  ], freeAlt: "Pick one up at CVS or Walgreens on your way home" },
-  2: { actions: [
-    { kind: "DOORDASH", icon: "🛒", label: "Order Delivery", param: "{cuisine}" },
-    { kind: "INSTACART", icon: "🛒", label: "Order Groceries" },
-  ], freeAlt: "Cook something simple she loves — no need to order" },
-  3: { actions: [
-    { kind: "SMS_DRAFT", icon: "💬", label: "Text Her", message: "Hey {herName}, just thinking of you today. Hope you're feeling okay 💕", requires: "herPhone" },
-    { kind: "WHATSAPP", icon: "💬", label: "WhatsApp", message: "Hey {herName}, just thinking of you today. Hope you're feeling okay 💕", requires: "herPhone" },
-  ], freeAlt: "Send her a voice message instead" },
-  4: { actions: [
-    { kind: "SPOTIFY_PLAYLIST", icon: "🎵", label: "Set the Mood", param: "cozy evening playlist" },
-  ], freeAlt: "Put on something soft at home tonight" },
-  5: { actions: [
-    { kind: "DOORDASH", icon: "☕", label: "Order Her Coffee", param: "{coffeeOrder}" },
-    { kind: "GOOGLE_CALENDAR", icon: "📅", label: "Morning Walk", param: "Morning walk with {herName}" },
-  ], freeAlt: "Make her coffee at home exactly how she likes it" },
-  6: { actions: [
-    { kind: "GOOGLE_CALENDAR", icon: "📅", label: "Block the Weekend", param: "Weekend with {herName}" },
-    { kind: "AIRBNB_EXPERIENCES", icon: "🏡", label: "Browse Experiences" },
-  ], freeAlt: "Write down 3 ideas for the weekend and show her tonight" },
-  8: { actions: [
-    { kind: "SMS_DRAFT", icon: "💬", label: "Send a Text", message: "Saw this and thought of you 😂 [paste link]", requires: "herPhone" },
-  ], freeAlt: "Screenshot a reel and send it directly" },
-  10: { actions: [
-    { kind: "CLASSPASS", icon: "🧘", label: "Find a Class" },
-  ], freeAlt: "Look up a free yoga video on YouTube and do it together at home" },
-  11: { actions: [
-    { kind: "RESY", icon: "🍽️", label: "Reserve a Table", param: "{restaurant}", requires: "restaurant" },
-    { kind: "GOOGLE_CALENDAR", icon: "📅", label: "Add Date Night", param: "Date Night 🌙" },
-    { kind: "TASKRABBIT", icon: "👶", label: "Book Babysitter" },
-  ], freeAlt: "Call the restaurant directly — and ask a family member about the kids" },
-  12: { actions: [
-    { kind: "VOICE_MEMO", icon: "🎙️", label: "Record Voice Note" },
-  ], freeAlt: "Send her a quick audio message through WhatsApp" },
-  13: { actions: [
-    { kind: "SPOTIFY_PLAYLIST", icon: "🎵", label: "Set the Mood", param: "romantic playlist" },
-  ], freeAlt: "Put on a playlist you both love at home tonight" },
-  14: { actions: [
-    { kind: "URBAN_STEMS", icon: "🌸", label: "Order Flowers" },
-    { kind: "RESY", icon: "🍽️", label: "Reserve Lunch", param: "{restaurant}", requires: "restaurant" },
-    { kind: "SMS_DRAFT", icon: "💬", label: "Text Her", message: "Thinking of surprising you today 👀", requires: "herPhone" },
-  ], freeAlt: "Pick up flowers on the way home — she loves {flowers}" },
-  15: { actions: [
-    { kind: "RESY", icon: "🍽️", label: "Book Dinner", param: "{restaurant}", requires: "restaurant" },
-    { kind: "GOOGLE_CALENDAR", icon: "📅", label: "Add to Calendar", param: "Evening with {herName} 🌹" },
-    { kind: "AMAZON_SEARCH", icon: "🍷", label: "Order Wine", param: "wine delivery" },
-  ], freeAlt: "Cook at home and set the table properly — candles, the works" },
-  16: { actions: [
-    { kind: "SMS_DRAFT", icon: "💬", label: "Send Text", message: "I just want you to know I think you're incredible. I was bragging about you today 😊", requires: "herPhone" },
-    { kind: "MEJURI", icon: "💍", label: "Treat Her" },
-  ], freeAlt: "Tell her in person tonight — look her in the eyes when you do" },
-  17: { actions: [
-    { kind: "SNAPPR", icon: "📸", label: "Book Photographer" },
-    { kind: "GOOGLE_CALENDAR", icon: "📅", label: "Schedule It", param: "Photo date with {herName}" },
-  ], freeAlt: "Take her somewhere beautiful and take the photos yourself" },
-  18: { actions: [
-    { kind: "SPOTIFY_PLAYLIST", icon: "🎵", label: "Set the Mood", param: "romantic evening playlist" },
-  ], freeAlt: "Light candles, put the phones away, let the evening unfold" },
-  19: { actions: [
-    { kind: "INSTACART", icon: "🛒", label: "Order Ingredients" },
-    { kind: "HELLOFRESH", icon: "🍱", label: "Meal Kit" },
-  ], freeAlt: "Cook from scratch — look up her favorite recipe and make it tonight" },
-  20: { actions: [
-    { kind: "AMAZON_SEARCH", icon: "🛒", label: "Cleaning Supplies", param: "home organization essentials" },
-    { kind: "TASKRABBIT", icon: "🔧", label: "Hire Help" },
-  ], freeAlt: "Spend 20 minutes tidying before she gets home — no announcement needed" },
-  21: { actions: [
-    { kind: "TASKRABBIT", icon: "🔧", label: "Hire It Out" },
-  ], freeAlt: "Pick one thing she's been asking about and just do it today" },
-  22: { actions: [
-    { kind: "GOOGLE_CALENDAR", icon: "📅", label: "Block Time", param: "Us Time — Life Admin 📋" },
-  ], freeAlt: "Ask her tonight: when's a good time for us to sit down together?" },
-  23: { actions: [
-    { kind: "SPOTIFY_PLAYLIST", icon: "🎵", label: "Her Playlist", param: "relaxing solo time" },
-    { kind: "AUDIBLE_GIFT", icon: "🎧", label: "Gift Audiobook" },
-  ], freeAlt: "Tell her you've got the next 30 minutes handled — and mean it" },
-  24: { actions: [
-    { kind: "AMAZON_SEARCH", icon: "🛒", label: "Sticky Notes", param: "colorful sticky notes" },
-  ], freeAlt: "Use whatever paper is around — the words matter more than the paper" },
-  25: { actions: [
-    { kind: "SPOTIFY_PLAYLIST", icon: "🎵", label: "Cozy Playlist", param: "cozy night in playlist" },
-  ], freeAlt: "Pick a movie she's mentioned and have it queued up before she sits down" },
-  26: { actions: [
-    { kind: "SMS_DRAFT", icon: "💬", label: "Send Text", message: "Hey — on a scale of 1–10, how stressed are you feeling?", requires: "herPhone" },
-    { kind: "CALM_GIFT", icon: "🧘", label: "Gift Calm" },
-  ], freeAlt: "Ask her in person tonight — and just listen, don't fix" },
-  27: { actions: [
-    { kind: "AMAZON_SEARCH", icon: "🛒", label: "Massage Oil", param: "massage oil couples" },
-    { kind: "MINDBODY", icon: "💆", label: "Book Spa" },
-  ], freeAlt: "Offer a 10-minute back massage tonight — no agenda" },
-  28: { actions: [
-    { kind: "DOORDASH", icon: "☕", label: "Order Her Coffee", param: "{coffeeOrder}" },
-    { kind: "AMAZON_SEARCH", icon: "☕", label: "Upgrade Her Morning", param: "Nespresso machine" },
-  ], freeAlt: "Make her coffee exactly how she likes it and bring it to her in bed" },
-  29: { actions: [
-    { kind: "AMAZON_SEARCH", icon: "🛒", label: "Organization", param: "home organization" },
-  ], freeAlt: "Clear one surface, lower the volume, handle whatever needs handling" },
-  30: { actions: [
-    { kind: "AUDIBLE_GIFT", icon: "🎧", label: "Gift Audiobook" },
-  ], freeAlt: "Ask how she's feeling and then just listen — no advice unless she asks" },
-  31: { actions: [
-    { kind: "SPOTIFY_PLAYLIST", icon: "🎵", label: "Sleep Playlist", param: "relaxing sleep music" },
-  ], freeAlt: "Handle bedtime tonight without being asked" },
-  33: { actions: [
-    { kind: "DOORDASH", icon: "🛒", label: "Order Food", param: "{cuisine}" },
-    { kind: "AMAZON_SEARCH", icon: "🕯️", label: "Get Candles", param: "scented candles relaxing" },
-  ], freeAlt: "Make comfort food at home and light whatever candles you have" },
-  34: { actions: [
-    { kind: "SMS_DRAFT", icon: "💬", label: "Send Text", message: "You looked beautiful today. I noticed.", requires: "herPhone" },
-    { kind: "MEJURI", icon: "💍", label: "Treat Her" },
-  ], freeAlt: "Tell her she looks beautiful tonight — be specific about what you notice" },
-  35: { actions: [
-    { kind: "TASKRABBIT", icon: "🔧", label: "Hire Help" },
-  ], freeAlt: "Finish the thing she's been waiting on — quietly, no fanfare" },
-  36: { actions: [
-    { kind: "SMS_DRAFT", icon: "💬", label: "Send Text", message: "Thinking of you right now 💙 Hope your day is okay.", requires: "herPhone" },
-    { kind: "WHATSAPP", icon: "💬", label: "WhatsApp", message: "Thinking of you right now 💙 Hope your day is okay.", requires: "herPhone" },
-  ], freeAlt: "Send a voice note instead — hearing your voice means more" },
-  37: { actions: [
-    { kind: "CALM_GIFT", icon: "🧘", label: "Try Calm Together" },
-  ], freeAlt: "Suggest 5 minutes of deep breathing together before bed" },
-  38: { actions: [
-    { kind: "AMAZON_SEARCH", icon: "🛒", label: "Bath Essentials", param: "bath salts relaxing gift set" },
-    { kind: "MINDBODY", icon: "💆", label: "Book Spa" },
-  ], freeAlt: "Run the bath, get the temperature right, leave her to it" },
-  39: { actions: [
-    { kind: "SMS_DRAFT", icon: "💬", label: "Send Text", message: "Hey {herName} — just wanted you to know I see you and I've got you. Always. 💕", requires: "herPhone" },
-    { kind: "URBAN_STEMS", icon: "🌸", label: "Order Flowers" },
-  ], freeAlt: "Say it out loud tonight — no phone, just you" },
-  40: { actions: [
-    { kind: "GOOGLE_CALENDAR", icon: "📅", label: "Plan Next Cycle", param: "New cycle — Day 1 prep" },
-    { kind: "AMAZON_SEARCH", icon: "🛒", label: "Stock Up", param: "electric heat pad" },
-  ], freeAlt: "Make a mental note: heat pad ready, meals covered, keep it calm tomorrow" },
+// --- Phase + variation → action group mapping ---
+// Each phase has 12 entries indexed 0..11, aligned 1:1 with the 12 prompts
+// for that phase in src/lib/cycle.ts. Action chips MUST match the prompt text.
+export const PHASE_ACTIONS: Record<Phase, DayActionGroup[]> = {
+  M: [
+    // 1. Bring her water and her favorite snack
+    { actions: [
+      { kind: "INSTACART", icon: "🛒", label: "Order Her Snack", param: "{snack}" },
+      { kind: "DOORDASH", icon: "🛒", label: "Deliver Her Treat", param: "{snack}" },
+    ], freeAlt: "Grab it from the kitchen — water + her favorite snack, no fuss" },
+    // 2. Take one chore off her plate
+    { actions: [
+      { kind: "TASKRABBIT", icon: "🔧", label: "Outsource a Chore" },
+    ], freeAlt: "Pick the chore she hates most and just do it tonight" },
+    // 3. Run her a hot bath, light a candle
+    { actions: [
+      { kind: "AMAZON_SEARCH", icon: "🛒", label: "Bath Salts + Candle", param: "bath salts and candle gift set" },
+    ], freeAlt: "Run the bath now, dim the lights, use whatever candle you have" },
+    // 4. Send a midday text
+    { actions: [
+      { kind: "SMS_DRAFT", icon: "💬", label: "Text Her", message: "Just thinking about you. Don't lift a finger tonight — I've got us. 💕", requires: "herPhone" },
+      { kind: "WHATSAPP", icon: "💬", label: "WhatsApp", message: "Just thinking about you. Don't lift a finger tonight — I've got us. 💕", requires: "herPhone" },
+    ], freeAlt: "Send a voice note — hearing your voice will hit harder" },
+    // 5. Pick up a heating pad / chocolate / comfort item
+    { actions: [
+      { kind: "AMAZON_SEARCH", icon: "🛒", label: "Order Heat Pad", param: "electric heating pad" },
+      { kind: "INSTACART", icon: "🛒", label: "Comfort Items", param: "chocolate" },
+    ], freeAlt: "Stop at CVS or Walgreens on the way home" },
+    // 6. Cancel one thing on her calendar she's dreading
+    { actions: [
+      { kind: "GOOGLE_CALENDAR", icon: "📅", label: "Open Her Calendar" },
+      { kind: "SMS_DRAFT", icon: "💬", label: "Send the Cancel", message: "Hey — I need to reschedule on {herName}'s behalf, she's not feeling well. Can we move this?", requires: "herPhone" },
+    ], freeAlt: "Pick the dreaded thing and handle the call yourself" },
+    // 7. Make dinner or order in
+    { actions: [
+      { kind: "DOORDASH", icon: "🛒", label: "Order Dinner", param: "{cuisine}" },
+      { kind: "INSTACART", icon: "🛒", label: "Order Groceries" },
+      { kind: "HELLOFRESH", icon: "🍱", label: "Easy Meal Kit" },
+    ], freeAlt: "Make something simple she loves — eggs, pasta, soup" },
+    // 8. Sit on the couch, phone face-down, just be present
+    { actions: [
+      { kind: "SPOTIFY_PLAYLIST", icon: "🎵", label: "Quiet Evening", param: "calm acoustic evening" },
+    ], freeAlt: "Phone face-down. Sit close. That's the whole prompt." },
+    // 9. Take the kids/pets/dishes for the night
+    { actions: [
+      { kind: "TASKRABBIT", icon: "👶", label: "Book Babysitter" },
+    ], freeAlt: "Just take it all on tonight — no announcement needed" },
+    // 10. Tell her she's beautiful — no expectations
+    { actions: [
+      { kind: "SMS_DRAFT", icon: "💬", label: "Tell Her", message: "You're beautiful. That's it. No reason. 💕", requires: "herPhone" },
+    ], freeAlt: "Say it in person tonight — look her in the eyes" },
+    // 11. Long, no-strings massage
+    { actions: [
+      { kind: "AMAZON_SEARCH", icon: "🛒", label: "Massage Oil", param: "massage oil unscented" },
+      { kind: "MINDBODY", icon: "💆", label: "Book Her a Spa" },
+    ], freeAlt: "10 minutes of back or foot rub — no agenda, no follow-up" },
+    // 12. Skip the fix-it advice. Validate.
+    { actions: [
+      { kind: "SMS_DRAFT", icon: "💬", label: "Validate", message: "That sounds really hard. I'm here. 💙", requires: "herPhone" },
+    ], freeAlt: "Say it in person — then just listen, don't fix" },
+  ],
+  EF: [
+    // 1. Plan a small adventure for the weekend
+    { actions: [
+      { kind: "AIRBNB_EXPERIENCES", icon: "🏡", label: "Browse Experiences" },
+      { kind: "GOOGLE_CALENDAR", icon: "📅", label: "Block the Weekend", param: "Weekend adventure with {herName}" },
+    ], freeAlt: "Write down 3 local ideas and let her pick tonight" },
+    // 2. Send a flirty text
+    { actions: [
+      { kind: "SMS_DRAFT", icon: "💬", label: "Flirty Text", message: "Can't stop thinking about you today 👀", requires: "herPhone" },
+      { kind: "WHATSAPP", icon: "💬", label: "WhatsApp", message: "Can't stop thinking about you today 👀", requires: "herPhone" },
+    ], freeAlt: "Send a voice note — your tone will land harder than text" },
+    // 3. Suggest a walk together after dinner
+    { actions: [
+      { kind: "GOOGLE_CALENDAR", icon: "📅", label: "Add Evening Walk", param: "Evening walk with {herName}" },
+    ], freeAlt: "Just ask at dinner — no agenda, no phones" },
+    // 4. Pick a restaurant she's wanted to try and book it
+    { actions: [
+      { kind: "RESY", icon: "🍽️", label: "Book on Resy", param: "{restaurant}", requires: "restaurant" },
+      { kind: "OPEN_TABLE", icon: "🍽️", label: "Book on OpenTable", param: "{restaurant}", requires: "restaurant" },
+    ], freeAlt: "Call the restaurant directly — sometimes it's faster" },
+    // 5. Compliment something specific
+    { actions: [
+      { kind: "SMS_DRAFT", icon: "💬", label: "Specific Compliment", message: "I keep thinking about how you handled today. You were incredible.", requires: "herPhone" },
+    ], freeAlt: "Tell her tonight — be specific about what you noticed" },
+    // 6. Ask: one thing you'd love to do this month?
+    { actions: [
+      { kind: "SMS_DRAFT", icon: "💬", label: "Ask Her", message: "What's one thing you'd love to do this month? Let's actually do it.", requires: "herPhone" },
+      { kind: "GOOGLE_CALENDAR", icon: "📅", label: "Hold the Date", param: "{herName}'s pick" },
+    ], freeAlt: "Ask her tonight and start planning together on the spot" },
+    // 7. Surprise her with her favorite coffee
+    { actions: [
+      { kind: "DOORDASH", icon: "☕", label: "Order Her Coffee", param: "{coffeeOrder}" },
+    ], freeAlt: "Make her coffee at home — exactly the way she likes it" },
+    // 8. Text at lunch: get dressed up tonight, I'm taking you out
+    { actions: [
+      { kind: "SMS_DRAFT", icon: "💬", label: "Send the Text", message: "Get dressed up tonight. I'm taking you out. 🌙", requires: "herPhone" },
+      { kind: "RESY", icon: "🍽️", label: "Book the Spot", param: "{restaurant}", requires: "restaurant" },
+    ], freeAlt: "Send the text — then make a great home date if reservations are tight" },
+    // 9. Try something new — recipe, workout, playlist
+    { actions: [
+      { kind: "HELLOFRESH", icon: "🍱", label: "New Recipe Kit" },
+      { kind: "CLASSPASS", icon: "🧘", label: "New Class" },
+      { kind: "SPOTIFY_PLAYLIST", icon: "🎵", label: "New Playlist", param: "discover weekly fresh" },
+    ], freeAlt: "Find a YouTube workout you've never tried and do it together" },
+    // 10. Bring up an early-relationship memory
+    { actions: [
+      { kind: "SMS_DRAFT", icon: "💬", label: "Send the Memory", message: "Was just remembering [your memory] — still makes me smile. 🥰", requires: "herPhone" },
+    ], freeAlt: "Tell her tonight at dinner — your face will sell it" },
+    // 11. Make tomorrow morning easier
+    { actions: [
+      { kind: "AMAZON_SEARCH", icon: "🛒", label: "Coffee Timer", param: "programmable coffee maker" },
+    ], freeAlt: "Prep her coffee tonight, pack her bag, clear her path out the door" },
+    // 12. Look her in the eyes, tell her she's stunning
+    { actions: [], freeAlt: "This one's all you. Eye contact. Slow it down. Mean it." },
+  ],
+  O: [
+    // 1. Plan a real date night this week
+    { actions: [
+      { kind: "RESY", icon: "🍽️", label: "Book the Restaurant", param: "{restaurant}", requires: "restaurant" },
+      { kind: "GOOGLE_CALENDAR", icon: "📅", label: "Add Date Night", param: "Date Night with {herName} 🌙" },
+      { kind: "TASKRABBIT", icon: "👶", label: "Book Babysitter" },
+    ], freeAlt: "Cook at home, set the table properly, ask family for the kids" },
+    // 2. Initiate intimacy — kiss her like you mean it
+    { actions: [
+      { kind: "SPOTIFY_PLAYLIST", icon: "🎵", label: "Set the Mood", param: "slow romantic" },
+    ], freeAlt: "Pull her in, slow down, kiss her like the first time" },
+    // 3. Send flowers to work or have them waiting
+    { actions: [
+      { kind: "URBAN_STEMS", icon: "🌸", label: "Order Flowers", param: "{flowers}" },
+      { kind: "FLOWERS_1800", icon: "🌸", label: "1-800-Flowers", param: "{flowers}" },
+    ], freeAlt: "Pick up {flowers} on the way home — she loves them" },
+    // 4. Tell her one specific thing you find irresistible
+    { actions: [
+      { kind: "SMS_DRAFT", icon: "💬", label: "Tell Her Now", message: "One thing I find totally irresistible about you: [be specific]. 🔥", requires: "herPhone" },
+    ], freeAlt: "Say it in person tonight — be specific, not generic" },
+    // 5. Clear the evening, phones away
+    { actions: [
+      { kind: "GOOGLE_CALENDAR", icon: "📅", label: "Block Tonight", param: "Phones-down evening with {herName}" },
+    ], freeAlt: "Phones in a drawer at 8pm. Just you two." },
+    // 6. Write a short note, leave it for her morning
+    { actions: [
+      { kind: "AMAZON_SEARCH", icon: "🛒", label: "Sticky Notes", param: "colorful sticky notes" },
+    ], freeAlt: "Any paper. Any pen. The words matter more than the stationery." },
+    // 7. Slow dance in the kitchen
+    { actions: [
+      { kind: "SPOTIFY_PLAYLIST", icon: "🎵", label: "Slow Dance Songs", param: "slow dance kitchen" },
+    ], freeAlt: "Hum a song you both love. No music required." },
+    // 8. Ask about a dream — career, travel, anything
+    { actions: [
+      { kind: "SMS_DRAFT", icon: "💬", label: "Open the Door", message: "What's something you've been dreaming about lately? Tell me everything tonight. 💭", requires: "herPhone" },
+    ], freeAlt: "Ask at dinner — then put your phone down and just listen" },
+    // 9. Take a candid photo, tell her later why you love it
+    { actions: [
+      { kind: "SNAPPR", icon: "📸", label: "Hire a Photographer" },
+    ], freeAlt: "Catch her laughing today. Send it later with what you noticed." },
+    // 10. Make her laugh hard
+    { actions: [
+      { kind: "SMS_DRAFT", icon: "💬", label: "Send Something Funny", message: "Remember when [inside joke]? 😂", requires: "herPhone" },
+    ], freeAlt: "Use the voice or memory that always cracks her up" },
+    // 11. Plan a getaway weekend (even one night counts)
+    { actions: [
+      { kind: "AIRBNB_EXPERIENCES", icon: "🏡", label: "Browse Stays" },
+      { kind: "GOOGLE_CALENDAR", icon: "📅", label: "Block the Night", param: "Getaway with {herName}" },
+    ], freeAlt: "One night somewhere local counts. Book it tonight." },
+    // 12. Tell her: I'd choose you all over again
+    { actions: [
+      { kind: "SMS_DRAFT", icon: "💬", label: "Send It", message: "I'd choose you all over again. Every time. 💍", requires: "herPhone" },
+      { kind: "MEJURI", icon: "💍", label: "A Small Token" },
+    ], freeAlt: "Say it tonight, in person, looking right at her" },
+  ],
+  EL: [
+    // 1. Cook her favorite meal at home, set the table properly
+    { actions: [
+      { kind: "INSTACART", icon: "🛒", label: "Order Ingredients" },
+      { kind: "HELLOFRESH", icon: "🍱", label: "Meal Kit" },
+    ], freeAlt: "Cook from what's in the fridge — set the table like company's coming" },
+    // 2. Cozy movie night — let her pick, popcorn how she likes it
+    { actions: [
+      { kind: "INSTACART", icon: "🛒", label: "Popcorn + Snacks", param: "popcorn movie night" },
+      { kind: "SPOTIFY_PLAYLIST", icon: "🎵", label: "Pre-Movie Vibe", param: "cozy night in" },
+    ], freeAlt: "Make her popcorn the way she likes — let her pick the movie" },
+    // 3. Light candles before she gets home, soft lighting, music low
+    { actions: [
+      { kind: "AMAZON_SEARCH", icon: "🕯️", label: "Get Candles", param: "scented candles cozy" },
+      { kind: "SPOTIFY_PLAYLIST", icon: "🎵", label: "Soft Music", param: "soft evening jazz" },
+    ], freeAlt: "Use whatever candles you have. Lights low. Music quiet." },
+    // 4. Take something off her mental load
+    { actions: [
+      { kind: "GOOGLE_CALENDAR", icon: "📅", label: "Own a Calendar Item" },
+      { kind: "TASKRABBIT", icon: "🔧", label: "Outsource the Task" },
+    ], freeAlt: "Pick one appointment, RSVP, or kid thing — own it end-to-end" },
+    // 5. Send a sweet "just because" text
+    { actions: [
+      { kind: "SMS_DRAFT", icon: "💬", label: "Just Because", message: "Just thinking about you. No reason. Hope your day's good. 💕", requires: "herPhone" },
+      { kind: "WHATSAPP", icon: "💬", label: "WhatsApp", message: "Just thinking about you. No reason. Hope your day's good. 💕", requires: "herPhone" },
+    ], freeAlt: "Send a voice note — same words, more warmth" },
+    // 6. Ask: how are you really doing this week?
+    { actions: [
+      { kind: "SMS_DRAFT", icon: "💬", label: "Open the Door", message: "How are you actually doing this week? I want the real answer. 💙", requires: "herPhone" },
+    ], freeAlt: "Ask in person tonight — then listen without trying to fix" },
+    // 7. Tidy one space she cares about
+    { actions: [
+      { kind: "AMAZON_SEARCH", icon: "🛒", label: "Organizers", param: "kitchen counter organizer" },
+      { kind: "TASKRABBIT", icon: "🔧", label: "Hire Help" },
+    ], freeAlt: "20 minutes on one surface — kitchen, bedroom, or entry" },
+    // 8. Bring home her favorite treat
+    { actions: [
+      { kind: "INSTACART", icon: "🛒", label: "Deliver Her Treat", param: "{snack}" },
+      { kind: "DOORDASH", icon: "🛒", label: "DoorDash It", param: "{snack}" },
+    ], freeAlt: "Pick up {snack} on the way home — she loves it" },
+    // 9. Hold her longer than usual when you hug
+    { actions: [], freeAlt: "Just count to ten in the hug. Don't let go first." },
+    // 10. Write down 3 things you appreciate, read one out loud
+    { actions: [
+      { kind: "AMAZON_SEARCH", icon: "🛒", label: "Nice Notebook", param: "small leather notebook" },
+    ], freeAlt: "Any paper works. The reading-it-aloud part is what matters." },
+    // 11. Plan a quiet weekend morning — coffee in bed, nowhere to be
+    { actions: [
+      { kind: "GOOGLE_CALENDAR", icon: "📅", label: "Block Sat Morning", param: "Slow morning with {herName}" },
+      { kind: "INSTACART", icon: "🛒", label: "Pastries + Coffee", param: "fresh pastries" },
+    ], freeAlt: "Just protect Saturday morning — no plans, coffee in bed" },
+    // 12. Ask about her friends by name
+    { actions: [
+      { kind: "SMS_DRAFT", icon: "💬", label: "Ask About a Friend", message: "How's [her friend's name] doing lately? Anything new with her?", requires: "herPhone" },
+    ], freeAlt: "Bring it up at dinner — use the name, remember the details" },
+  ],
+  LL: [
+    // 1. Lead with patience — don't take sideways landings personally
+    { actions: [], freeAlt: "Pause before you respond today. Patience is the whole prompt." },
+    // 2. Don't try to fix it. Say "tell me more"
+    { actions: [
+      { kind: "SMS_DRAFT", icon: "💬", label: "Tell Me More", message: "That makes sense. Tell me more — I'm listening. 💙", requires: "herPhone" },
+    ], freeAlt: "Say it in person — then actually let her talk without interrupting" },
+    // 3. Anticipate one thing she'll need and have it ready
+    { actions: [
+      { kind: "INSTACART", icon: "🛒", label: "Stock Her Comfort", param: "{snack}" },
+      { kind: "AMAZON_SEARCH", icon: "🛒", label: "What She'll Need", param: "{snack}" },
+    ], freeAlt: "Pick the thing she always reaches for — have it on the counter" },
+    // 4. Apologize first if there's any tension
+    { actions: [
+      { kind: "SMS_DRAFT", icon: "💬", label: "Apologize First", message: "Hey — I've been thinking. I'm sorry about earlier. You didn't deserve that energy from me. 💙", requires: "herPhone" },
+    ], freeAlt: "Say it in person tonight — first, before she has to bring it up" },
+    // 5. Take the kids/dog/dishes off her plate, no big deal made
+    { actions: [
+      { kind: "TASKRABBIT", icon: "👶", label: "Book Babysitter" },
+    ], freeAlt: "Just do it — quietly. The lack of announcement is the gift." },
+    // 6. Say: you've been carrying a lot. Let me handle dinner.
+    { actions: [
+      { kind: "DOORDASH", icon: "🛒", label: "Handle Dinner", param: "{cuisine}" },
+      { kind: "INSTACART", icon: "🛒", label: "Order Groceries" },
+    ], freeAlt: "Cook something simple. Tell her: 'I've got dinner. Sit down.'" },
+    // 7. Lower the temperature — soft voice, slow movements
+    { actions: [
+      { kind: "SPOTIFY_PLAYLIST", icon: "🎵", label: "Calm the Room", param: "calm ambient soft" },
+    ], freeAlt: "Soft voice. Slow walk. Phone away. That's it." },
+    // 8. Send a text mid-day: thinking of you, you're doing more than you know
+    { actions: [
+      { kind: "SMS_DRAFT", icon: "💬", label: "Send the Text", message: "Thinking of you. You're doing more than you know. 💙", requires: "herPhone" },
+      { kind: "WHATSAPP", icon: "💬", label: "WhatsApp", message: "Thinking of you. You're doing more than you know. 💙", requires: "herPhone" },
+    ], freeAlt: "Send a voice note instead — your voice will carry it further" },
+    // 9. Ask: anything you're worrying about that I could just take care of?
+    { actions: [
+      { kind: "SMS_DRAFT", icon: "💬", label: "Open the Offer", message: "Is there anything you're worrying about that I could just take off your plate?", requires: "herPhone" },
+    ], freeAlt: "Ask in person — and follow through on whatever she names" },
+    // 10. Turn off the TV, ask about her day before launching into yours
+    { actions: [], freeAlt: "TV off. Phone away. Ask first. Listen all the way through." },
+    // 11. Bring her tea, water, or her comfort drink
+    { actions: [
+      { kind: "INSTACART", icon: "🛒", label: "Stock Her Drink", param: "{snack}" },
+    ], freeAlt: "Make it now and bring it to her — no questions asked" },
+    // 12. Tell her: I love you, you don't have to perform anything tonight
+    { actions: [
+      { kind: "SMS_DRAFT", icon: "💬", label: "Send It", message: "I love you. We're good. You don't have to perform anything tonight. 💙", requires: "herPhone" },
+      { kind: "CALM_GIFT", icon: "🧘", label: "Gift Calm" },
+    ], freeAlt: "Say it tonight, in person, and let her exhale" },
+  ],
 };
 
-export function getActionGroupForDay(day: number): DayActionGroup | null {
-  return DAY_ACTIONS[day] || null;
+export function getActionGroupForDay(
+  day: number,
+  variation: number,
+  cycleLength: number,
+): DayActionGroup | null {
+  const phase = phaseForDay(day, cycleLength);
+  const list = PHASE_ACTIONS[phase];
+  if (!list || list.length === 0) return null;
+  const group = list[(variation - 1) % list.length];
+  // Hide chip rows that are intentionally empty (e.g., "this one's all you")
+  if (!group || group.actions.length === 0) {
+    return group?.freeAlt ? group : null;
+  }
+  return group;
 }
 
 /** Replace {herName} {restaurant} {coffeeOrder} {flowers} {cuisine} with profile values. */
