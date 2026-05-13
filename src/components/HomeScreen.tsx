@@ -187,7 +187,7 @@ export function HomeScreen({ profile, setProfile, logs }: Props) {
         <p className="text-base leading-relaxed">{promptText}</p>
 
         {(() => {
-          const group = getActionGroupForDay(day);
+          const group = getActionGroupForDay(day, variation, profile.cycleLength);
           if (!group) return null;
           const spend = getSpend();
           const monthTotal = currentMonthSpend();
@@ -337,7 +337,7 @@ export function HomeScreen({ profile, setProfile, logs }: Props) {
           const ph = phaseForDay(d, profile.cycleLength);
           const m = PHASE_META[ph];
           const text = getPromptForDay(d, variation, profile.cycleLength);
-          const group = getActionGroupForDay(d);
+          const group = getActionGroupForDay(d, variation, profile.cycleLength);
           return (
             <div
               key={d}
