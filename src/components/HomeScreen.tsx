@@ -19,7 +19,8 @@ import {
 } from "@/lib/storage";
 import { RotateCcw, Flame, ThumbsUp, X as XIcon } from "lucide-react";
 import { ActionChips } from "@/components/ActionChips";
-import { getActionsForDay } from "@/lib/actions";
+import { getActionGroupForDay, shouldSuppressPaid } from "@/lib/actions";
+import { getSpend, currentMonthSpend } from "@/lib/storage";
 
 interface Props {
   profile: Profile;
