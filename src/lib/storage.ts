@@ -46,6 +46,8 @@ export interface Profile {
   notifications: boolean;
   smsPolling: boolean;
   activatedAt?: string; // ISO yyyy-mm-dd — set on first save
+  spendTier?: SpendTier;
+  monthlyBudgetCap?: number; // dollars; 0/undef = no cap
 }
 
 export interface PromptLog {
