@@ -153,3 +153,45 @@ function Toggle({ label, checked, onChange }: { label: string; checked: boolean;
     </div>
   );
 }
+
+function SpendDashboard({ cap }: { cap?: number }) {
+  const [open, setOpen] = useState(false);
+  const total = currentMonthSpend();
+  const entries = getSpend().filter((e) => {
+    const d = new Date(e.date);
+    const now = new Date();
+    return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth();
+  });
+  const pct = cap && cap > 0 ? Math.min(100, Math.round((total / cap) * 100)) : 0;
+  return (
+    <div className="space-y-3">
+      <button onClick={() => setOpen((o) => !o)} className="w-full text-left">
+        <p className="text-xs text-muted-foreground">This month's Attuned spend</p>
+        <p className="text-3xl font-semibold mt-1">${total}</p>
+        {cap ? (
+          <>
+            <div className="mt-3 h-2 rounded-full bg-surface-elevated overflow-hidden">
+              <div className="h-full bg-gold transition-all" style={{ width: `${pct}%` }} />
+            </div>
+            <p className="text-[10px] text-muted-foreground mt-1.5">${total} of ${cap} cap · {pct}%</p>
+          </>
+        ) : (
+          <p className="text-[10px] text-muted-foreground mt-1.5">No monthly cap set</p>
+        )}
+        <p className="text-[10px] text-gold mt-2">{open ? "Hide breakdown ↑" : "Tap for breakdown ↓"}</p>
+      </button>
+      {open && (
+        <div className="space-y-2 pt-2 border-t border-border">
+          {entries.length === 0 && <p className="text-xs text-muted-foreground">No spend logged this month yet.</p>}
+          {entries.map((e, i) => (
+            <div key={i} className="flex justify-between text-xs">
+              <span className="text-muted-foreground">{e.date} · Day {e.cycleDay}</span>
+              <span className="text-foreground/90">{e.label}</span>
+              <span className="font-medium tabular-nums">${e.cost}</span>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
