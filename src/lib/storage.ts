@@ -113,7 +113,19 @@ export function upsertLog(log: PromptLog) {
   setLogs(logs);
 }
 
-export function getVariations(): Record<string, number> {
+// --- Spend tracking ---
+export function getSpend(): SpendEntry[] { return read<SpendEntry[]>(KEYS.spend, []); }
+export function addSpend(e: SpendEntry) {
+  const arr = getSpend();
+  arr.unshift(e);
+  write(KEYS.spend, arr);
+}
+export function currentMonthSpend(today: Date = new Date()): number {
+  const y = today.getFullYear(), m = today.getMonth();
+  return getSpend()
+    .filter((e) => { const d = new Date(e.date); return d.getFullYear() === y && d.getMonth() === m; })
+    .reduce((s, e) => s + (e.cost || 0), 0);
+}
   return read<Record<string, number>>(KEYS.variations, {});
 }
 export function getOrAssignVariation(dateISO: string): number {
