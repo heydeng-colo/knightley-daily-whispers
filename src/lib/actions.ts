@@ -380,7 +380,8 @@ export function fillTemplate(template: string, profile: Profile): string {
     .replace(/\{coffeeOrder\}/g, profile.coffeeOrder || "coffee")
     .replace(/\{flowers\}/g, profile.flowers || "her favorite")
     .replace(/\{flowerType\}/g, profile.flowers || "her favorite")
-    .replace(/\{cuisine\}/g, profile.cuisine || "");
+    .replace(/\{cuisine\}/g, profile.cuisine || "")
+    .replace(/\{snack\}/g, profile.favoriteSnack || "her favorite snack");
 }
 
 function ymd(d: Date): string {
