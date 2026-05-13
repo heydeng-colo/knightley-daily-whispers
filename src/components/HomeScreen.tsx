@@ -17,7 +17,7 @@ import {
   type Profile,
   type PromptLog,
 } from "@/lib/storage";
-import { RotateCcw, Flame, ThumbsUp, X as XIcon } from "lucide-react";
+import { Droplet, Flame, ThumbsUp, X as XIcon, Gift } from "lucide-react";
 import { ActionChips } from "@/components/ActionChips";
 import { getActionGroupForDay, shouldSuppressPaid } from "@/lib/actions";
 import { getSpend, currentMonthSpend } from "@/lib/storage";
