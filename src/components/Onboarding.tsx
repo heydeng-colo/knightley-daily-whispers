@@ -48,6 +48,8 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
       loves: data.loves || [],
       notifications: data.notifications ?? true,
       smsPolling: data.smsPolling ?? true,
+      spendTier: data.spendTier || "50",
+      monthlyBudgetCap: data.monthlyBudgetCap,
     };
     setProfile(profile);
     onDone();
