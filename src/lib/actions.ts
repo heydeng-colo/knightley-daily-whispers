@@ -366,7 +366,7 @@ export function getActionGroupForDay(
       actions: [
         { kind: "URBAN_STEMS", icon: "🌸", label: "UrbanStems", param: "{flowers}" },
         { kind: "RESY", icon: "🍽️", label: "Resy Lunch", param: "{restaurant}" },
-        { kind: "SMS_DRAFT", icon: "💬", label: "iMessage", message: "Surprise — heading your way for lunch. Be ready in 20. 💕", requires: "herPhone" },
+        { kind: "SMS_DRAFT", icon: "💬", label: "iMessage", message: "Surprise — heading your way for lunch. Be ready in 20. 💕" },
       ],
       freeAlt: "Just show up at her office with {flowers} — no warning needed",
     };
