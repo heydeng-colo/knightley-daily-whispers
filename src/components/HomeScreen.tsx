@@ -36,7 +36,9 @@ export function HomeScreen({ profile, setProfile, logs }: Props) {
   const [noteSaved, setNoteSaved] = useState(false);
 
   const today = todayISO();
-  const day = cycleDay(profile.lastPeriodStart, profile.cycleLength);
+  // Default the homescreen to Day 14 (peak ovulation) so the example
+  // experience showcases the highest-signal prompt and action set.
+  const day = 14;
   const phase = phaseForDay(day, profile.cycleLength);
   const meta = PHASE_META[phase];
   const variation = useMemo(() => getOrAssignVariation(today), [today]);
