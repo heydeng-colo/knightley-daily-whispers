@@ -360,6 +360,17 @@ export function getActionGroupForDay(
   variation: number,
   cycleLength: number,
 ): DayActionGroup | null {
+  // Day 14 — fixed showcase trio: UrbanStems, Resy, iMessage.
+  if (day === 14) {
+    return {
+      actions: [
+        { kind: "URBAN_STEMS", icon: "🌸", label: "UrbanStems", param: "{flowers}" },
+        { kind: "RESY", icon: "🍽️", label: "Resy Lunch", param: "{restaurant}" },
+        { kind: "SMS_DRAFT", icon: "💬", label: "iMessage", message: "Surprise — heading your way for lunch. Be ready in 20. 💕", requires: "herPhone" },
+      ],
+      freeAlt: "Just show up at her office with {flowers} — no warning needed",
+    };
+  }
   const phase = phaseForDay(day, cycleLength);
   const list = PHASE_ACTIONS[phase];
   if (!list || list.length === 0) return null;

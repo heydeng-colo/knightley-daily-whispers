@@ -111,6 +111,8 @@ const PROMPTS: Record<Phase, string[]> = {
 };
 
 export function getPromptForDay(day: number, variation: number, cycleLength: number): string {
+  // Day 14 is the showcase ovulatory peak — fixed prompt with curated chips.
+  if (day === 14) return "Surprise lunch drop-in / flowers.";
   const phase = phaseForDay(day, cycleLength);
   const list = PROMPTS[phase];
   return list[(variation - 1) % list.length];
