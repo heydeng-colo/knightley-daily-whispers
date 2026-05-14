@@ -18,15 +18,10 @@ export function ActionChips({ group, profile, cycleDay, phase, hidePaid, hidePai
   const [smsAction, setSmsAction] = useState<ActionDef | null>(null);
   const [draft, setDraft] = useState("");
 
-  // Always surface at least one actionable transaction pill by default —
-  // even when guardrails would otherwise hide all paid chips, keep the first
-  // paid action visible so the example prompt always has a tappable next step.
-  const filtered = group.actions.filter((a) => (hidePaid ? !isPaidAction(a) : true));
-  const firstPaid = group.actions.find((a) => isPaidAction(a));
-  if (hidePaid && firstPaid && !filtered.some((a) => a.kind === firstPaid.kind)) {
-    filtered.unshift(firstPaid);
-  }
-  const visible = filtered.slice(0, 3);
+  // Always show the full action set so chips remain visible after a tap —
+  // guardrails surface as an informational note (hidePaidReason) rather than
+  // removing pills the user may want to revisit.
+  const visible = group.actions.slice(0, 3);
 
   const openSmsModal = (a: ActionDef) => {
     setSmsAction(a);
