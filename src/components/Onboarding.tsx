@@ -119,7 +119,6 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
 }
 
 function Step1({ data, update }: { data: Partial<Profile>; update: (p: Partial<Profile>) => void }) {
-  const children = data.children || [];
   return (
     <div className="space-y-5">
       <h2 className="text-xl font-medium">About your relationship</h2>
@@ -132,49 +131,6 @@ function Step1({ data, update }: { data: Partial<Profile>; update: (p: Partial<P
       <Field label="Your anniversary (optional)">
         <Input type="date" value={data.anniversary || ""} onChange={(e) => update({ anniversary: e.target.value })} />
       </Field>
-
-      <div className="space-y-2">
-        <Label className="text-sm text-muted-foreground">Kids (optional)</Label>
-        {children.map((c, i) => (
-          <div key={i} className="flex gap-2 items-center">
-            <Input
-              className="w-28"
-              placeholder="First name"
-              value={c.name}
-              onChange={(e) => {
-                const arr = [...children];
-                arr[i] = { ...arr[i], name: e.target.value };
-                update({ children: arr });
-              }}
-            />
-            <Input
-              type="date"
-              value={c.birthday}
-              onChange={(e) => {
-                const arr = [...children];
-                arr[i] = { ...arr[i], birthday: e.target.value };
-                update({ children: arr });
-              }}
-            />
-            <Button
-              size="icon"
-              variant="ghost"
-              onClick={() => update({ children: children.filter((_, j) => j !== i) })}
-            >
-              <Trash2 className="h-4 w-4" />
-            </Button>
-          </div>
-        ))}
-        {children.length < 6 && (
-          <Button
-            variant="secondary"
-            size="sm"
-            onClick={() => update({ children: [...children, { name: "", birthday: "" }] })}
-          >
-            <Plus className="h-4 w-4 mr-1" /> Add child
-          </Button>
-        )}
-      </div>
 
       <Field label="Relationship stage">
         <div className="grid grid-cols-3 gap-2">
@@ -192,58 +148,6 @@ function Step1({ data, update }: { data: Partial<Profile>; update: (p: Partial<P
             </button>
           ))}
         </div>
-      </Field>
-
-      <div className="grid grid-cols-2 gap-3">
-        <Field label="Years together">
-          <Input
-            type="number"
-            min={0}
-            step="0.5"
-            value={data.relLengthMonths ? +(data.relLengthMonths / 12).toFixed(2) : 0}
-            onChange={(e) => update({ relLengthMonths: Math.round((parseFloat(e.target.value) || 0) * 12) })}
-          />
-        </Field>
-        <Field label="…or months">
-          <Input
-            type="number"
-            min={0}
-            value={data.relLengthMonths ?? 0}
-            onChange={(e) => update({ relLengthMonths: parseInt(e.target.value) || 0 })}
-          />
-        </Field>
-      </div>
-
-      <Field label="Favorite flowers"><Input value={data.flowers || ""} onChange={(e) => update({ flowers: e.target.value })} /></Field>
-      <Field label="Favorite cuisine"><Input value={data.cuisine || ""} onChange={(e) => update({ cuisine: e.target.value })} /></Field>
-      <Field label="Favorite restaurant"><Input value={data.restaurant || ""} onChange={(e) => update({ restaurant: e.target.value })} /></Field>
-      <Field label="Favorite date night"><Input value={data.dateNight || ""} onChange={(e) => update({ dateNight: e.target.value })} /></Field>
-      <Field label="Favorite snack or treat">
-        <Input value={data.favoriteSnack || ""} onChange={(e) => update({ favoriteSnack: e.target.value })} placeholder="e.g. dark chocolate, salt & vinegar chips" />
-      </Field>
-      <Field label="Favorite coffee order">
-        <Input value={data.coffeeOrder || ""} onChange={(e) => update({ coffeeOrder: e.target.value })} placeholder="e.g. oat milk latte" />
-      </Field>
-
-      <Field label="Her cellphone (for monthly check-in)">
-        <Input
-          type="tel"
-          value={data.herPhone || ""}
-          onChange={(e) => update({ herPhone: e.target.value })}
-          placeholder="(555) 123-4567"
-        />
-        <p className="text-xs text-muted-foreground mt-1">Used once a month to check in with her anonymously.</p>
-      </Field>
-
-      <Field label={`Average cycle length: ${data.cycleLength} days`}>
-        <input
-          type="range"
-          min={21}
-          max={40}
-          value={data.cycleLength || 28}
-          onChange={(e) => update({ cycleLength: parseInt(e.target.value) })}
-          className="w-full accent-[var(--gold)]"
-        />
       </Field>
 
       <div className="space-y-2 pt-2">
@@ -264,16 +168,6 @@ function Step1({ data, update }: { data: Partial<Profile>; update: (p: Partial<P
           ))}
         </div>
       </div>
-      <Field label="Monthly budget cap (optional)">
-        <Input
-          type="number"
-          min={0}
-          placeholder="e.g. 100"
-          value={data.monthlyBudgetCap ?? ""}
-          onChange={(e) => update({ monthlyBudgetCap: e.target.value ? parseInt(e.target.value) : undefined })}
-        />
-        <p className="text-xs text-muted-foreground mt-1">When you hit this, paid suggestions pause until next month.</p>
-      </Field>
     </div>
   );
 }
@@ -322,6 +216,17 @@ function Step2({ data, update }: { data: Partial<Profile>; update: (p: Partial<P
           </div>
         </div>
       )}
+      <Field label="Her cellphone (optional)">
+        <Input
+          type="tel"
+          value={data.herPhone || ""}
+          onChange={(e) => update({ herPhone: e.target.value })}
+          placeholder="(555) 123-4567"
+        />
+        <p className="text-xs text-muted-foreground mt-1">
+          Optional. Used to poll her anonymously for relationship feedback.
+        </p>
+      </Field>
     </div>
   );
 }
