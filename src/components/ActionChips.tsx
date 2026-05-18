@@ -1,8 +1,10 @@
 import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { buildActionUrl, fillTemplate, isPaidAction, actionCost, type ActionDef, type DayActionGroup } from "@/lib/actions";
-import { addSpend, type Profile } from "@/lib/storage";
+import { addSpend, setProfile as saveProfile, type Profile } from "@/lib/storage";
 import type { Phase } from "@/lib/cycle";
 
 interface Props {
@@ -14,18 +16,49 @@ interface Props {
   hidePaidReason?: string;
 }
 
+type ChipCategory = "dining" | "flowers" | "coffee" | "snack";
+
+const ASKED_KEY = "attuned.askedCategories";
+
+function getAsked(): Record<string, boolean> {
+  if (typeof window === "undefined") return {};
+  try { return JSON.parse(localStorage.getItem(ASKED_KEY) || "{}"); } catch { return {}; }
+}
+function markAsked(cat: ChipCategory) {
+  if (typeof window === "undefined") return;
+  const cur = getAsked();
+  cur[cat] = true;
+  localStorage.setItem(ASKED_KEY, JSON.stringify(cur));
+}
+
+function categoryFor(a: ActionDef): ChipCategory | null {
+  const p = a.param || "";
+  if (a.kind === "RESY" || a.kind === "OPEN_TABLE" || p.includes("{restaurant}") || p.includes("{cuisine}")) return "dining";
+  if (a.kind === "URBAN_STEMS" || a.kind === "FLOWERS_1800" || p.includes("{flowers}")) return "flowers";
+  if (p.includes("{coffeeOrder}")) return "coffee";
+  if (p.includes("{snack}")) return "snack";
+  return null;
+}
+
 export function ActionChips({ group, profile, cycleDay, phase, hidePaid, hidePaidReason }: Props) {
   const [smsAction, setSmsAction] = useState<ActionDef | null>(null);
   const [draft, setDraft] = useState("");
+
+  const [askPrompt, setAskPrompt] = useState<{ category: ChipCategory; action: ActionDef } | null>(null);
+  const [formCuisine, setFormCuisine] = useState("");
+  const [formRestaurant, setFormRestaurant] = useState("");
+  const [formFlowers, setFormFlowers] = useState("");
+  const [formCoffee, setFormCoffee] = useState("");
+  const [formSnack, setFormSnack] = useState("");
 
   // Always show the full action set so chips remain visible after a tap —
   // guardrails surface as an informational note (hidePaidReason) rather than
   // removing pills the user may want to revisit.
   const visible = group.actions.slice(0, 3);
 
-  const openSmsModal = (a: ActionDef) => {
+  const openSmsModal = (a: ActionDef, p: Profile) => {
     setSmsAction(a);
-    setDraft(fillTemplate(a.message || "", profile));
+    setDraft(fillTemplate(a.message || "", p));
   };
 
   const logAndOpen = (a: ActionDef, url: string) => {
@@ -43,10 +76,41 @@ export function ActionChips({ group, profile, cycleDay, phase, hidePaid, hidePai
     window.open(url, "_blank", "noopener");
   };
 
+  const executeAction = (a: ActionDef, p: Profile) => {
+    if (a.kind === "SMS_DRAFT" || a.kind === "WHATSAPP") { openSmsModal(a, p); return; }
+    logAndOpen(a, buildActionUrl(a, p));
+  };
+
   const handleClick = (a: ActionDef, disabled: boolean) => {
     if (disabled) return;
-    if (a.kind === "SMS_DRAFT" || a.kind === "WHATSAPP") { openSmsModal(a); return; }
-    logAndOpen(a, buildActionUrl(a, profile));
+    const cat = categoryFor(a);
+    if (cat && !getAsked()[cat]) {
+      setFormCuisine(profile.cuisine || "");
+      setFormRestaurant(profile.restaurant || "");
+      setFormFlowers(profile.flowers || "");
+      setFormCoffee(profile.coffeeOrder || "");
+      setFormSnack(profile.favoriteSnack || "");
+      setAskPrompt({ category: cat, action: a });
+      return;
+    }
+    executeAction(a, profile);
+  };
+
+  const submitAsk = () => {
+    if (!askPrompt) return;
+    const updated: Profile = {
+      ...profile,
+      cuisine: formCuisine.trim() || profile.cuisine,
+      restaurant: formRestaurant.trim() || profile.restaurant,
+      flowers: formFlowers.trim() || profile.flowers,
+      coffeeOrder: formCoffee.trim() || profile.coffeeOrder,
+      favoriteSnack: formSnack.trim() || profile.favoriteSnack,
+    };
+    saveProfile(updated);
+    markAsked(askPrompt.category);
+    const action = askPrompt.action;
+    setAskPrompt(null);
+    executeAction(action, updated);
   };
 
   const sendSms = (kind: "SMS_DRAFT" | "WHATSAPP") => {
@@ -94,6 +158,64 @@ export function ActionChips({ group, profile, cycleDay, phase, hidePaid, hidePai
       {hidePaid && hidePaidReason && (
         <p className="mt-1.5 text-[10px] text-muted-foreground/60 italic">{hidePaidReason}</p>
       )}
+
+      <Dialog open={!!askPrompt} onOpenChange={(o) => !o && setAskPrompt(null)}>
+        <DialogContent className="bg-surface border-border">
+          <DialogHeader>
+            <DialogTitle>
+              {askPrompt?.category === "dining" && "Her dining preferences"}
+              {askPrompt?.category === "flowers" && "Her favorite flowers"}
+              {askPrompt?.category === "coffee" && "Her coffee order"}
+              {askPrompt?.category === "snack" && "Her favorite snack"}
+            </DialogTitle>
+            <DialogDescription>
+              Quick one-time question so future suggestions land. We'll remember it.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-3">
+            {askPrompt?.category === "dining" && (
+              <>
+                <div className="space-y-1.5">
+                  <Label htmlFor="ask-cuisine">Favorite cuisine</Label>
+                  <Input id="ask-cuisine" value={formCuisine} onChange={(e) => setFormCuisine(e.target.value)} placeholder="Italian, sushi, Thai…" />
+                </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="ask-restaurant">Favorite restaurant</Label>
+                  <Input id="ask-restaurant" value={formRestaurant} onChange={(e) => setFormRestaurant(e.target.value)} placeholder="The spot she always picks" />
+                </div>
+              </>
+            )}
+            {askPrompt?.category === "flowers" && (
+              <div className="space-y-1.5">
+                <Label htmlFor="ask-flowers">Favorite flower type</Label>
+                <Input id="ask-flowers" value={formFlowers} onChange={(e) => setFormFlowers(e.target.value)} placeholder="Peonies, tulips, ranunculus…" />
+              </div>
+            )}
+            {askPrompt?.category === "coffee" && (
+              <div className="space-y-1.5">
+                <Label htmlFor="ask-coffee">Her coffee order</Label>
+                <Input id="ask-coffee" value={formCoffee} onChange={(e) => setFormCoffee(e.target.value)} placeholder="Oat latte, no sugar…" />
+              </div>
+            )}
+            {askPrompt?.category === "snack" && (
+              <div className="space-y-1.5">
+                <Label htmlFor="ask-snack">Her favorite snack</Label>
+                <Input id="ask-snack" value={formSnack} onChange={(e) => setFormSnack(e.target.value)} placeholder="Dark chocolate, popcorn…" />
+              </div>
+            )}
+          </div>
+
+          <DialogFooter className="gap-2 sm:gap-2">
+            <Button variant="secondary" onClick={() => { if (askPrompt) { markAsked(askPrompt.category); const a = askPrompt.action; setAskPrompt(null); executeAction(a, profile); } }}>
+              Skip
+            </Button>
+            <Button className="gold-gradient text-gold-foreground" onClick={submitAsk}>
+              Save & continue
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       <Dialog open={!!smsAction} onOpenChange={(o) => !o && setSmsAction(null)}>
         <DialogContent className="bg-surface border-border">
