@@ -185,9 +185,12 @@ export function ActionChips({ group, profile, cycleDay, phase, hidePaid, hidePai
               {askPrompt?.category === "flowers" && "Her favorite flowers"}
               {askPrompt?.category === "coffee" && "Her coffee order"}
               {askPrompt?.category === "snack" && "Her favorite snack"}
+              {askPrompt?.category === "phone" && `${profile.herName || "Her"}'s number`}
             </DialogTitle>
             <DialogDescription>
-              Quick one-time question so future suggestions land. We'll remember it.
+              {askPrompt?.category === "phone"
+                ? "Add her number to send messages straight from here. We'll remember it."
+                : "Quick one-time question so future suggestions land. We'll remember it."}
             </DialogDescription>
           </DialogHeader>
 
