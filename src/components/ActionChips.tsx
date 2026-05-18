@@ -78,7 +78,14 @@ export function ActionChips({ group, profile, cycleDay, phase, hidePaid, hidePai
   };
 
   const executeAction = (a: ActionDef, p: Profile) => {
-    if (a.kind === "SMS_DRAFT" || a.kind === "WHATSAPP") { openSmsModal(a, p); return; }
+    if (a.kind === "SMS_DRAFT" || a.kind === "WHATSAPP") {
+      if (!p.herPhone) {
+        setFormPhone("");
+        setAskPrompt({ category: "phone", action: a });
+        return;
+      }
+      openSmsModal(a, p); return;
+    }
     logAndOpen(a, buildActionUrl(a, p));
   };
 
