@@ -234,8 +234,15 @@ export function ActionChips({ group, profile, cycleDay, phase, hidePaid, hidePai
           </div>
 
           <DialogFooter className="gap-2 sm:gap-2">
-            <Button variant="secondary" onClick={() => { if (askPrompt) { markAsked(askPrompt.category); const a = askPrompt.action; setAskPrompt(null); executeAction(a, profile); } }}>
-              Skip
+            <Button variant="secondary" onClick={() => {
+              if (!askPrompt) return;
+              if (askPrompt.category === "phone") { setAskPrompt(null); return; }
+              markAsked(askPrompt.category);
+              const a = askPrompt.action;
+              setAskPrompt(null);
+              executeAction(a, profile);
+            }}>
+              {askPrompt?.category === "phone" ? "Cancel" : "Skip"}
             </Button>
             <Button className="gold-gradient text-gold-foreground" onClick={submitAsk}>
               Save & continue
