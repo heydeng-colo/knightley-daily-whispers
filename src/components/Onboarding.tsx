@@ -402,7 +402,7 @@ function StepLovesSwipe({
             onClick={onFinish}
             className="text-xs text-muted-foreground hover:text-gold transition"
           >
-            I'm done — finish setup ({remaining} left)
+            I'm done — finish setup
           </button>
         </div>
       )}
