@@ -346,14 +346,22 @@ function StepLovesSwipe({
             {/* Next card peeking */}
             {pos + 1 < total && (
               <div
-                className="absolute inset-0 rounded-3xl border border-border bg-surface-elevated/60 scale-[0.96] translate-y-2"
+                className="absolute inset-0 rounded-3xl border border-border bg-surface-elevated/60 scale-[0.96] translate-y-2 overflow-hidden"
                 aria-hidden
-              />
+              >
+                {LOVE_IMAGES[deck[pos + 1]] && (
+                  <img
+                    src={LOVE_IMAGES[deck[pos + 1]]}
+                    alt=""
+                    className="w-full h-full object-cover opacity-40"
+                  />
+                )}
+              </div>
             )}
             {/* Active card */}
             <div
               key={pos}
-              className={`absolute inset-0 rounded-3xl border border-border bg-surface p-6 flex items-center justify-center text-center transition-all duration-200 ${
+              className={`absolute inset-0 rounded-3xl border border-border bg-surface overflow-hidden flex items-end transition-all duration-200 ${
                 exiting === "left"
                   ? "-translate-x-[120%] -rotate-12 opacity-0"
                   : exiting === "right"
@@ -362,12 +370,27 @@ function StepLovesSwipe({
                   ? "-translate-y-[120%] opacity-0"
                   : ""
               }`}
-              style={{
-                background:
-                  "linear-gradient(160deg, color-mix(in oklab, var(--gold) 10%, var(--surface)), var(--surface))",
-              }}
             >
-              <p className="text-lg leading-snug font-medium">{ALL_LOVES[deck[pos]]}</p>
+              {LOVE_IMAGES[deck[pos]] && (
+                <img
+                  src={LOVE_IMAGES[deck[pos]]}
+                  alt=""
+                  className="absolute inset-0 w-full h-full object-cover"
+                />
+              )}
+              {/* Legibility scrim: dark gradient bottom, slight overall darken */}
+              <div className="absolute inset-0 bg-black/30" aria-hidden />
+              <div
+                className="absolute inset-0"
+                aria-hidden
+                style={{
+                  background:
+                    "linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.55) 45%, rgba(0,0,0,0.15) 100%)",
+                }}
+              />
+              <p className="relative text-lg leading-snug font-medium text-white p-6 drop-shadow-[0_2px_8px_rgba(0,0,0,0.7)]">
+                {ALL_LOVES[deck[pos]]}
+              </p>
             </div>
           </>
         )}
