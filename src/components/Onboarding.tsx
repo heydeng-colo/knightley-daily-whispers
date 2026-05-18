@@ -6,7 +6,8 @@ import { GOALS, LOVES_PART_1, LOVES_PART_2 } from "@/lib/loves";
 import { setProfile, SPEND_TIER_LABEL, type Profile, type SpendTier } from "@/lib/storage";
 import { ArrowLeft, ArrowRight, Heart, Star, X as XIcon, Check } from "lucide-react";
 
-const STEPS = ["About", "Cycle", "Goals", "Loves"];
+const STEPS = ["About", "Cycle", "Loves"];
+
 
 export function Onboarding({ onDone }: { onDone: () => void }) {
   const [step, setStep] = useState(0);
@@ -78,8 +79,7 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
         <div key={step} className="slide-up">
           {step === 0 && <Step1 data={data} update={update} />}
           {step === 1 && <Step2 data={data} update={update} />}
-          {step === 2 && <Step3 data={data} update={update} />}
-          {step === 3 && <StepLovesSwipe data={data} update={update} onFinish={finish} />}
+          {step === 2 && <StepLovesSwipe data={data} update={update} onFinish={finish} />}
         </div>
       </div>
 
@@ -115,6 +115,10 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
 }
 
 function Step1({ data, update }: { data: Partial<Profile>; update: (p: Partial<Profile>) => void }) {
+  const goals = data.goals || [];
+  const toggleGoal = (g: string) =>
+    update({ goals: goals.includes(g) ? goals.filter((x) => x !== g) : [...goals, g] });
+
   return (
     <div className="space-y-5">
       <h2 className="text-xl font-medium">About your relationship</h2>
@@ -145,6 +149,28 @@ function Step1({ data, update }: { data: Partial<Profile>; update: (p: Partial<P
           ))}
         </div>
       </Field>
+
+      <div className="space-y-2 pt-2">
+        <Label className="text-sm text-muted-foreground">What are your goals in this relationship?</Label>
+        <div className="grid grid-cols-2 gap-3">
+          {GOALS.map((g) => {
+            const on = goals.includes(g);
+            return (
+              <button
+                key={g}
+                onClick={() => toggleGoal(g)}
+                className={`rounded-2xl p-4 text-left text-sm border transition ${
+                  on
+                    ? "bg-gold text-gold-foreground border-gold"
+                    : "bg-surface border-border text-foreground"
+                }`}
+              >
+                {g}
+              </button>
+            );
+          })}
+        </div>
+      </div>
     </div>
   );
 }
@@ -222,36 +248,6 @@ function Step2({ data, update }: { data: Partial<Profile>; update: (p: Partial<P
             </button>
           ))}
         </div>
-      </div>
-    </div>
-  );
-}
-
-function Step3({ data, update }: { data: Partial<Profile>; update: (p: Partial<Profile>) => void }) {
-  const goals = data.goals || [];
-  const toggle = (g: string) =>
-    update({ goals: goals.includes(g) ? goals.filter((x) => x !== g) : [...goals, g] });
-  return (
-    <div className="space-y-5">
-      <h2 className="text-xl font-medium">Your goals</h2>
-      <p className="text-sm text-muted-foreground">Select all that apply.</p>
-      <div className="grid grid-cols-2 gap-3">
-        {GOALS.map((g) => {
-          const on = goals.includes(g);
-          return (
-            <button
-              key={g}
-              onClick={() => toggle(g)}
-              className={`rounded-2xl p-4 text-left text-sm border transition ${
-                on
-                  ? "bg-gold text-gold-foreground border-gold"
-                  : "bg-surface border-border text-foreground"
-              }`}
-            >
-              {g}
-            </button>
-          );
-        })}
       </div>
     </div>
   );
