@@ -19,6 +19,7 @@ import {
 } from "@/lib/storage";
 import { Droplet, Flame, ThumbsUp, X as XIcon, Gift } from "lucide-react";
 import { ActionChips } from "@/components/ActionChips";
+import { MiniQuiz } from "@/components/MiniQuiz";
 import { getActionGroupForDay, shouldSuppressPaid } from "@/lib/actions";
 import { getSpend, currentMonthSpend } from "@/lib/storage";
 
@@ -129,6 +130,7 @@ export function HomeScreen({ profile, setProfile, logs }: Props) {
 
   return (
     <div className="space-y-5">
+      <MiniQuiz profile={profile} />
       {/* Top bar */}
       <div className="flex items-center justify-between pt-2">
         <div className="flex items-baseline gap-2">

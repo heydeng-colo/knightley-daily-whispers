@@ -1,12 +1,12 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { GOALS, LOVES_PART_1, LOVES_PART_2 } from "@/lib/loves";
 import { setProfile, SPEND_TIER_LABEL, type Profile, type SpendTier } from "@/lib/storage";
-import { ArrowLeft, ArrowRight, Plus, Trash2, Heart } from "lucide-react";
+import { ArrowLeft, ArrowRight, Heart, Star, X as XIcon, Check } from "lucide-react";
 
-const STEPS = ["About", "Cycle", "Goals", "Loves 1", "Loves 2"];
+const STEPS = ["About", "Cycle", "Goals", "Loves"];
 
 export function Onboarding({ onDone }: { onDone: () => void }) {
   const [step, setStep] = useState(0);
@@ -58,14 +58,12 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
   return (
     <div className="min-h-dvh bg-background text-foreground">
       <div className="mx-auto max-w-md px-5 pt-10 pb-28">
-        {/* Header */}
         <div className="flex items-center gap-2 mb-2">
           <Heart className="h-5 w-5 text-gold" />
           <span className="text-sm tracking-widest uppercase text-muted-foreground">Attuned</span>
         </div>
         <h1 className="text-2xl font-semibold mb-6">Let's get you set up</h1>
 
-        {/* Progress */}
         <div className="flex gap-1.5 mb-8">
           {STEPS.map((_, i) => (
             <div
@@ -81,12 +79,10 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
           {step === 0 && <Step1 data={data} update={update} />}
           {step === 1 && <Step2 data={data} update={update} />}
           {step === 2 && <Step3 data={data} update={update} />}
-          {step === 3 && <Step4 data={data} update={update} part={1} />}
-          {step === 4 && <Step4 data={data} update={update} part={2} />}
+          {step === 3 && <StepLovesSwipe data={data} update={update} onFinish={finish} />}
         </div>
       </div>
 
-      {/* Sticky footer */}
       <div className="fixed bottom-0 inset-x-0 glass border-t border-border">
         <div className="mx-auto max-w-md px-5 py-4 flex gap-3">
           {step > 0 && (
@@ -149,25 +145,6 @@ function Step1({ data, update }: { data: Partial<Profile>; update: (p: Partial<P
           ))}
         </div>
       </Field>
-
-      <div className="space-y-2 pt-2">
-        <Label className="text-sm text-muted-foreground">Monthly spend comfort</Label>
-        <div className="grid grid-cols-2 gap-2">
-          {(Object.keys(SPEND_TIER_LABEL) as SpendTier[]).map((t) => (
-            <button
-              key={t}
-              onClick={() => update({ spendTier: t })}
-              className={`rounded-xl py-2.5 px-3 text-xs border transition text-left ${
-                (data.spendTier || "50") === t
-                  ? "bg-gold text-gold-foreground border-gold"
-                  : "bg-surface border-border text-foreground"
-              }`}
-            >
-              {SPEND_TIER_LABEL[t]}
-            </button>
-          ))}
-        </div>
-      </div>
     </div>
   );
 }
@@ -227,6 +204,25 @@ function Step2({ data, update }: { data: Partial<Profile>; update: (p: Partial<P
           Optional. Used to poll her anonymously for relationship feedback.
         </p>
       </Field>
+
+      <div className="space-y-2 pt-2">
+        <Label className="text-sm text-muted-foreground">Monthly spend comfort</Label>
+        <div className="grid grid-cols-2 gap-2">
+          {(Object.keys(SPEND_TIER_LABEL) as SpendTier[]).map((t) => (
+            <button
+              key={t}
+              onClick={() => update({ spendTier: t })}
+              className={`rounded-xl py-2.5 px-3 text-xs border transition text-left ${
+                (data.spendTier || "50") === t
+                  ? "bg-gold text-gold-foreground border-gold"
+                  : "bg-surface border-border text-foreground"
+              }`}
+            >
+              {SPEND_TIER_LABEL[t]}
+            </button>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
@@ -261,45 +257,142 @@ function Step3({ data, update }: { data: Partial<Profile>; update: (p: Partial<P
   );
 }
 
-function Step4({
+// ---- Swipe deck for "Loves" ----
+
+const ALL_LOVES = [...LOVES_PART_1, ...LOVES_PART_2];
+
+function shuffle<T>(arr: T[]): T[] {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+type SwipeDir = "left" | "right" | "up" | null;
+
+function StepLovesSwipe({
   data,
   update,
-  part,
+  onFinish,
 }: {
   data: Partial<Profile>;
   update: (p: Partial<Profile>) => void;
-  part: 1 | 2;
+  onFinish: () => void;
 }) {
-  const list = part === 1 ? LOVES_PART_1 : LOVES_PART_2;
-  const offset = part === 1 ? 0 : LOVES_PART_1.length;
+  // Stable shuffled order of indices into ALL_LOVES
+  const deck = useMemo(() => shuffle(ALL_LOVES.map((_, i) => i)), []);
+  const [pos, setPos] = useState(0);
+  const [exiting, setExiting] = useState<SwipeDir>(null);
   const loves = data.loves || [];
-  const toggle = (idx: number) =>
-    update({ loves: loves.includes(idx) ? loves.filter((x) => x !== idx) : [...loves, idx] });
+  const total = deck.length;
+  const remaining = total - pos;
+  const done = pos >= total;
+
+  const decide = (dir: Exclude<SwipeDir, null>) => {
+    if (exiting) return;
+    const idx = deck[pos];
+    if (dir === "right" || dir === "up") {
+      if (!loves.includes(idx)) update({ loves: [...loves, idx] });
+    }
+    setExiting(dir);
+    setTimeout(() => {
+      setExiting(null);
+      setPos((p) => p + 1);
+    }, 220);
+  };
+
   return (
-    <div className="space-y-4">
-      <h2 className="text-xl font-medium">
-        {part === 1 ? "Which of these does she appreciate?" : "Almost done — a few more."}
-      </h2>
-      <p className="text-sm text-muted-foreground">Select all that apply.</p>
-      <div className="flex flex-wrap gap-2">
-        {list.map((item, i) => {
-          const idx = offset + i;
-          const on = loves.includes(idx);
-          return (
-            <button
-              key={idx}
-              onClick={() => toggle(idx)}
-              className={`rounded-full px-3.5 py-2 text-xs border transition text-left leading-snug ${
-                on
-                  ? "bg-gold text-gold-foreground border-gold"
-                  : "bg-surface border-border text-foreground"
-              }`}
-            >
-              {item}
-            </button>
-          );
-        })}
+    <div className="space-y-5">
+      <h2 className="text-xl font-medium">What lands for her?</h2>
+      <p className="text-sm text-muted-foreground">
+        Swipe through. Tap <span className="text-foreground">Skip</span>, <span className="text-foreground">Like</span>, or <span className="text-foreground">Love</span>. The more you tag, the sharper your prompts get — you can always refine later from feedback.
+      </p>
+
+      <div className="flex items-center justify-between text-[11px] text-muted-foreground">
+        <span>{Math.min(pos + 1, total)} / {total}</span>
+        <span>{loves.length} liked</span>
       </div>
+
+      <div className="relative h-72">
+        {done ? (
+          <div className="absolute inset-0 rounded-3xl border border-border bg-surface flex flex-col items-center justify-center text-center p-6">
+            <Heart className="h-8 w-8 text-gold mb-3" />
+            <p className="text-base font-medium">All done — {loves.length} saved.</p>
+            <p className="text-xs text-muted-foreground mt-1">We'll keep learning from your daily feedback.</p>
+            <Button className="mt-4 gold-gradient text-gold-foreground" onClick={onFinish}>
+              Finish Setup
+            </Button>
+          </div>
+        ) : (
+          <>
+            {/* Next card peeking */}
+            {pos + 1 < total && (
+              <div
+                className="absolute inset-0 rounded-3xl border border-border bg-surface-elevated/60 scale-[0.96] translate-y-2"
+                aria-hidden
+              />
+            )}
+            {/* Active card */}
+            <div
+              key={pos}
+              className={`absolute inset-0 rounded-3xl border border-border bg-surface p-6 flex items-center justify-center text-center transition-all duration-200 ${
+                exiting === "left"
+                  ? "-translate-x-[120%] -rotate-12 opacity-0"
+                  : exiting === "right"
+                  ? "translate-x-[120%] rotate-12 opacity-0"
+                  : exiting === "up"
+                  ? "-translate-y-[120%] opacity-0"
+                  : ""
+              }`}
+              style={{
+                background:
+                  "linear-gradient(160deg, color-mix(in oklab, var(--gold) 10%, var(--surface)), var(--surface))",
+              }}
+            >
+              <p className="text-lg leading-snug font-medium">{ALL_LOVES[deck[pos]]}</p>
+            </div>
+          </>
+        )}
+      </div>
+
+      {!done && (
+        <div className="grid grid-cols-3 gap-3">
+          <button
+            onClick={() => decide("left")}
+            className="rounded-2xl py-4 border border-border bg-surface text-foreground flex flex-col items-center gap-1 hover:border-gold/40 transition"
+          >
+            <XIcon className="h-5 w-5" />
+            <span className="text-[11px] tracking-wide">Skip</span>
+          </button>
+          <button
+            onClick={() => decide("right")}
+            className="rounded-2xl py-4 border border-border bg-surface text-foreground flex flex-col items-center gap-1 hover:border-gold/40 transition"
+          >
+            <Check className="h-5 w-5" />
+            <span className="text-[11px] tracking-wide">Like</span>
+          </button>
+          <button
+            onClick={() => decide("up")}
+            className="rounded-2xl py-4 border border-gold/50 bg-gold/10 text-gold flex flex-col items-center gap-1 hover:bg-gold/20 transition"
+          >
+            <Star className="h-5 w-5 fill-current" />
+            <span className="text-[11px] tracking-wide">Love</span>
+          </button>
+        </div>
+      )}
+
+      {!done && (
+        <div className="text-center">
+          <button
+            onClick={onFinish}
+            className="text-xs text-muted-foreground hover:text-gold transition"
+          >
+            I'm done — finish setup ({remaining} left)
+          </button>
+        </div>
+      )}
     </div>
   );
 }

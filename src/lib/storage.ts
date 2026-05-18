@@ -48,6 +48,8 @@ export interface Profile {
   activatedAt?: string; // ISO yyyy-mm-dd — set on first save
   spendTier?: SpendTier;
   monthlyBudgetCap?: number; // dollars; 0/undef = no cap
+  miniQuiz?: Record<string, string>; // conversational quiz answers, served after day 3
+  miniQuizDismissed?: boolean;
 }
 
 export interface PromptLog {
