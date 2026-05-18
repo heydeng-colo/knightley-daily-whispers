@@ -253,36 +253,6 @@ function Step2({ data, update }: { data: Partial<Profile>; update: (p: Partial<P
   );
 }
 
-function Step3({ data, update }: { data: Partial<Profile>; update: (p: Partial<Profile>) => void }) {
-  const goals = data.goals || [];
-  const toggle = (g: string) =>
-    update({ goals: goals.includes(g) ? goals.filter((x) => x !== g) : [...goals, g] });
-  return (
-    <div className="space-y-5">
-      <h2 className="text-xl font-medium">Your goals</h2>
-      <p className="text-sm text-muted-foreground">Select all that apply.</p>
-      <div className="grid grid-cols-2 gap-3">
-        {GOALS.map((g) => {
-          const on = goals.includes(g);
-          return (
-            <button
-              key={g}
-              onClick={() => toggle(g)}
-              className={`rounded-2xl p-4 text-left text-sm border transition ${
-                on
-                  ? "bg-gold text-gold-foreground border-gold"
-                  : "bg-surface border-border text-foreground"
-              }`}
-            >
-              {g}
-            </button>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
-
 // ---- Swipe deck for "Loves" ----
 
 const ALL_LOVES = [...LOVES_PART_1, ...LOVES_PART_2];
