@@ -130,6 +130,7 @@ export function HomeScreen({ profile, setProfile, logs }: Props) {
 
   return (
     <div className="space-y-5">
+      <MiniQuiz profile={profile} />
       {/* Top bar */}
       <div className="flex items-center justify-between pt-2">
         <div className="flex items-baseline gap-2">
