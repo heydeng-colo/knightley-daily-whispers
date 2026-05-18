@@ -299,11 +299,12 @@ function StepLovesSwipe({
   const [exiting, setExiting] = useState<SwipeDir>(null);
   const loves = data.loves || [];
   const total = deck.length;
-  const remaining = total - pos;
-  const done = pos >= total;
+  const TARGET_LIKES = 15;
+  const targetMet = loves.length >= TARGET_LIKES;
+  const done = pos >= total || targetMet;
 
   const decide = (dir: Exclude<SwipeDir, null>) => {
-    if (exiting) return;
+    if (exiting || targetMet) return;
     const idx = deck[pos];
     if (dir === "right" || dir === "up") {
       if (!loves.includes(idx)) update({ loves: [...loves, idx] });
@@ -331,7 +332,9 @@ function StepLovesSwipe({
         {done ? (
           <div className="absolute inset-0 rounded-3xl border border-border bg-surface flex flex-col items-center justify-center text-center p-6">
             <Heart className="h-8 w-8 text-gold mb-3" />
-            <p className="text-base font-medium">All done — {loves.length} saved.</p>
+            <p className="text-base font-medium">
+              {targetMet ? `Great — ${loves.length} things that land for her.` : `All done — ${loves.length} saved.`}
+            </p>
             <p className="text-xs text-muted-foreground mt-1">We'll keep learning from your daily feedback.</p>
             <Button className="mt-4 gold-gradient text-gold-foreground" onClick={onFinish}>
               Finish Setup
@@ -401,7 +404,7 @@ function StepLovesSwipe({
             onClick={onFinish}
             className="text-xs text-muted-foreground hover:text-gold transition"
           >
-            I'm done — finish setup ({remaining} left)
+            I'm done — finish setup
           </button>
         </div>
       )}
