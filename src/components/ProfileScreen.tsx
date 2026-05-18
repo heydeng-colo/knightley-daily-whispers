@@ -26,6 +26,7 @@ export function ProfileScreen({ profile, setProfile }: { profile: Profile; setPr
         <Field label="Her name"><Input value={p.herName} onChange={(e) => update({ herName: e.target.value })} /></Field>
         <Field label="Her birthday"><Input type="date" value={p.herBirthday} onChange={(e) => update({ herBirthday: e.target.value })} /></Field>
         <Field label="Anniversary"><Input type="date" value={p.anniversary || ""} onChange={(e) => update({ anniversary: e.target.value })} /></Field>
+        <Field label="Her zip code"><Input value={p.herZipCode || ""} onChange={(e) => update({ herZipCode: e.target.value })} maxLength={10} /></Field>
         <Field label="Favorite flowers"><Input value={p.flowers} onChange={(e) => update({ flowers: e.target.value })} /></Field>
         <Field label="Favorite cuisine"><Input value={p.cuisine} onChange={(e) => update({ cuisine: e.target.value })} /></Field>
         <Field label="Favorite restaurant"><Input value={p.restaurant} onChange={(e) => update({ restaurant: e.target.value })} /></Field>
