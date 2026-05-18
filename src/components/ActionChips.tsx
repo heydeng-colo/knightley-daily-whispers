@@ -106,6 +106,16 @@ export function ActionChips({ group, profile, cycleDay, phase, hidePaid, hidePai
 
   const submitAsk = () => {
     if (!askPrompt) return;
+    if (askPrompt.category === "phone") {
+      const phone = formPhone.trim();
+      if (!phone) return;
+      const updated: Profile = { ...profile, herPhone: phone };
+      saveProfile(updated);
+      const action = askPrompt.action;
+      setAskPrompt(null);
+      openSmsModal(action, updated);
+      return;
+    }
     const updated: Profile = {
       ...profile,
       cuisine: formCuisine.trim() || profile.cuisine,
