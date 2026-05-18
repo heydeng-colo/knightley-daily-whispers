@@ -225,6 +225,12 @@ export function ActionChips({ group, profile, cycleDay, phase, hidePaid, hidePai
                 <Input id="ask-snack" value={formSnack} onChange={(e) => setFormSnack(e.target.value)} placeholder="Dark chocolate, popcorn…" />
               </div>
             )}
+            {askPrompt?.category === "phone" && (
+              <div className="space-y-1.5">
+                <Label htmlFor="ask-phone">Phone number</Label>
+                <Input id="ask-phone" type="tel" inputMode="tel" autoFocus value={formPhone} onChange={(e) => setFormPhone(e.target.value)} placeholder="+1 555 123 4567" />
+              </div>
+            )}
           </div>
 
           <DialogFooter className="gap-2 sm:gap-2">
