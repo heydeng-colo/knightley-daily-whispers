@@ -244,7 +244,7 @@ function Step2({ data, update }: { data: Partial<Profile>; update: (p: Partial<P
             type="range"
             min={0}
             max={300}
-            step={10}
+            step={25}
             value={data.monthlyBudgetCap ?? 50}
             onChange={(e) => {
               const val = parseInt(e.target.value);
