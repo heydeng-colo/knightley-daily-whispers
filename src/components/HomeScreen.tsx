@@ -19,6 +19,7 @@ import {
 } from "@/lib/storage";
 import { Droplet, Flame, ThumbsUp, X as XIcon, Gift } from "lucide-react";
 import { ActionChips } from "@/components/ActionChips";
+import { MiniQuiz } from "@/components/MiniQuiz";
 import { getActionGroupForDay, shouldSuppressPaid } from "@/lib/actions";
 import { getSpend, currentMonthSpend } from "@/lib/storage";
 
