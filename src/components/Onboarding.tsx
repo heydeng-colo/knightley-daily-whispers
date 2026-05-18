@@ -115,6 +115,10 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
 }
 
 function Step1({ data, update }: { data: Partial<Profile>; update: (p: Partial<Profile>) => void }) {
+  const goals = data.goals || [];
+  const toggleGoal = (g: string) =>
+    update({ goals: goals.includes(g) ? goals.filter((x) => x !== g) : [...goals, g] });
+
   return (
     <div className="space-y-5">
       <h2 className="text-xl font-medium">About your relationship</h2>
@@ -145,6 +149,28 @@ function Step1({ data, update }: { data: Partial<Profile>; update: (p: Partial<P
           ))}
         </div>
       </Field>
+
+      <div className="space-y-2 pt-2">
+        <Label className="text-sm text-muted-foreground">What are your goals in this relationship?</Label>
+        <div className="grid grid-cols-2 gap-3">
+          {GOALS.map((g) => {
+            const on = goals.includes(g);
+            return (
+              <button
+                key={g}
+                onClick={() => toggleGoal(g)}
+                className={`rounded-2xl p-4 text-left text-sm border transition ${
+                  on
+                    ? "bg-gold text-gold-foreground border-gold"
+                    : "bg-surface border-border text-foreground"
+                }`}
+              >
+                {g}
+              </button>
+            );
+          })}
+        </div>
+      </div>
     </div>
   );
 }
