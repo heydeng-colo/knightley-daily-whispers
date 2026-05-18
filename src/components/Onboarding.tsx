@@ -39,6 +39,7 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
       stage: data.stage || "Married",
       relLengthMonths: data.relLengthMonths || 0,
       relLengthYears: data.relLengthYears || 1,
+      herZipCode: data.herZipCode || "",
       flowers: data.flowers || "",
       cuisine: data.cuisine || "",
       restaurant: data.restaurant || "",
