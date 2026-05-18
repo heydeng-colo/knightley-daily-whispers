@@ -16,7 +16,7 @@ interface Props {
   hidePaidReason?: string;
 }
 
-type ChipCategory = "dining" | "flowers" | "coffee" | "snack";
+type ChipCategory = "dining" | "flowers" | "coffee" | "snack" | "phone";
 
 const ASKED_KEY = "attuned.askedCategories";
 
@@ -50,6 +50,7 @@ export function ActionChips({ group, profile, cycleDay, phase, hidePaid, hidePai
   const [formFlowers, setFormFlowers] = useState("");
   const [formCoffee, setFormCoffee] = useState("");
   const [formSnack, setFormSnack] = useState("");
+  const [formPhone, setFormPhone] = useState("");
 
   // Always show the full action set so chips remain visible after a tap —
   // guardrails surface as an informational note (hidePaidReason) rather than
@@ -77,7 +78,14 @@ export function ActionChips({ group, profile, cycleDay, phase, hidePaid, hidePai
   };
 
   const executeAction = (a: ActionDef, p: Profile) => {
-    if (a.kind === "SMS_DRAFT" || a.kind === "WHATSAPP") { openSmsModal(a, p); return; }
+    if (a.kind === "SMS_DRAFT" || a.kind === "WHATSAPP") {
+      if (!p.herPhone) {
+        setFormPhone("");
+        setAskPrompt({ category: "phone", action: a });
+        return;
+      }
+      openSmsModal(a, p); return;
+    }
     logAndOpen(a, buildActionUrl(a, p));
   };
 
@@ -98,6 +106,16 @@ export function ActionChips({ group, profile, cycleDay, phase, hidePaid, hidePai
 
   const submitAsk = () => {
     if (!askPrompt) return;
+    if (askPrompt.category === "phone") {
+      const phone = formPhone.trim();
+      if (!phone) return;
+      const updated: Profile = { ...profile, herPhone: phone };
+      saveProfile(updated);
+      const action = askPrompt.action;
+      setAskPrompt(null);
+      openSmsModal(action, updated);
+      return;
+    }
     const updated: Profile = {
       ...profile,
       cuisine: formCuisine.trim() || profile.cuisine,
@@ -167,9 +185,12 @@ export function ActionChips({ group, profile, cycleDay, phase, hidePaid, hidePai
               {askPrompt?.category === "flowers" && "Her favorite flowers"}
               {askPrompt?.category === "coffee" && "Her coffee order"}
               {askPrompt?.category === "snack" && "Her favorite snack"}
+              {askPrompt?.category === "phone" && `${profile.herName || "Her"}'s number`}
             </DialogTitle>
             <DialogDescription>
-              Quick one-time question so future suggestions land. We'll remember it.
+              {askPrompt?.category === "phone"
+                ? "Add her number to send messages straight from here. We'll remember it."
+                : "Quick one-time question so future suggestions land. We'll remember it."}
             </DialogDescription>
           </DialogHeader>
 
@@ -204,11 +225,24 @@ export function ActionChips({ group, profile, cycleDay, phase, hidePaid, hidePai
                 <Input id="ask-snack" value={formSnack} onChange={(e) => setFormSnack(e.target.value)} placeholder="Dark chocolate, popcorn…" />
               </div>
             )}
+            {askPrompt?.category === "phone" && (
+              <div className="space-y-1.5">
+                <Label htmlFor="ask-phone">Phone number</Label>
+                <Input id="ask-phone" type="tel" inputMode="tel" autoFocus value={formPhone} onChange={(e) => setFormPhone(e.target.value)} placeholder="+1 555 123 4567" />
+              </div>
+            )}
           </div>
 
           <DialogFooter className="gap-2 sm:gap-2">
-            <Button variant="secondary" onClick={() => { if (askPrompt) { markAsked(askPrompt.category); const a = askPrompt.action; setAskPrompt(null); executeAction(a, profile); } }}>
-              Skip
+            <Button variant="secondary" onClick={() => {
+              if (!askPrompt) return;
+              if (askPrompt.category === "phone") { setAskPrompt(null); return; }
+              markAsked(askPrompt.category);
+              const a = askPrompt.action;
+              setAskPrompt(null);
+              executeAction(a, profile);
+            }}>
+              {askPrompt?.category === "phone" ? "Cancel" : "Skip"}
             </Button>
             <Button className="gold-gradient text-gold-foreground" onClick={submitAsk}>
               Save & continue
