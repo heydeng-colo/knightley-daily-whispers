@@ -6,7 +6,8 @@ import { GOALS, LOVES_PART_1, LOVES_PART_2 } from "@/lib/loves";
 import { setProfile, SPEND_TIER_LABEL, type Profile, type SpendTier } from "@/lib/storage";
 import { ArrowLeft, ArrowRight, Heart, Star, X as XIcon, Check } from "lucide-react";
 
-const STEPS = ["About", "Cycle", "Goals", "Loves"];
+const STEPS = ["About", "Cycle", "Loves"];
+
 
 export function Onboarding({ onDone }: { onDone: () => void }) {
   const [step, setStep] = useState(0);
@@ -78,8 +79,7 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
         <div key={step} className="slide-up">
           {step === 0 && <Step1 data={data} update={update} />}
           {step === 1 && <Step2 data={data} update={update} />}
-          {step === 2 && <Step3 data={data} update={update} />}
-          {step === 3 && <StepLovesSwipe data={data} update={update} onFinish={finish} />}
+          {step === 2 && <StepLovesSwipe data={data} update={update} onFinish={finish} />}
         </div>
       </div>
 
