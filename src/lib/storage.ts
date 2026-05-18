@@ -31,6 +31,7 @@ export interface Profile {
   children: Child[];
   stage: "Dating" | "Engaged" | "Married";
   relLengthMonths: number;
+  relLengthYears: number;
   flowers: string;
   cuisine: string;
   restaurant: string;
