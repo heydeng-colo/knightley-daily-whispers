@@ -50,6 +50,7 @@ export function ActionChips({ group, profile, cycleDay, phase, hidePaid, hidePai
   const [formFlowers, setFormFlowers] = useState("");
   const [formCoffee, setFormCoffee] = useState("");
   const [formSnack, setFormSnack] = useState("");
+  const [formPhone, setFormPhone] = useState("");
 
   // Always show the full action set so chips remain visible after a tap —
   // guardrails surface as an informational note (hidePaidReason) rather than
