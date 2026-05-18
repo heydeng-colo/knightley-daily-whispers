@@ -154,6 +154,15 @@ function Step1({ data, update }: { data: Partial<Profile>; update: (p: Partial<P
         </div>
       </Field>
 
+      <Field label="Her zip code">
+        <Input
+          value={data.herZipCode || ""}
+          onChange={(e) => update({ herZipCode: e.target.value })}
+          placeholder="e.g. 90210"
+          maxLength={10}
+        />
+      </Field>
+
       <Field label={`Years together: ${data.relLengthYears === 30 ? "30+" : data.relLengthYears} year${data.relLengthYears === 1 ? "" : "s"}`}>
         <div className="rounded-2xl bg-surface border border-border p-5 space-y-4">
           <input
