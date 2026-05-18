@@ -17,6 +17,7 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
     cycleLength: 28,
     stage: "Married",
     relLengthMonths: 12,
+    relLengthYears: 1,
     goals: [],
     loves: [],
     notifications: true,
@@ -37,6 +38,7 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
       children: data.children || [],
       stage: data.stage || "Married",
       relLengthMonths: data.relLengthMonths || 0,
+      relLengthYears: data.relLengthYears || 1,
       flowers: data.flowers || "",
       cuisine: data.cuisine || "",
       restaurant: data.restaurant || "",
@@ -148,6 +150,25 @@ function Step1({ data, update }: { data: Partial<Profile>; update: (p: Partial<P
               {s}
             </button>
           ))}
+        </div>
+      </Field>
+
+      <Field label={`Years together: ${data.relLengthYears === 30 ? "30+" : data.relLengthYears} year${data.relLengthYears === 1 ? "" : "s"}`}>
+        <div className="rounded-2xl bg-surface border border-border p-5 space-y-4">
+          <input
+            type="range"
+            min={1}
+            max={30}
+            step={1}
+            value={data.relLengthYears || 1}
+            onChange={(e) => update({ relLengthYears: parseInt(e.target.value) })}
+            className="w-full accent-[var(--gold)]"
+          />
+          <div className="flex justify-between text-[10px] text-muted-foreground">
+            <span>1 yr</span>
+            <span>15 yrs</span>
+            <span>30+ yrs</span>
+          </div>
         </div>
       </Field>
 
