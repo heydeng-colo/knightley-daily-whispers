@@ -32,6 +32,7 @@ export interface Profile {
   stage: "Dating" | "Engaged" | "Married";
   relLengthMonths: number;
   relLengthYears: number;
+  herZipCode: string;
   flowers: string;
   cuisine: string;
   restaurant: string;

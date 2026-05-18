@@ -39,6 +39,7 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
       stage: data.stage || "Married",
       relLengthMonths: data.relLengthMonths || 0,
       relLengthYears: data.relLengthYears || 1,
+      herZipCode: data.herZipCode || "",
       flowers: data.flowers || "",
       cuisine: data.cuisine || "",
       restaurant: data.restaurant || "",
@@ -151,6 +152,15 @@ function Step1({ data, update }: { data: Partial<Profile>; update: (p: Partial<P
             </button>
           ))}
         </div>
+      </Field>
+
+      <Field label="Her zip code">
+        <Input
+          value={data.herZipCode || ""}
+          onChange={(e) => update({ herZipCode: e.target.value })}
+          placeholder="e.g. 90210"
+          maxLength={10}
+        />
       </Field>
 
       <Field label={`Years together: ${data.relLengthYears === 30 ? "30+" : data.relLengthYears} year${data.relLengthYears === 1 ? "" : "s"}`}>
