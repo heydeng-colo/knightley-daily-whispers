@@ -299,11 +299,12 @@ function StepLovesSwipe({
   const [exiting, setExiting] = useState<SwipeDir>(null);
   const loves = data.loves || [];
   const total = deck.length;
-  const remaining = total - pos;
-  const done = pos >= total;
+  const TARGET_LIKES = 15;
+  const targetMet = loves.length >= TARGET_LIKES;
+  const done = pos >= total || targetMet;
 
   const decide = (dir: Exclude<SwipeDir, null>) => {
-    if (exiting) return;
+    if (exiting || targetMet) return;
     const idx = deck[pos];
     if (dir === "right" || dir === "up") {
       if (!loves.includes(idx)) update({ loves: [...loves, idx] });
