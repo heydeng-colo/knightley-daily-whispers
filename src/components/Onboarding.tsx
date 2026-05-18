@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { GOALS, LOVES_PART_1, LOVES_PART_2 } from "@/lib/loves";
-import { setProfile, SPEND_TIER_LABEL, type Profile, type SpendTier } from "@/lib/storage";
+import { setProfile, type Profile, type SpendTier } from "@/lib/storage";
 import { ArrowLeft, ArrowRight, Heart, Star, X as XIcon, Check } from "lucide-react";
 
 const STEPS = ["About", "Cycle", "Loves"];
@@ -231,22 +231,38 @@ function Step2({ data, update }: { data: Partial<Profile>; update: (p: Partial<P
         </p>
       </Field>
 
-      <div className="space-y-2 pt-2">
+      <div className="space-y-3 pt-2">
         <Label className="text-sm text-muted-foreground">Monthly spend comfort</Label>
-        <div className="grid grid-cols-2 gap-2">
-          {(Object.keys(SPEND_TIER_LABEL) as SpendTier[]).map((t) => (
-            <button
-              key={t}
-              onClick={() => update({ spendTier: t })}
-              className={`rounded-xl py-2.5 px-3 text-xs border transition text-left ${
-                (data.spendTier || "50") === t
-                  ? "bg-gold text-gold-foreground border-gold"
-                  : "bg-surface border-border text-foreground"
-              }`}
-            >
-              {SPEND_TIER_LABEL[t]}
-            </button>
-          ))}
+        <div className="rounded-2xl bg-surface border border-border p-5 space-y-4">
+          <div className="flex items-baseline justify-between">
+            <span className="text-2xl font-semibold">
+              ${data.monthlyBudgetCap ?? 50}
+            </span>
+            <span className="text-xs text-muted-foreground">per month</span>
+          </div>
+          <input
+            type="range"
+            min={0}
+            max={300}
+            step={10}
+            value={data.monthlyBudgetCap ?? 50}
+            onChange={(e) => {
+              const val = parseInt(e.target.value);
+              let tier: SpendTier = "free";
+              if (val >= 150) tier = "150plus";
+              else if (val >= 125) tier = "150";
+              else if (val >= 75) tier = "100";
+              else if (val >= 37) tier = "50";
+              else if (val >= 12) tier = "25";
+              update({ monthlyBudgetCap: val, spendTier: tier });
+            }}
+            className="w-full accent-[var(--gold)]"
+          />
+          <div className="flex justify-between text-[10px] text-muted-foreground">
+            <span>$0</span>
+            <span>$150</span>
+            <span>$300+</span>
+          </div>
         </div>
       </div>
     </div>
