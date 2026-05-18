@@ -153,6 +153,25 @@ function Step1({ data, update }: { data: Partial<Profile>; update: (p: Partial<P
         </div>
       </Field>
 
+      <Field label={`Years together: ${data.relLengthYears === 30 ? "30+" : data.relLengthYears} year${data.relLengthYears === 1 ? "" : "s"}`}>
+        <div className="rounded-2xl bg-surface border border-border p-5 space-y-4">
+          <input
+            type="range"
+            min={1}
+            max={30}
+            step={1}
+            value={data.relLengthYears || 1}
+            onChange={(e) => update({ relLengthYears: parseInt(e.target.value) })}
+            className="w-full accent-[var(--gold)]"
+          />
+          <div className="flex justify-between text-[10px] text-muted-foreground">
+            <span>1 yr</span>
+            <span>15 yrs</span>
+            <span>30+ yrs</span>
+          </div>
+        </div>
+      </Field>
+
       <div className="space-y-2 pt-2">
         <Label className="text-sm text-muted-foreground">What are your goals in this relationship?</Label>
         <div className="grid grid-cols-2 gap-3">
