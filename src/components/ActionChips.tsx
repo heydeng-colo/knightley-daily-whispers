@@ -16,7 +16,7 @@ interface Props {
   hidePaidReason?: string;
 }
 
-type ChipCategory = "dining" | "flowers" | "coffee" | "snack";
+type ChipCategory = "dining" | "flowers" | "coffee" | "snack" | "phone";
 
 const ASKED_KEY = "attuned.askedCategories";
 
