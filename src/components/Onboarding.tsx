@@ -216,6 +216,17 @@ function Step2({ data, update }: { data: Partial<Profile>; update: (p: Partial<P
           </div>
         </div>
       )}
+      <Field label="Her cellphone (optional)">
+        <Input
+          type="tel"
+          value={data.herPhone || ""}
+          onChange={(e) => update({ herPhone: e.target.value })}
+          placeholder="(555) 123-4567"
+        />
+        <p className="text-xs text-muted-foreground mt-1">
+          Optional. Used to poll her anonymously for relationship feedback.
+        </p>
+      </Field>
     </div>
   );
 }
