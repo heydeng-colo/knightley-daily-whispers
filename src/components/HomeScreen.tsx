@@ -206,6 +206,7 @@ export function HomeScreen({ profile, setProfile, logs }: Props) {
                 hidePaid={guard.suppress}
                 hidePaidReason={guard.reason}
               />
+              <OtherActionLog promptDay={day} phase={phase} />
             </div>
           );
         })()}
