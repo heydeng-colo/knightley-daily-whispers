@@ -19,6 +19,7 @@ import {
 } from "@/lib/storage";
 import { Droplet, Flame, ThumbsUp, X as XIcon, Gift } from "lucide-react";
 import { ActionChips } from "@/components/ActionChips";
+import { OtherActionLog } from "@/components/OtherActionLog";
 import { MiniQuiz } from "@/components/MiniQuiz";
 import { getActionGroupForDay, shouldSuppressPaid } from "@/lib/actions";
 import { getSpend, currentMonthSpend } from "@/lib/storage";
@@ -206,6 +207,7 @@ export function HomeScreen({ profile, setProfile, logs }: Props) {
                 hidePaid={guard.suppress}
                 hidePaidReason={guard.reason}
               />
+              <OtherActionLog promptDay={day} phase={phase} />
             </div>
           );
         })()}
