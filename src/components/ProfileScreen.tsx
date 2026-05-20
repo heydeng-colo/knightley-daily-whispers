@@ -7,7 +7,7 @@ import { clearAll, currentMonthSpend, getSpend, nextPollDate, SPEND_TIER_LABEL, 
 import { BRAND_PREF_AFFINITIES, type BrandPreference } from "@/lib/affiliatePartners";
 import { useState } from "react";
 
-export function ProfileScreen({ profile, setProfile }: { profile: Profile; setProfile: (p: Profile) => void }) {
+export function ProfileScreen({ profile, setProfile }: { profile: Profile; setProfile: (p: Profile | null) => void }) {
   const [p, setP] = useState<Profile>(profile);
   const [showLoves, setShowLoves] = useState(false);
 
