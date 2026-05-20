@@ -4,10 +4,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { GOALS, LOVES_PART_1, LOVES_PART_2 } from "@/lib/loves";
 import { LOVE_IMAGES } from "@/lib/loveImages";
+import { BRAND_PREF_AFFINITIES, type BrandPreference } from "@/lib/affiliatePartners";
 import { setProfile, type Profile, type SpendTier } from "@/lib/storage";
 import { ArrowLeft, ArrowRight, Heart, Star, X as XIcon, Check } from "lucide-react";
 
-const STEPS = ["About", "Cycle", "Loves"];
+const STEPS = ["About", "Her World", "Cycle", "Loves"];
 
 
 export function Onboarding({ onDone }: { onDone: () => void }) {
@@ -23,6 +24,8 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
     notifications: true,
     smsPolling: true,
     spendTier: "50",
+    brandPreference: "curated",
+    brandAffinities: BRAND_PREF_AFFINITIES["curated"],
   });
 
   const update = (patch: Partial<Profile>) => setData((d) => ({ ...d, ...patch }));
@@ -55,6 +58,8 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
       smsPolling: data.smsPolling ?? true,
       spendTier: data.spendTier || "50",
       monthlyBudgetCap: data.monthlyBudgetCap,
+      brandPreference: data.brandPreference || "curated",
+      brandAffinities: data.brandAffinities || BRAND_PREF_AFFINITIES[data.brandPreference || "curated"],
     };
     setProfile(profile);
     onDone();
@@ -82,8 +87,9 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
 
         <div key={step} className="slide-up">
           {step === 0 && <Step1 data={data} update={update} />}
-          {step === 1 && <Step2 data={data} update={update} />}
-          {step === 2 && <StepLovesSwipe data={data} update={update} onFinish={finish} />}
+          {step === 1 && <StepBrandPref data={data} update={update} />}
+          {step === 2 && <Step2 data={data} update={update} />}
+          {step === 3 && <StepLovesSwipe data={data} update={update} onFinish={finish} />}
         </div>
       </div>
 
