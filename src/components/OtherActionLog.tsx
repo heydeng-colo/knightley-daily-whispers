@@ -50,24 +50,11 @@ function logTap(entry: TapLog) {
 export function OtherActionLog({ promptDay, phase, cycleId }: Props) {
   const [text, setText] = useState("");
   const [submitting, setSubmitting] = useState(false);
-  const [loggedToday, setLoggedToday] = useState(false);
   const [banner, setBanner] = useState<Suggestion | null>(null);
   const [alternatives, setAlternatives] = useState<Suggestion[]>([]);
   const [showAlts, setShowAlts] = useState(false);
   const [fallback, setFallback] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    const d = localStorage.getItem(LOGGED_TODAY_KEY);
-    if (d === todayISO()) setLoggedToday(true);
-  }, []);
-
-  const markDone = () => {
-    const date = todayISO();
-    localStorage.setItem(LOGGED_TODAY_KEY, date);
-    setLoggedToday(true);
-  };
 
   const submit = async () => {
     const t = text.trim();
