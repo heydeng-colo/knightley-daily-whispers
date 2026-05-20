@@ -28,6 +28,7 @@ function Index() {
   const ready = useClientReady();
   const v = useStorageVersion();
   const [tab, setTab] = useState<Tab>("home");
+  const [reviewIntake, setReviewIntake] = useState(false);
 
   if (!ready) {
     return <div className="min-h-dvh bg-background" />;
@@ -40,6 +41,10 @@ function Index() {
     return <Onboarding onDone={() => { /* triggers via storage event */ }} />;
   }
 
+  if (reviewIntake) {
+    return <Onboarding initialProfile={profile} onDone={() => setReviewIntake(false)} />;
+  }
+
   // referenced to subscribe to storage updates
   void v;
 
@@ -48,7 +53,7 @@ function Index() {
       <div className="mx-auto max-w-md px-5 pt-4 pb-28">
         {tab === "home" && <HomeScreen profile={profile} setProfile={saveProfile} logs={logs} />}
         {tab === "calendar" && <CalendarScreen profile={profile} logs={logs} />}
-        {tab === "profile" && <ProfileScreen profile={profile} setProfile={saveProfile} />}
+        {tab === "profile" && <ProfileScreen profile={profile} setProfile={saveProfile} onReviewIntake={() => setReviewIntake(true)} />}
         {tab === "help" && <HelpScreen />}
       </div>
       <BottomNav tab={tab} onChange={setTab} />

@@ -7,7 +7,7 @@ import { clearAll, currentMonthSpend, getSpend, nextPollDate, SPEND_TIER_LABEL, 
 import { BRAND_PREF_AFFINITIES, type BrandPreference } from "@/lib/affiliatePartners";
 import { useState } from "react";
 
-export function ProfileScreen({ profile, setProfile }: { profile: Profile; setProfile: (p: Profile | null) => void }) {
+export function ProfileScreen({ profile, setProfile, onReviewIntake }: { profile: Profile; setProfile: (p: Profile | null) => void; onReviewIntake?: () => void }) {
   const [p, setP] = useState<Profile>(profile);
   const [showLoves, setShowLoves] = useState(false);
 
@@ -141,12 +141,12 @@ export function ProfileScreen({ profile, setProfile }: { profile: Profile; setPr
         <Button
           variant="outline"
           onClick={() => {
-            if (confirm("Go back to the intake quiz? Your existing profile will be cleared.")) {
-              setProfile(null);
+            if (confirm("Review your intake quiz answers?")) {
+              onReviewIntake?.();
             }
           }}
         >
-          Retake intake quiz
+          Review intake quiz
         </Button>
       </Section>
 
