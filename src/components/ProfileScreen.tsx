@@ -141,12 +141,12 @@ export function ProfileScreen({ profile, setProfile, onReviewIntake }: { profile
         <Button
           variant="outline"
           onClick={() => {
-            if (confirm("Go back to the intake quiz? Your existing profile will be cleared.")) {
-              setProfile(null);
+            if (confirm("Review your intake quiz answers?")) {
+              onReviewIntake?.();
             }
           }}
         >
-          Retake intake quiz
+          Review intake quiz
         </Button>
       </Section>
 
