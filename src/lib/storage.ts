@@ -52,6 +52,8 @@ export interface Profile {
   monthlyBudgetCap?: number; // dollars; 0/undef = no cap
   miniQuiz?: Record<string, string>; // conversational quiz answers, served after day 3
   miniQuizDismissed?: boolean;
+  brandPreference?: "local" | "curated" | "elevated";
+  brandAffinities?: Record<string, 1 | 2 | 3>;
 }
 
 export interface PromptLog {

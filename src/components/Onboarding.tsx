@@ -4,10 +4,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { GOALS, LOVES_PART_1, LOVES_PART_2 } from "@/lib/loves";
 import { LOVE_IMAGES } from "@/lib/loveImages";
+import { BRAND_PREF_AFFINITIES, type BrandPreference } from "@/lib/affiliatePartners";
 import { setProfile, type Profile, type SpendTier } from "@/lib/storage";
 import { ArrowLeft, ArrowRight, Heart, Star, X as XIcon, Check } from "lucide-react";
 
-const STEPS = ["About", "Cycle", "Loves"];
+const STEPS = ["About", "Her World", "Cycle", "Loves"];
 
 
 export function Onboarding({ onDone }: { onDone: () => void }) {
@@ -23,6 +24,8 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
     notifications: true,
     smsPolling: true,
     spendTier: "50",
+    brandPreference: "curated",
+    brandAffinities: BRAND_PREF_AFFINITIES["curated"],
   });
 
   const update = (patch: Partial<Profile>) => setData((d) => ({ ...d, ...patch }));
@@ -55,6 +58,8 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
       smsPolling: data.smsPolling ?? true,
       spendTier: data.spendTier || "50",
       monthlyBudgetCap: data.monthlyBudgetCap,
+      brandPreference: data.brandPreference || "curated",
+      brandAffinities: data.brandAffinities || BRAND_PREF_AFFINITIES[data.brandPreference || "curated"],
     };
     setProfile(profile);
     onDone();
@@ -82,8 +87,9 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
 
         <div key={step} className="slide-up">
           {step === 0 && <Step1 data={data} update={update} />}
-          {step === 1 && <Step2 data={data} update={update} />}
-          {step === 2 && <StepLovesSwipe data={data} update={update} onFinish={finish} />}
+          {step === 1 && <StepBrandPref data={data} update={update} />}
+          {step === 2 && <Step2 data={data} update={update} />}
+          {step === 3 && <StepLovesSwipe data={data} update={update} onFinish={finish} />}
         </div>
       </div>
 
@@ -463,6 +469,50 @@ function StepLovesSwipe({
           </button>
         </div>
       )}
+    </div>
+  );
+}
+
+const BRAND_TILES: Array<{ value: BrandPreference; label: string; desc: string }> = [
+  { value: "local", label: "Classic", desc: "She loves what she loves — the neighborhood spot, the go-to place, the thing that's always right" },
+  { value: "curated", label: "Curated", desc: "She has taste and favorites — quality matters to her, and she notices when something is chosen with care" },
+  { value: "elevated", label: "Distinctive", desc: "She moves in a world where the details matter — the brand, the presentation, the experience itself" },
+];
+
+function StepBrandPref({ data, update }: { data: Partial<Profile>; update: (p: Partial<Profile>) => void }) {
+  const current = data.brandPreference || "curated";
+  const select = (value: BrandPreference) => {
+    update({ brandPreference: value, brandAffinities: BRAND_PREF_AFFINITIES[value] });
+  };
+  return (
+    <div className="space-y-5">
+      <h2 className="text-xl font-medium">Help us match recommendations to her world</h2>
+      <p className="text-sm text-muted-foreground">
+        Think about the places she shops, the restaurants she loves, the brands she notices. Which feels most like her?
+      </p>
+      <div className="space-y-3">
+        {BRAND_TILES.map((tile) => {
+          const on = current === tile.value;
+          return (
+            <button
+              key={tile.value}
+              onClick={() => select(tile.value)}
+              className={`w-full text-left rounded-2xl p-4 border transition ${
+                on ? "bg-gold/10 border-gold text-foreground" : "bg-surface border-border text-foreground hover:border-gold/40"
+              }`}
+            >
+              <div className="flex items-center justify-between mb-1">
+                <span className="text-base font-medium">{tile.label}</span>
+                {on && <Check className="h-4 w-4 text-gold" />}
+              </div>
+              <p className="text-xs text-muted-foreground leading-relaxed">{tile.desc}</p>
+            </button>
+          );
+        })}
+      </div>
+      <p className="text-[11px] italic text-muted-foreground/70 leading-relaxed">
+        This helps us suggest experiences that feel natural to her — not a spending guide. More isn't more if it doesn't fit her world.
+      </p>
     </div>
   );
 }

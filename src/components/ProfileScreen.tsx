@@ -4,6 +4,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { LOVES_PART_1, LOVES_PART_2 } from "@/lib/loves";
 import { clearAll, currentMonthSpend, getSpend, nextPollDate, SPEND_TIER_LABEL, type Profile, type SpendTier } from "@/lib/storage";
+import { BRAND_PREF_AFFINITIES, type BrandPreference } from "@/lib/affiliatePartners";
 import { useState } from "react";
 
 export function ProfileScreen({ profile, setProfile }: { profile: Profile; setProfile: (p: Profile) => void }) {
@@ -93,6 +94,31 @@ export function ProfileScreen({ profile, setProfile }: { profile: Profile; setPr
             onChange={(e) => update({ monthlyBudgetCap: e.target.value ? parseInt(e.target.value) : undefined })}
           />
         </Field>
+      </Section>
+
+      <Section title="Her World">
+        <p className="text-xs text-muted-foreground">How recommendations are tuned to her taste.</p>
+        <div className="space-y-2">
+          {([
+            { value: "local", label: "Classic", desc: "Neighborhood favorites, go-to spots" },
+            { value: "curated", label: "Curated", desc: "Taste and favorites, chosen with care" },
+            { value: "elevated", label: "Distinctive", desc: "Where the details matter" },
+          ] as Array<{ value: BrandPreference; label: string; desc: string }>).map((tile) => {
+            const on = (p.brandPreference || "curated") === tile.value;
+            return (
+              <button
+                key={tile.value}
+                onClick={() => update({ brandPreference: tile.value, brandAffinities: BRAND_PREF_AFFINITIES[tile.value] })}
+                className={`w-full text-left rounded-xl p-3 border transition ${
+                  on ? "bg-gold/10 border-gold" : "bg-surface-elevated border-border hover:border-gold/40"
+                }`}
+              >
+                <div className="text-sm font-medium">{tile.label}</div>
+                <div className="text-[11px] text-muted-foreground">{tile.desc}</div>
+              </button>
+            );
+          })}
+        </div>
       </Section>
 
       <Section title="Spend Dashboard">
