@@ -7,7 +7,7 @@ import { clearAll, currentMonthSpend, getSpend, nextPollDate, SPEND_TIER_LABEL, 
 import { BRAND_PREF_AFFINITIES, type BrandPreference } from "@/lib/affiliatePartners";
 import { useState } from "react";
 
-export function ProfileScreen({ profile, setProfile }: { profile: Profile; setProfile: (p: Profile) => void }) {
+export function ProfileScreen({ profile, setProfile }: { profile: Profile; setProfile: (p: Profile | null) => void }) {
   const [p, setP] = useState<Profile>(profile);
   const [showLoves, setShowLoves] = useState(false);
 
@@ -135,6 +135,19 @@ export function ProfileScreen({ profile, setProfile }: { profile: Profile; setPr
         <div className="rounded-2xl bg-surface-elevated p-3 border border-border text-sm leading-relaxed">
           Hi {p.herName} 👋 Quick anonymous check-in from Attuned — how is he doing lately? Reply 1–5. Also — is he getting your coffee right? You take: {p.coffeeOrder || "—"}. Reply Y or N.
         </div>
+      </Section>
+
+      <Section title="Intake quiz">
+        <Button
+          variant="outline"
+          onClick={() => {
+            if (confirm("Go back to the intake quiz? Your existing profile will be cleared.")) {
+              setProfile(null);
+            }
+          }}
+        >
+          Retake intake quiz
+        </Button>
       </Section>
 
       <Section title="Danger zone">
