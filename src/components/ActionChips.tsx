@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { buildActionUrl, fillTemplate, isPaidAction, actionCost, type ActionDef, type DayActionGroup } from "@/lib/actions";
 import { addSpend, setProfile as saveProfile, type Profile } from "@/lib/storage";
+import { getEligibleChips, ACTION_KIND_TO_BRAND_KEY } from "@/lib/affiliatePartners";
 import type { Phase } from "@/lib/cycle";
 
 interface Props {
@@ -55,7 +56,13 @@ export function ActionChips({ group, profile, cycleDay, phase, hidePaid, hidePai
   // Always show the full action set so chips remain visible after a tap —
   // guardrails surface as an informational note (hidePaidReason) rather than
   // removing pills the user may want to revisit.
-  const visible = group.actions.slice(0, 3);
+  const tagged = group.actions.map((a) => ({ ...a, brandKey: ACTION_KIND_TO_BRAND_KEY[a.kind] }));
+  const eligible = getEligibleChips(tagged, {
+    spendTier: profile.spendTier,
+    brandPreference: profile.brandPreference,
+    brandAffinities: profile.brandAffinities,
+  });
+  const visible = eligible.slice(0, 3);
 
   const openSmsModal = (a: ActionDef, p: Profile) => {
     setSmsAction(a);
