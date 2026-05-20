@@ -12,7 +12,7 @@ const STEPS = ["About", "Her World", "Cycle", "Loves"];
 
 
 export function Onboarding({ onDone, initialProfile }: { onDone: () => void; initialProfile?: Profile }) {
-  const [step, setStep] = useState(1); // Skip to "About" if reviewing
+  const [step, setStep] = useState(0);
   const [data, setData] = useState<Partial<Profile>>({
     children: [],
     cycleLength: 28,
