@@ -89,8 +89,11 @@ export function OtherActionLog({ promptDay, phase, cycleId }: Props) {
           suggestions?: Suggestion[];
           fallbackMessage?: string;
         };
+        console.log("[OtherBox] /api/v1/feedback/other response:", data);
         suggestions = Array.isArray(data.suggestions) ? data.suggestions : [];
         fallbackMessage = data.fallbackMessage || null;
+      } else {
+        console.log("[OtherBox] /api/v1/feedback/other non-OK response:", resp.status, await resp.text().catch(() => ""));
       }
     } catch { /* offline-friendly */ }
 
