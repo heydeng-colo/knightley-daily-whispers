@@ -32,7 +32,6 @@ interface TapLog {
 
 const STORAGE_KEY = "otherActions";
 const TAP_LOG_KEY = "attuned.otherTapLogs";
-const LOGGED_TODAY_KEY = "attuned.otherLoggedDate";
 
 function todayISO() {
   return new Date().toISOString().slice(0, 10);
