@@ -137,6 +137,19 @@ export function ProfileScreen({ profile, setProfile }: { profile: Profile; setPr
         </div>
       </Section>
 
+      <Section title="Intake quiz">
+        <Button
+          variant="outline"
+          onClick={() => {
+            if (confirm("Go back to the intake quiz? Your existing profile will be cleared.")) {
+              setProfile(null);
+            }
+          }}
+        >
+          Retake intake quiz
+        </Button>
+      </Section>
+
       <Section title="Danger zone">
         <Button
           variant="destructive"
