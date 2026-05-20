@@ -111,13 +111,11 @@ export function OtherActionLog({ promptDay, phase, cycleId }: Props) {
       setBanner(top);
       setAlternatives(rest);
       setShowAlts(false);
-      markDone();
       if (typeof window !== "undefined") {
         window.open(top.affiliateUrl, "_blank", "noopener");
       }
     } else {
       setFallback(fallbackMessage || "Noted — we'll factor this in. ✓");
-      markDone();
       setTimeout(() => setFallback(null), 2400);
     }
   };
