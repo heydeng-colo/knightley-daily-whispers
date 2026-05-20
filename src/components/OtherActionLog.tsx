@@ -197,7 +197,7 @@ export function OtherActionLog({ promptDay, phase, cycleId }: Props) {
             disabled={!text.trim() || submitting}
             className="shrink-0 text-[11px] font-medium px-3 py-1.5 rounded-full gold-gradient text-gold-foreground disabled:opacity-40 disabled:cursor-not-allowed"
           >
-            {submitting ? "…" : "Log it →"}
+            {submitting ? "…" : "Go"}
           </button>
         </div>
         {submitting ? (
