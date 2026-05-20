@@ -176,44 +176,41 @@ export function OtherActionLog({ promptDay, phase, cycleId }: Props) {
         </div>
       )}
 
-      {loggedToday && !banner && !fallback ? (
-        <p className="text-[11px] italic text-muted-foreground/70">✓ Done</p>
-      ) : fallback ? (
+      {fallback && (
         <p className="text-xs text-emerald-500 py-2">{fallback}</p>
-      ) : !banner ? (
-        <div>
-          <div className="flex items-center gap-2">
-            <input
-              ref={inputRef}
-              type="text"
-              value={text}
-              onChange={(e) => setText(e.target.value)}
-              onKeyDown={(e) => { if (e.key === "Enter") submit(); }}
-              disabled={submitting}
-              placeholder="Something else in mind? Tell us →"
-              className="flex-1 min-w-0 bg-surface-elevated border border-border rounded-full px-3 py-1.5 text-xs focus:outline-none focus:border-gold/50 transition disabled:opacity-60"
-            />
-            <button
-              type="button"
-              onClick={submit}
-              disabled={!text.trim() || submitting}
-              className="shrink-0 text-[11px] font-medium px-3 py-1.5 rounded-full gold-gradient text-gold-foreground disabled:opacity-40 disabled:cursor-not-allowed"
-            >
-              {submitting ? "…" : "Log it →"}
-            </button>
-          </div>
-          {submitting ? (
-            <p className="mt-1 text-[10px] italic text-muted-foreground/80 flex items-center gap-1.5">
-              <span className="inline-block h-1.5 w-1.5 rounded-full bg-gold animate-pulse" />
-              Finding the best option...
-            </p>
-          ) : (
-            <p className="mt-1 text-[9px] italic text-muted-foreground/60">
-              We'll remember this for future prompts.
-            </p>
-          )}
+      )}
+      <div>
+        <div className="flex items-center gap-2">
+          <input
+            ref={inputRef}
+            type="text"
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            onKeyDown={(e) => { if (e.key === "Enter") submit(); }}
+            disabled={submitting}
+            placeholder="Something else in mind? Tell us →"
+            className="flex-1 min-w-0 bg-surface-elevated border border-border rounded-full px-3 py-1.5 text-xs focus:outline-none focus:border-gold/50 transition disabled:opacity-60"
+          />
+          <button
+            type="button"
+            onClick={submit}
+            disabled={!text.trim() || submitting}
+            className="shrink-0 text-[11px] font-medium px-3 py-1.5 rounded-full gold-gradient text-gold-foreground disabled:opacity-40 disabled:cursor-not-allowed"
+          >
+            {submitting ? "…" : "Log it →"}
+          </button>
         </div>
-      ) : null}
+        {submitting ? (
+          <p className="mt-1 text-[10px] italic text-muted-foreground/80 flex items-center gap-1.5">
+            <span className="inline-block h-1.5 w-1.5 rounded-full bg-gold animate-pulse" />
+            Finding the best option...
+          </p>
+        ) : (
+          <p className="mt-1 text-[9px] italic text-muted-foreground/60">
+            We'll remember this for future prompts.
+          </p>
+        )}
+      </div>
     </div>
   );
 }
