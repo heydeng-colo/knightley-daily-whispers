@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import type { Phase } from "@/lib/cycle";
 
 interface Props {
@@ -32,7 +32,6 @@ interface TapLog {
 
 const STORAGE_KEY = "otherActions";
 const TAP_LOG_KEY = "attuned.otherTapLogs";
-const LOGGED_TODAY_KEY = "attuned.otherLoggedDate";
 
 function todayISO() {
   return new Date().toISOString().slice(0, 10);
@@ -50,24 +49,11 @@ function logTap(entry: TapLog) {
 export function OtherActionLog({ promptDay, phase, cycleId }: Props) {
   const [text, setText] = useState("");
   const [submitting, setSubmitting] = useState(false);
-  const [loggedToday, setLoggedToday] = useState(false);
   const [banner, setBanner] = useState<Suggestion | null>(null);
   const [alternatives, setAlternatives] = useState<Suggestion[]>([]);
   const [showAlts, setShowAlts] = useState(false);
   const [fallback, setFallback] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    const d = localStorage.getItem(LOGGED_TODAY_KEY);
-    if (d === todayISO()) setLoggedToday(true);
-  }, []);
-
-  const markDone = () => {
-    const date = todayISO();
-    localStorage.setItem(LOGGED_TODAY_KEY, date);
-    setLoggedToday(true);
-  };
 
   const submit = async () => {
     const t = text.trim();
@@ -124,13 +110,11 @@ export function OtherActionLog({ promptDay, phase, cycleId }: Props) {
       setBanner(top);
       setAlternatives(rest);
       setShowAlts(false);
-      markDone();
       if (typeof window !== "undefined") {
         window.open(top.affiliateUrl, "_blank", "noopener");
       }
     } else {
       setFallback(fallbackMessage || "Noted — we'll factor this in. ✓");
-      markDone();
       setTimeout(() => setFallback(null), 2400);
     }
   };
@@ -192,44 +176,41 @@ export function OtherActionLog({ promptDay, phase, cycleId }: Props) {
         </div>
       )}
 
-      {loggedToday && !banner && !fallback ? (
-        <p className="text-[11px] italic text-muted-foreground/70">✓ Done</p>
-      ) : fallback ? (
+      {fallback && (
         <p className="text-xs text-emerald-500 py-2">{fallback}</p>
-      ) : !banner ? (
-        <div>
-          <div className="flex items-center gap-2">
-            <input
-              ref={inputRef}
-              type="text"
-              value={text}
-              onChange={(e) => setText(e.target.value)}
-              onKeyDown={(e) => { if (e.key === "Enter") submit(); }}
-              disabled={submitting}
-              placeholder="Something else in mind? Tell us →"
-              className="flex-1 min-w-0 bg-surface-elevated border border-border rounded-full px-3 py-1.5 text-xs focus:outline-none focus:border-gold/50 transition disabled:opacity-60"
-            />
-            <button
-              type="button"
-              onClick={submit}
-              disabled={!text.trim() || submitting}
-              className="shrink-0 text-[11px] font-medium px-3 py-1.5 rounded-full gold-gradient text-gold-foreground disabled:opacity-40 disabled:cursor-not-allowed"
-            >
-              {submitting ? "…" : "Log it →"}
-            </button>
-          </div>
-          {submitting ? (
-            <p className="mt-1 text-[10px] italic text-muted-foreground/80 flex items-center gap-1.5">
-              <span className="inline-block h-1.5 w-1.5 rounded-full bg-gold animate-pulse" />
-              Finding the best option...
-            </p>
-          ) : (
-            <p className="mt-1 text-[9px] italic text-muted-foreground/60">
-              We'll remember this for future prompts.
-            </p>
-          )}
+      )}
+      <div>
+        <div className="flex items-center gap-2">
+          <input
+            ref={inputRef}
+            type="text"
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            onKeyDown={(e) => { if (e.key === "Enter") submit(); }}
+            disabled={submitting}
+            placeholder="Something else in mind? Tell us →"
+            className="flex-1 min-w-0 bg-surface-elevated border border-border rounded-full px-3 py-1.5 text-xs focus:outline-none focus:border-gold/50 transition disabled:opacity-60"
+          />
+          <button
+            type="button"
+            onClick={submit}
+            disabled={!text.trim() || submitting}
+            className="shrink-0 text-[11px] font-medium px-3 py-1.5 rounded-full gold-gradient text-gold-foreground disabled:opacity-40 disabled:cursor-not-allowed"
+          >
+            {submitting ? "…" : "Log it →"}
+          </button>
         </div>
-      ) : null}
+        {submitting ? (
+          <p className="mt-1 text-[10px] italic text-muted-foreground/80 flex items-center gap-1.5">
+            <span className="inline-block h-1.5 w-1.5 rounded-full bg-gold animate-pulse" />
+            Finding the best option...
+          </p>
+        ) : (
+          <p className="mt-1 text-[9px] italic text-muted-foreground/60">
+            We'll remember this for future prompts.
+          </p>
+        )}
+      </div>
     </div>
   );
 }
