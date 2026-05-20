@@ -11,8 +11,8 @@ import { ArrowLeft, ArrowRight, Heart, Star, X as XIcon, Check } from "lucide-re
 const STEPS = ["About", "Her World", "Cycle", "Loves"];
 
 
-export function Onboarding({ onDone }: { onDone: () => void }) {
-  const [step, setStep] = useState(0);
+export function Onboarding({ onDone, initialProfile }: { onDone: () => void; initialProfile?: Profile }) {
+  const [step, setStep] = useState(1); // Skip to "About" if reviewing
   const [data, setData] = useState<Partial<Profile>>({
     children: [],
     cycleLength: 28,
@@ -26,6 +26,7 @@ export function Onboarding({ onDone }: { onDone: () => void }) {
     spendTier: "50",
     brandPreference: "curated",
     brandAffinities: BRAND_PREF_AFFINITIES["curated"],
+    ...initialProfile,
   });
 
   const update = (patch: Partial<Profile>) => setData((d) => ({ ...d, ...patch }));
