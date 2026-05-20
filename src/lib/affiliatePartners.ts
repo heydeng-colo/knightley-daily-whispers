@@ -125,20 +125,29 @@ export function getEligibleChips<T extends ChipLike>(dayChips: T[], user: ChipUs
     return true;
   });
 
-  // Fallback: if filter removed all non-utility chips, restore the highest-tier
-  // Classic (tier 1) chip available for the day.
+  // Fallback: if filter removed all non-utility chips, restore the lowest-tier
+  // non-utility chips available for the day so users always see actionable
+  // chips (prefer tier 1, otherwise the next-lowest tier present).
   const hasNonUtility = filtered.some((c) => {
     if (!c.brandKey) return false;
     const p = AFFILIATE_PARTNERS[c.brandKey];
     return p && !p.utilityChip && !p.comingSoon;
   });
   if (!hasNonUtility) {
-    const fallback = dayChips.find((c) => {
+    const candidates = dayChips.filter((c) => {
       if (!c.brandKey) return false;
       const p = AFFILIATE_PARTNERS[c.brandKey];
-      return !!p && !p.utilityChip && !p.comingSoon && p.brandTier === 1;
+      return !!p && !p.utilityChip && !p.comingSoon && p.brandTier != null;
     });
-    if (fallback && !filtered.includes(fallback)) return [...filtered, fallback];
+    if (candidates.length) {
+      const minTier = Math.min(
+        ...candidates.map((c) => AFFILIATE_PARTNERS[c.brandKey!].brandTier as number),
+      );
+      const restored = candidates.filter(
+        (c) => AFFILIATE_PARTNERS[c.brandKey!].brandTier === minTier,
+      );
+      return [...filtered, ...restored.filter((c) => !filtered.includes(c))];
+    }
   }
   return filtered;
 }
