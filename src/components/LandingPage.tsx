@@ -321,7 +321,7 @@ export function LandingPage({ onStart }: { onStart: () => void }) {
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "1fr 1fr 1fr",
+            gridTemplateColumns: "1fr",
             gap: 16,
           }}
         >
