@@ -133,6 +133,9 @@ function Step1({ data, update }: { data: Partial<Profile>; update: (p: Partial<P
   return (
     <div className="space-y-5">
       <h2 className="text-xl font-medium">About your relationship</h2>
+      <p className="text-xs text-muted-foreground leading-relaxed">
+        At Attuned, we value your privacy. We only ask for needed info, and even then, it's optional. We never share your data, with anyone.
+      </p>
       <Field label="Her first initial (the first letter of her first name)">
         <Input
           value={data.herName || ""}
@@ -246,7 +249,7 @@ function Step2({ data, update }: { data: Partial<Profile>; update: (p: Partial<P
   return (
     <div className="space-y-6">
       <h2 className="text-xl font-medium">Her cycle</h2>
-      <Field label="When did her last period start?">
+      <Field label="When did her last period start? If you don't know, guess.">
         <Input
           type="date"
           value={data.lastPeriodStart || ""}
@@ -254,7 +257,7 @@ function Step2({ data, update }: { data: Partial<Profile>; update: (p: Partial<P
           max={new Date().toISOString().slice(0, 10)}
         />
       </Field>
-      <Field label={`Cycle length: ${length} days`}>
+      <Field label={`How long is her typical cycle? If you don't know, guess or leave the default. (${length} days)`}>
         <input
           type="range"
           min={21}
