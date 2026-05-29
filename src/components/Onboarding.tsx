@@ -433,7 +433,7 @@ function StepLovesSwipe({
             </p>
             <p className="text-xs text-muted-foreground mt-1">We'll keep learning from your daily feedback.</p>
             <Button className="mt-4 gold-gradient text-gold-foreground" onClick={onFinish}>
-              Finish Setup
+              Continue
             </Button>
           </div>
         ) : (
