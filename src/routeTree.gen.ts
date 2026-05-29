@@ -9,11 +9,17 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as WelcomeRouteImport } from './routes/welcome'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ApiLovesImageRouteImport } from './routes/api/loves/image'
 import { Route as ApiV1FeedbackOtherRouteImport } from './routes/api/v1/feedback/other'
 
+const WelcomeRoute = WelcomeRouteImport.update({
+  id: '/welcome',
+  path: '/welcome',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const OnboardingRoute = OnboardingRouteImport.update({
   id: '/onboarding',
   path: '/onboarding',
@@ -38,12 +44,14 @@ const ApiV1FeedbackOtherRoute = ApiV1FeedbackOtherRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/onboarding': typeof OnboardingRoute
+  '/welcome': typeof WelcomeRoute
   '/api/loves/image': typeof ApiLovesImageRoute
   '/api/v1/feedback/other': typeof ApiV1FeedbackOtherRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/onboarding': typeof OnboardingRoute
+  '/welcome': typeof WelcomeRoute
   '/api/loves/image': typeof ApiLovesImageRoute
   '/api/v1/feedback/other': typeof ApiV1FeedbackOtherRoute
 }
@@ -51,18 +59,30 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/onboarding': typeof OnboardingRoute
+  '/welcome': typeof WelcomeRoute
   '/api/loves/image': typeof ApiLovesImageRoute
   '/api/v1/feedback/other': typeof ApiV1FeedbackOtherRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/onboarding' | '/api/loves/image' | '/api/v1/feedback/other'
+  fullPaths:
+    | '/'
+    | '/onboarding'
+    | '/welcome'
+    | '/api/loves/image'
+    | '/api/v1/feedback/other'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/onboarding' | '/api/loves/image' | '/api/v1/feedback/other'
+  to:
+    | '/'
+    | '/onboarding'
+    | '/welcome'
+    | '/api/loves/image'
+    | '/api/v1/feedback/other'
   id:
     | '__root__'
     | '/'
     | '/onboarding'
+    | '/welcome'
     | '/api/loves/image'
     | '/api/v1/feedback/other'
   fileRoutesById: FileRoutesById
@@ -70,12 +90,20 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   OnboardingRoute: typeof OnboardingRoute
+  WelcomeRoute: typeof WelcomeRoute
   ApiLovesImageRoute: typeof ApiLovesImageRoute
   ApiV1FeedbackOtherRoute: typeof ApiV1FeedbackOtherRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/welcome': {
+      id: '/welcome'
+      path: '/welcome'
+      fullPath: '/welcome'
+      preLoaderRoute: typeof WelcomeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/onboarding': {
       id: '/onboarding'
       path: '/onboarding'
@@ -110,9 +138,20 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   OnboardingRoute: OnboardingRoute,
+  WelcomeRoute: WelcomeRoute,
   ApiLovesImageRoute: ApiLovesImageRoute,
   ApiV1FeedbackOtherRoute: ApiV1FeedbackOtherRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
