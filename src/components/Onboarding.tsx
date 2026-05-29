@@ -34,8 +34,12 @@ export function Onboarding({ onDone, initialProfile }: { onDone: () => void; ini
   const next = () => setStep((s) => Math.min(STEPS.length - 1, s + 1));
   const back = () => setStep((s) => Math.max(0, s - 1));
 
+  const emailValid = !!(data.email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email.trim()));
+
   const finish = () => {
+    if (!emailValid) return;
     const profile: Profile = {
+      email: (data.email || "").trim(),
       herName: data.herName || "",
       herBirthday: data.herBirthday || "",
       anniversary: data.anniversary,
