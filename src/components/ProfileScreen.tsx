@@ -1,3 +1,4 @@
+import { useNavigate } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -8,6 +9,7 @@ import { BRAND_PREF_AFFINITIES, type BrandPreference } from "@/lib/affiliatePart
 import { useState } from "react";
 
 export function ProfileScreen({ profile, setProfile, onReviewIntake }: { profile: Profile; setProfile: (p: Profile | null) => void; onReviewIntake?: () => void }) {
+  const navigate = useNavigate();
   const [p, setP] = useState<Profile>(profile);
   const [showLoves, setShowLoves] = useState(false);
 
@@ -141,12 +143,12 @@ export function ProfileScreen({ profile, setProfile, onReviewIntake }: { profile
         <Button
           variant="outline"
           onClick={() => {
-            if (confirm("Review your intake quiz answers?")) {
-              onReviewIntake?.();
+            if (confirm("Retake your intake quiz?")) {
+              navigate({ to: "/welcome" });
             }
           }}
         >
-          Review intake quiz
+          Retake intake quiz
         </Button>
       </Section>
 
