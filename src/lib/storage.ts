@@ -25,6 +25,7 @@ export interface SpendEntry {
 }
 
 export interface Profile {
+  email?: string;
   herName: string;
   herBirthday: string;
   anniversary?: string;
