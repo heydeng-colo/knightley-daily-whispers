@@ -191,11 +191,12 @@ export function LandingPage({ onStart }: { onStart: () => void }) {
       >
         <div
           style={{
-            display: "grid",
-            gridTemplateColumns: "1fr 1fr",
-            gap: 52,
-            alignItems: "center",
+            display: "flex",
+            flexDirection: "column",
+            gap: 40,
+            alignItems: "flex-start",
             minHeight: "calc(100vh - 200px)",
+            justifyContent: "center",
           }}
         >
           <div>
@@ -251,13 +252,14 @@ export function LandingPage({ onStart }: { onStart: () => void }) {
           <div
             style={{
               borderLeft: "1px solid rgba(201,168,76,0.22)",
-              paddingLeft: 44,
+              paddingLeft: 24,
+              alignSelf: "stretch",
             }}
           >
             <p
               style={{
                 fontFamily: SERIF,
-                fontSize: 24,
+                fontSize: 22,
                 fontStyle: "italic",
                 color: C.gold2,
                 lineHeight: 1.6,
@@ -319,7 +321,7 @@ export function LandingPage({ onStart }: { onStart: () => void }) {
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "1fr 1fr 1fr",
+            gridTemplateColumns: "1fr",
             gap: 16,
           }}
         >
@@ -375,7 +377,7 @@ export function LandingPage({ onStart }: { onStart: () => void }) {
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "1fr 1fr 1fr",
+            gridTemplateColumns: "1fr",
             gap: 16,
             marginBottom: 48,
           }}
