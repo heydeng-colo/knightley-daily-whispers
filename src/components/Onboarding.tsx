@@ -8,7 +8,7 @@ import { BRAND_PREF_AFFINITIES, type BrandPreference } from "@/lib/affiliatePart
 import { setProfile, type Profile, type SpendTier } from "@/lib/storage";
 import { ArrowLeft, ArrowRight, Heart, Star, X as XIcon, Check } from "lucide-react";
 
-const STEPS = ["About", "Her World", "Cycle", "Loves"];
+const STEPS = ["About", "Her World", "Cycle", "Loves", "Account"];
 
 
 export function Onboarding({ onDone, initialProfile }: { onDone: () => void; initialProfile?: Profile }) {
