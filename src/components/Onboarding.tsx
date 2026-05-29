@@ -94,7 +94,8 @@ export function Onboarding({ onDone, initialProfile }: { onDone: () => void; ini
           {step === 0 && <Step1 data={data} update={update} />}
           {step === 1 && <StepBrandPref data={data} update={update} />}
           {step === 2 && <Step2 data={data} update={update} />}
-          {step === 3 && <StepLovesSwipe data={data} update={update} onFinish={finish} />}
+          {step === 3 && <StepLovesSwipe data={data} update={update} onFinish={next} />}
+          {step === 4 && <StepAccount data={data} update={update} />}
         </div>
       </div>
 
@@ -110,12 +111,40 @@ export function Onboarding({ onDone, initialProfile }: { onDone: () => void; ini
               Next <ArrowRight className="h-4 w-4 ml-1" />
             </Button>
           ) : (
-            <Button className="flex-1 gold-gradient text-gold-foreground hover:opacity-90" onClick={finish}>
-              Finish Setup
+            <Button
+              className="flex-1 gold-gradient text-gold-foreground hover:opacity-90"
+              onClick={finish}
+              disabled={!emailValid}
+            >
+              Create Account
             </Button>
           )}
         </div>
       </div>
+    </div>
+  );
+}
+
+function StepAccount({ data, update }: { data: Partial<Profile>; update: (p: Partial<Profile>) => void }) {
+  return (
+    <div className="space-y-5">
+      <h2 className="text-xl font-medium">One last thing — your email</h2>
+      <p className="text-sm text-muted-foreground leading-relaxed">
+        We'll use this to save your setup and send your daily prompt. No spam, no sharing — ever.
+      </p>
+      <Field label="Your email address">
+        <Input
+          type="email"
+          inputMode="email"
+          autoComplete="email"
+          value={data.email || ""}
+          onChange={(e) => update({ email: e.target.value })}
+          placeholder="you@example.com"
+        />
+      </Field>
+      <p className="text-[11px] italic text-muted-foreground/70 leading-relaxed">
+        Tap Create Account below to finish.
+      </p>
     </div>
   );
 }
