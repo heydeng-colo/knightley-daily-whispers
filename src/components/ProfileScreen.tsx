@@ -9,6 +9,7 @@ import { BRAND_PREF_AFFINITIES, type BrandPreference } from "@/lib/affiliatePart
 import { useState } from "react";
 
 export function ProfileScreen({ profile, setProfile, onReviewIntake }: { profile: Profile; setProfile: (p: Profile | null) => void; onReviewIntake?: () => void }) {
+  const navigate = useNavigate();
   const [p, setP] = useState<Profile>(profile);
   const [showLoves, setShowLoves] = useState(false);
 
