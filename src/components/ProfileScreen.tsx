@@ -143,12 +143,12 @@ export function ProfileScreen({ profile, setProfile, onReviewIntake }: { profile
         <Button
           variant="outline"
           onClick={() => {
-            if (confirm("Review your intake quiz answers?")) {
-              onReviewIntake?.();
+            if (confirm("Retake your intake quiz?")) {
+              navigate({ to: "/welcome" });
             }
           }}
         >
-          Review intake quiz
+          Retake intake quiz
         </Button>
       </Section>
 
