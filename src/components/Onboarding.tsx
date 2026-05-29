@@ -133,14 +133,35 @@ function Step1({ data, update }: { data: Partial<Profile>; update: (p: Partial<P
   return (
     <div className="space-y-5">
       <h2 className="text-xl font-medium">About your relationship</h2>
-      <Field label="Her name">
-        <Input value={data.herName || ""} onChange={(e) => update({ herName: e.target.value })} placeholder="e.g. Sarah" />
+      <Field label="Her first initial (the first letter of her first name)">
+        <Input
+          value={data.herName || ""}
+          onChange={(e) => update({ herName: e.target.value.slice(0, 1).toUpperCase() })}
+          placeholder='e.g. "S"'
+          maxLength={1}
+        />
       </Field>
-      <Field label="Her birthday">
-        <Input type="date" value={data.herBirthday || ""} onChange={(e) => update({ herBirthday: e.target.value })} />
+      <Field label="Her birthday (month and day)">
+        <Input
+          type="text"
+          inputMode="numeric"
+          value={data.herBirthday || ""}
+          onChange={(e) => update({ herBirthday: e.target.value })}
+          placeholder="MM-DD"
+          maxLength={5}
+          pattern="\d{2}-\d{2}"
+        />
       </Field>
-      <Field label="Your anniversary (optional)">
-        <Input type="date" value={data.anniversary || ""} onChange={(e) => update({ anniversary: e.target.value })} />
+      <Field label="Your anniversary (month and day, optional)">
+        <Input
+          type="text"
+          inputMode="numeric"
+          value={data.anniversary || ""}
+          onChange={(e) => update({ anniversary: e.target.value })}
+          placeholder="MM-DD"
+          maxLength={5}
+          pattern="\d{2}-\d{2}"
+        />
       </Field>
 
       <Field label="Relationship stage">
