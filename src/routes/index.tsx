@@ -1,11 +1,12 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { Onboarding } from "@/components/Onboarding";
 import { BottomNav, type Tab } from "@/components/BottomNav";
 import { HomeScreen } from "@/components/HomeScreen";
 import { CalendarScreen } from "@/components/CalendarScreen";
 import { ProfileScreen } from "@/components/ProfileScreen";
 import { HelpScreen } from "@/components/HelpScreen";
+import { Onboarding } from "@/components/Onboarding";
+import { LandingPage } from "@/components/LandingPage";
 import {
   getProfile,
   getLogs,
@@ -17,8 +18,8 @@ import {
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Attuned — Daily relationship guidance" },
-      { name: "description", content: "A calm, daily prompt to help you show up for her — attuned to her cycle." },
+      { title: "Attuned — Show up for her, every day" },
+      { name: "description", content: "One daily prompt, timed to her cycle. Built by men, for men, for real-life relationships." },
     ],
   }),
   component: Index,
@@ -27,6 +28,7 @@ export const Route = createFileRoute("/")({
 function Index() {
   const ready = useClientReady();
   const v = useStorageVersion();
+  const navigate = useNavigate();
   const [tab, setTab] = useState<Tab>("home");
   const [reviewIntake, setReviewIntake] = useState(false);
 
@@ -38,14 +40,13 @@ function Index() {
   const logs = getLogs();
 
   if (!profile) {
-    return <Onboarding onDone={() => { /* triggers via storage event */ }} />;
+    return <LandingPage onStart={() => navigate({ to: "/onboarding" })} />;
   }
 
   if (reviewIntake) {
     return <Onboarding initialProfile={profile} onDone={() => setReviewIntake(false)} />;
   }
 
-  // referenced to subscribe to storage updates
   void v;
 
   return (
