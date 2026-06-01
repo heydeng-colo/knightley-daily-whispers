@@ -369,12 +369,6 @@ function FreeAlternativeRow({ text, cycleDay, phase }: FreeAlternativeRowProps) 
     });
   };
 
-  const onKey = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter" || e.key === " ") {
-      e.preventDefault();
-      toggle();
-    }
-  };
 
   return (
     <div
