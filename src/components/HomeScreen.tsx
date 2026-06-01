@@ -213,14 +213,28 @@ export function HomeScreen({ profile, setProfile, logs }: Props) {
           ? "linear-gradient(160deg, color-mix(in oklab, var(--gold) 14%, var(--surface)), var(--surface))"
           : `linear-gradient(160deg, color-mix(in oklab, ${meta.color} 28%, var(--surface)), var(--surface))` }}
       >
-        <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full opacity-30 blur-3xl" style={{ background: meta.color }} />
+        <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full opacity-30 blur-3xl" style={{ background: isPaused ? "var(--gold)" : meta.color }} />
         <p className="text-sm text-muted-foreground">{profile.herName ? `${profile.herName}'s Cycle` : "Her Cycle"}</p>
-        <p className="text-5xl font-semibold mt-1">Day {day}</p>
-        <div className="flex items-center gap-2 mt-3">
-          <span className="h-2.5 w-2.5 rounded-full" style={{ background: meta.color }} />
-          <span className="text-sm font-medium">{meta.name}</span>
-        </div>
-        <p className="text-sm text-muted-foreground mt-2 leading-snug">{meta.description}</p>
+        <p className="text-5xl font-semibold mt-1">{isPaused ? "Paused" : `Day ${day}`}</p>
+        {isPaused ? (
+          <>
+            <div className="flex items-center gap-2 mt-3">
+              <Pause className="h-3.5 w-3.5 text-gold" />
+              <span className="text-sm font-medium text-gold">Cycle paused</span>
+            </div>
+            <p className="text-sm text-muted-foreground mt-2 leading-snug">
+              Prompts continue on a steady relationship rhythm. Resume any time to re-sync to her cycle.
+            </p>
+          </>
+        ) : (
+          <>
+            <div className="flex items-center gap-2 mt-3">
+              <span className="h-2.5 w-2.5 rounded-full" style={{ background: meta.color }} />
+              <span className="text-sm font-medium">{meta.name}</span>
+            </div>
+            <p className="text-sm text-muted-foreground mt-2 leading-snug">{meta.description}</p>
+          </>
+        )}
       </div>
 
       {/* Daily prompt */}
