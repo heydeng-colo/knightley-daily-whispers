@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { LOVES_PART_1, LOVES_PART_2 } from "@/lib/loves";
-import { clearAll, currentMonthSpend, getSpend, nextPollDate, SPEND_TIER_LABEL, type Profile, type SpendTier } from "@/lib/storage";
+import { clearAll, currentMonthSpend, getSpend, nextPollDate, SPEND_TIER_LABEL, CYCLE_PAUSE_REASON_LABEL, type Profile, type SpendTier } from "@/lib/storage";
 import { BRAND_PREF_AFFINITIES, type BrandPreference } from "@/lib/affiliatePartners";
 import { useState } from "react";
 
@@ -12,6 +12,9 @@ export function ProfileScreen({ profile, setProfile, onReviewIntake }: { profile
   const navigate = useNavigate();
   const [p, setP] = useState<Profile>(profile);
   const [showLoves, setShowLoves] = useState(false);
+  const [resumeOpen, setResumeOpen] = useState(false);
+  const [resumeDate, setResumeDate] = useState(new Date().toISOString().slice(0, 10));
+  const isPaused = p.cycleMode === "paused";
 
   const update = (patch: Partial<Profile>) => {
     const next = { ...p, ...patch };
@@ -138,6 +141,66 @@ export function ProfileScreen({ profile, setProfile, onReviewIntake }: { profile
           Hi {p.herName} 👋 Quick anonymous check-in from Attuned — how is he doing lately? Reply 1–5. Also — is he getting your coffee right? You take: {p.coffeeOrder || "—"}. Reply Y or N.
         </div>
       </Section>
+
+      <Section title="Attunement Mode">
+        <div className="flex items-center gap-2">
+          <span
+            className="inline-block h-2.5 w-2.5 rounded-full"
+            style={{ background: isPaused ? "var(--gold)" : "rgb(74,222,128)" }}
+          />
+          <span className="text-sm">
+            {isPaused ? "Cycle paused" : "Cycle attunement active"}
+          </span>
+          {isPaused && p.cyclePauseReason && (
+            <span className="text-xs text-muted-foreground">({CYCLE_PAUSE_REASON_LABEL[p.cyclePauseReason]})</span>
+          )}
+        </div>
+        <button
+          onClick={() => {
+            if (isPaused) {
+              setResumeOpen(true);
+            } else {
+              navigate({ to: "/pause-cycle" });
+            }
+          }}
+          className="text-sm text-gold hover:underline"
+        >
+          {isPaused ? "Resume cycle attunement →" : "Pause cycle attunement →"}
+        </button>
+      </Section>
+
+      {resumeOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60 px-4"
+          onClick={() => setResumeOpen(false)}
+        >
+          <div
+            className="w-full max-w-md rounded-3xl bg-surface border border-border p-5 space-y-4"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h2 className="text-lg text-white" style={{ fontFamily: "Georgia, serif" }}>Resume cycle attunement?</h2>
+            <p className="text-sm text-muted-foreground">
+              Enter her last period date and Attuned will re-sync to her cycle. Your prompt history and feedback will be preserved.
+            </p>
+            <div className="space-y-1.5">
+              <Label className="text-xs text-muted-foreground">Her last period date</Label>
+              <Input type="date" value={resumeDate} max={new Date().toISOString().slice(0, 10)} onChange={(e) => setResumeDate(e.target.value)} />
+            </div>
+            <div className="flex justify-end gap-2 pt-2">
+              <button onClick={() => setResumeOpen(false)} className="text-sm text-muted-foreground px-3 py-2">Cancel</button>
+              <Button
+                className="gold-gradient text-gold-foreground"
+                onClick={() => {
+                  update({ cycleMode: "active", cyclePauseReason: null, lastPeriodStart: resumeDate });
+                  setResumeOpen(false);
+                }}
+              >
+                Resume →
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <Section title="Intake quiz">
         <Button

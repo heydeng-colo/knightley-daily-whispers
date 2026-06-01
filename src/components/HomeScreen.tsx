@@ -17,7 +17,9 @@ import {
   type Profile,
   type PromptLog,
 } from "@/lib/storage";
-import { Droplet, Flame, ThumbsUp, X as XIcon, Gift } from "lucide-react";
+import { Droplet, Flame, ThumbsUp, X as XIcon, Gift, Pause, Play } from "lucide-react";
+import { useNavigate } from "@tanstack/react-router";
+
 import { ActionChips } from "@/components/ActionChips";
 import { OtherActionLog } from "@/components/OtherActionLog";
 import { MiniQuiz } from "@/components/MiniQuiz";
@@ -31,11 +33,15 @@ interface Props {
 }
 
 export function HomeScreen({ profile, setProfile, logs }: Props) {
+  const navigate = useNavigate();
   const [resetOpen, setResetOpen] = useState(false);
   const [resetDate, setResetDate] = useState(todayISO());
+  const [resumeOpen, setResumeOpen] = useState(false);
+  const [resumeDate, setResumeDate] = useState(todayISO());
   const [showAll, setShowAll] = useState(false);
   const [noteDraft, setNoteDraft] = useState<string | null>(null);
   const [noteSaved, setNoteSaved] = useState(false);
+  const isPaused = profile.cycleMode === "paused";
 
   const today = todayISO();
   // Default the homescreen to Day 14 (peak ovulation) so the example
@@ -157,7 +163,7 @@ export function HomeScreen({ profile, setProfile, logs }: Props) {
       </div>
 
       {/* Reset cycle pill */}
-      <div className="flex justify-end -mt-2">
+      <div className="flex justify-end -mt-2 gap-2">
         <button
           onClick={() => setResetOpen(true)}
           className="inline-flex items-center gap-1.5 rounded-full bg-surface border border-border px-3 py-1.5 text-[11px] text-muted-foreground hover:text-gold hover:border-gold/40 transition"
@@ -166,21 +172,69 @@ export function HomeScreen({ profile, setProfile, logs }: Props) {
           <Droplet className="h-3 w-3" />
           Reset Her Cycle
         </button>
+        {isPaused ? (
+          <button
+            onClick={() => setResumeOpen(true)}
+            className="inline-flex items-center gap-1.5 rounded-full border border-gold/50 px-3 py-1.5 text-[11px] text-gold-foreground transition"
+            style={{ background: "var(--gold)" }}
+            aria-label="Resume her cycle"
+          >
+            <Play className="h-3 w-3" />
+            Resume Her Cycle
+          </button>
+        ) : (
+          <button
+            onClick={() => navigate({ to: "/pause-cycle" })}
+            className="inline-flex items-center gap-1.5 rounded-full bg-surface border border-border px-3 py-1.5 text-[11px] text-muted-foreground hover:text-gold hover:border-gold/40 transition"
+            aria-label="Pause her cycle"
+          >
+            <Pause className="h-3 w-3" />
+            Pause Her Cycle
+          </button>
+        )}
       </div>
+
+      {isPaused && (
+        <div className="flex justify-center -mt-1">
+          <span
+            className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] text-gold"
+            style={{ background: "rgba(201,168,76,0.12)", border: "1px solid rgba(201,168,76,0.35)" }}
+          >
+            <Pause className="h-3 w-3" />
+            Cycle paused
+          </span>
+        </div>
+      )}
 
       {/* Phase card */}
       <div
         className="rounded-3xl p-6 border border-border slide-up relative overflow-hidden"
-        style={{ background: `linear-gradient(160deg, color-mix(in oklab, ${meta.color} 28%, var(--surface)), var(--surface))` }}
+        style={{ background: isPaused
+          ? "linear-gradient(160deg, color-mix(in oklab, var(--gold) 14%, var(--surface)), var(--surface))"
+          : `linear-gradient(160deg, color-mix(in oklab, ${meta.color} 28%, var(--surface)), var(--surface))` }}
       >
-        <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full opacity-30 blur-3xl" style={{ background: meta.color }} />
+        <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full opacity-30 blur-3xl" style={{ background: isPaused ? "var(--gold)" : meta.color }} />
         <p className="text-sm text-muted-foreground">{profile.herName ? `${profile.herName}'s Cycle` : "Her Cycle"}</p>
-        <p className="text-5xl font-semibold mt-1">Day {day}</p>
-        <div className="flex items-center gap-2 mt-3">
-          <span className="h-2.5 w-2.5 rounded-full" style={{ background: meta.color }} />
-          <span className="text-sm font-medium">{meta.name}</span>
-        </div>
-        <p className="text-sm text-muted-foreground mt-2 leading-snug">{meta.description}</p>
+        <p className="text-5xl font-semibold mt-1">{isPaused ? "Paused" : `Day ${day}`}</p>
+        {isPaused ? (
+          <>
+            <div className="flex items-center gap-2 mt-3">
+              <Pause className="h-3.5 w-3.5 text-gold" />
+              <span className="text-sm font-medium text-gold">Cycle paused</span>
+            </div>
+            <p className="text-sm text-muted-foreground mt-2 leading-snug">
+              Prompts continue on a steady relationship rhythm. Resume any time to re-sync to her cycle.
+            </p>
+          </>
+        ) : (
+          <>
+            <div className="flex items-center gap-2 mt-3">
+              <span className="h-2.5 w-2.5 rounded-full" style={{ background: meta.color }} />
+              <span className="text-sm font-medium">{meta.name}</span>
+            </div>
+            <p className="text-sm text-muted-foreground mt-2 leading-snug">{meta.description}</p>
+          </>
+        )}
       </div>
 
       {/* Daily prompt */}
@@ -384,6 +438,39 @@ export function HomeScreen({ profile, setProfile, logs }: Props) {
           <DialogFooter>
             <Button variant="secondary" onClick={() => setResetOpen(false)}>Cancel</Button>
             <Button className="gold-gradient text-gold-foreground" onClick={onReset}>Confirm reset</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Resume Modal */}
+      <Dialog open={resumeOpen} onOpenChange={setResumeOpen}>
+        <DialogContent className="bg-surface border-border">
+          <DialogHeader>
+            <DialogTitle style={{ fontFamily: "Georgia, serif" }} className="text-white">Resume cycle attunement?</DialogTitle>
+          </DialogHeader>
+          <p className="text-sm text-muted-foreground">
+            Enter her last period date and Attuned will re-sync to her cycle. Your prompt history and feedback will be preserved.
+          </p>
+          <div className="space-y-1.5">
+            <label className="text-xs text-muted-foreground">Her last period date</label>
+            <Input
+              type="date"
+              value={resumeDate}
+              max={todayISO()}
+              onChange={(e) => setResumeDate(e.target.value)}
+            />
+          </div>
+          <DialogFooter>
+            <Button variant="secondary" onClick={() => setResumeOpen(false)}>Cancel</Button>
+            <Button
+              className="gold-gradient text-gold-foreground"
+              onClick={() => {
+                setProfile({ ...profile, cycleMode: "active", cyclePauseReason: null, lastPeriodStart: resumeDate });
+                setResumeOpen(false);
+              }}
+            >
+              Resume →
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

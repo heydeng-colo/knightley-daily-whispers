@@ -8,11 +8,16 @@ import { BRAND_PREF_AFFINITIES, type BrandPreference } from "@/lib/affiliatePart
 import { setProfile, type Profile, type SpendTier } from "@/lib/storage";
 import { ArrowLeft, ArrowRight, Heart, Star, X as XIcon, Check } from "lucide-react";
 
-const STEPS = ["About", "Her World", "Cycle", "Loves", "Account"];
+const STEPS = ["About", "Her World", "Tracking", "Cycle", "Loves", "Account"];
 
 
 export function Onboarding({ onDone, initialProfile }: { onDone: () => void; initialProfile?: Profile }) {
   const [step, setStep] = useState(0);
+  const [trackingChoice, setTrackingChoice] = useState<"yes" | "no" | "unsure" | null>(
+    initialProfile?.cycleMode === "paused"
+      ? (initialProfile.cyclePauseReason === "no_cycle" ? "no" : initialProfile.cyclePauseReason === "other" ? "unsure" : null)
+      : initialProfile?.cycleMode === "active" ? "yes" : null
+  );
   const [data, setData] = useState<Partial<Profile>>({
     children: [],
     cycleLength: 28,
@@ -26,13 +31,28 @@ export function Onboarding({ onDone, initialProfile }: { onDone: () => void; ini
     spendTier: "50",
     brandPreference: "curated",
     brandAffinities: BRAND_PREF_AFFINITIES["curated"],
+    cycleMode: "active",
+    cyclePauseReason: null,
     ...initialProfile,
   });
 
   const update = (patch: Partial<Profile>) => setData((d) => ({ ...d, ...patch }));
 
-  const next = () => setStep((s) => Math.min(STEPS.length - 1, s + 1));
-  const back = () => setStep((s) => Math.max(0, s - 1));
+  const next = () => {
+    // When leaving the Tracking step (index 2), skip Cycle (index 3) if not tracking
+    if (step === 2 && trackingChoice && trackingChoice !== "yes") {
+      setStep(4);
+      return;
+    }
+    setStep((s) => Math.min(STEPS.length - 1, s + 1));
+  };
+  const back = () => {
+    if (step === 4 && trackingChoice && trackingChoice !== "yes") {
+      setStep(2);
+      return;
+    }
+    setStep((s) => Math.max(0, s - 1));
+  };
 
   const emailValid = !!(data.email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email.trim()));
 
@@ -65,6 +85,8 @@ export function Onboarding({ onDone, initialProfile }: { onDone: () => void; ini
       monthlyBudgetCap: data.monthlyBudgetCap,
       brandPreference: data.brandPreference || "curated",
       brandAffinities: data.brandAffinities || BRAND_PREF_AFFINITIES[data.brandPreference || "curated"],
+      cycleMode: trackingChoice === "yes" ? "active" : "paused",
+      cyclePauseReason: trackingChoice === "no" ? "no_cycle" : trackingChoice === "unsure" ? "other" : null,
     };
     setProfile(profile);
     onDone();
@@ -93,9 +115,10 @@ export function Onboarding({ onDone, initialProfile }: { onDone: () => void; ini
         <div key={step} className="slide-up">
           {step === 0 && <Step1 data={data} update={update} />}
           {step === 1 && <StepBrandPref data={data} update={update} />}
-          {step === 2 && <Step2 data={data} update={update} />}
-          {step === 3 && <StepLovesSwipe data={data} update={update} onFinish={next} />}
-          {step === 4 && <StepAccount data={data} update={update} />}
+          {step === 2 && <StepTracking choice={trackingChoice} setChoice={setTrackingChoice} />}
+          {step === 3 && <Step2 data={data} update={update} />}
+          {step === 4 && <StepLovesSwipe data={data} update={update} onFinish={next} />}
+          {step === 5 && <StepAccount data={data} update={update} />}
         </div>
       </div>
 
@@ -107,7 +130,11 @@ export function Onboarding({ onDone, initialProfile }: { onDone: () => void; ini
             </Button>
           )}
           {step < STEPS.length - 1 ? (
-            <Button className="flex-1 gold-gradient text-gold-foreground hover:opacity-90" onClick={next}>
+            <Button
+              className="flex-1 gold-gradient text-gold-foreground hover:opacity-90"
+              onClick={next}
+              disabled={step === 2 && !trackingChoice}
+            >
               Next <ArrowRight className="h-4 w-4 ml-1" />
             </Button>
           ) : (
@@ -571,6 +598,63 @@ function StepBrandPref({ data, update }: { data: Partial<Profile>; update: (p: P
       <p className="text-[11px] italic text-muted-foreground/70 leading-relaxed">
         This helps us suggest experiences that feel natural to her — not a spending guide. More isn't more if it doesn't fit her world.
       </p>
+    </div>
+  );
+}
+
+function StepTracking({
+  choice,
+  setChoice,
+}: {
+  choice: "yes" | "no" | "unsure" | null;
+  setChoice: (c: "yes" | "no" | "unsure") => void;
+}) {
+  const tiles: Array<{
+    value: "yes" | "no" | "unsure";
+    label: string;
+    sub: string;
+    badge?: string;
+  }> = [
+    { value: "yes", label: "Yes, track her cycle (recommended)", sub: "Prompts will be timed to her biology for the most precise attunement", badge: "Recommended" },
+    { value: "no", label: "No, use a relationship rhythm", sub: "Prompts rotate on a consistent pattern — no cycle tracking needed" },
+    { value: "unsure", label: "I'm not sure yet", sub: "You can set this up later in your profile" },
+  ];
+  return (
+    <div className="space-y-5">
+      <h2 className="text-xl font-medium">Does she have a regular monthly cycle?</h2>
+      <p className="text-sm text-muted-foreground">
+        This tells us whether to time prompts to her biology or run on a steady relationship rhythm.
+      </p>
+      <div className="space-y-3">
+        {tiles.map((t) => {
+          const on = choice === t.value;
+          return (
+            <div key={t.value} className="space-y-2">
+              <button
+                onClick={() => setChoice(t.value)}
+                className={`w-full text-left rounded-2xl p-4 border transition ${
+                  on ? "bg-gold/10 border-gold text-foreground" : "bg-surface border-border text-foreground hover:border-gold/40"
+                }`}
+              >
+                <div className="flex items-center justify-between mb-1 gap-2">
+                  <span className="text-sm font-medium">{t.label}</span>
+                  {t.badge && (
+                    <span className="text-[10px] font-medium rounded-full px-2 py-0.5" style={{ background: "rgba(34,197,94,0.15)", color: "rgb(74,222,128)", border: "1px solid rgba(34,197,94,0.4)" }}>
+                      {t.badge}
+                    </span>
+                  )}
+                </div>
+                <p className="text-xs text-muted-foreground leading-relaxed">{t.sub}</p>
+              </button>
+              {t.value !== "yes" && (
+                <p className="text-[11px] italic text-gold/80 leading-snug pl-1">
+                  This disables attunement with her cycle. Prompts will still personalize based on your feedback and relationship history.
+                </p>
+              )}
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }

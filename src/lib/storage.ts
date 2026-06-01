@@ -24,7 +24,20 @@ export interface SpendEntry {
   cost: number;
 }
 
+export type CycleMode = "active" | "paused";
+export type CyclePauseReason = "pregnancy" | "menopause" | "irregular" | "no_cycle" | "other";
+
+export const CYCLE_PAUSE_REASON_LABEL: Record<CyclePauseReason, string> = {
+  pregnancy: "Pregnancy",
+  menopause: "Menopause",
+  irregular: "Irregular cycle",
+  no_cycle: "No cycle tracking",
+  other: "Other",
+};
+
 export interface Profile {
+  cycleMode?: CycleMode;
+  cyclePauseReason?: CyclePauseReason | null;
   email?: string;
   herName: string;
   herBirthday: string;
@@ -96,6 +109,9 @@ export function setProfile(p: Profile | null) {
   if (p && !p.activatedAt) {
     const existing = read<Profile | null>(KEYS.profile, null);
     p = { ...p, activatedAt: existing?.activatedAt || new Date().toISOString().slice(0, 10) };
+  }
+  if (p && p.cycleMode === undefined) {
+    p = { ...p, cycleMode: "active", cyclePauseReason: p.cyclePauseReason ?? null };
   }
   write(KEYS.profile, p);
 }

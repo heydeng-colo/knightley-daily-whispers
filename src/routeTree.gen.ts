@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as WelcomeRouteImport } from './routes/welcome'
+import { Route as PauseCycleRouteImport } from './routes/pause-cycle'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ApiLovesImageRouteImport } from './routes/api/loves/image'
@@ -18,6 +19,11 @@ import { Route as ApiV1FeedbackOtherRouteImport } from './routes/api/v1/feedback
 const WelcomeRoute = WelcomeRouteImport.update({
   id: '/welcome',
   path: '/welcome',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PauseCycleRoute = PauseCycleRouteImport.update({
+  id: '/pause-cycle',
+  path: '/pause-cycle',
   getParentRoute: () => rootRouteImport,
 } as any)
 const OnboardingRoute = OnboardingRouteImport.update({
@@ -44,6 +50,7 @@ const ApiV1FeedbackOtherRoute = ApiV1FeedbackOtherRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/onboarding': typeof OnboardingRoute
+  '/pause-cycle': typeof PauseCycleRoute
   '/welcome': typeof WelcomeRoute
   '/api/loves/image': typeof ApiLovesImageRoute
   '/api/v1/feedback/other': typeof ApiV1FeedbackOtherRoute
@@ -51,6 +58,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/onboarding': typeof OnboardingRoute
+  '/pause-cycle': typeof PauseCycleRoute
   '/welcome': typeof WelcomeRoute
   '/api/loves/image': typeof ApiLovesImageRoute
   '/api/v1/feedback/other': typeof ApiV1FeedbackOtherRoute
@@ -59,6 +67,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/onboarding': typeof OnboardingRoute
+  '/pause-cycle': typeof PauseCycleRoute
   '/welcome': typeof WelcomeRoute
   '/api/loves/image': typeof ApiLovesImageRoute
   '/api/v1/feedback/other': typeof ApiV1FeedbackOtherRoute
@@ -68,6 +77,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/onboarding'
+    | '/pause-cycle'
     | '/welcome'
     | '/api/loves/image'
     | '/api/v1/feedback/other'
@@ -75,6 +85,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/onboarding'
+    | '/pause-cycle'
     | '/welcome'
     | '/api/loves/image'
     | '/api/v1/feedback/other'
@@ -82,6 +93,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/onboarding'
+    | '/pause-cycle'
     | '/welcome'
     | '/api/loves/image'
     | '/api/v1/feedback/other'
@@ -90,6 +102,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   OnboardingRoute: typeof OnboardingRoute
+  PauseCycleRoute: typeof PauseCycleRoute
   WelcomeRoute: typeof WelcomeRoute
   ApiLovesImageRoute: typeof ApiLovesImageRoute
   ApiV1FeedbackOtherRoute: typeof ApiV1FeedbackOtherRoute
@@ -102,6 +115,13 @@ declare module '@tanstack/react-router' {
       path: '/welcome'
       fullPath: '/welcome'
       preLoaderRoute: typeof WelcomeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pause-cycle': {
+      id: '/pause-cycle'
+      path: '/pause-cycle'
+      fullPath: '/pause-cycle'
+      preLoaderRoute: typeof PauseCycleRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/onboarding': {
@@ -138,6 +158,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   OnboardingRoute: OnboardingRoute,
+  PauseCycleRoute: PauseCycleRoute,
   WelcomeRoute: WelcomeRoute,
   ApiLovesImageRoute: ApiLovesImageRoute,
   ApiV1FeedbackOtherRoute: ApiV1FeedbackOtherRoute,
