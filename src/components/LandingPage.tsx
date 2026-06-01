@@ -180,6 +180,26 @@ export function LandingPage({ onStart }: { onStart: () => void }) {
         </button>
       </nav>
 
+      {/* Hero note bar */}
+      <div
+        style={{
+          marginTop: 52,
+          background: "rgba(14,30,53,0.95)",
+          padding: "12px 40px",
+          borderBottom: "1px solid rgba(255,255,255,0.05)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: 8,
+        }}
+      >
+        <Lock size={12} color={C.gold} />
+        <span style={{ fontFamily: SANS, fontSize: 12, color: C.gray4, textAlign: "center" }}>
+          <span style={{ color: C.gray3 }}>Her data stays private. We only know her initial.</span>
+          {" · No account for her · One optional anonymous text/month"}
+        </span>
+      </div>
+
       {/* Hero */}
       <section
         style={{
