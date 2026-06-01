@@ -17,7 +17,9 @@ import {
   type Profile,
   type PromptLog,
 } from "@/lib/storage";
-import { Droplet, Flame, ThumbsUp, X as XIcon, Gift } from "lucide-react";
+import { Droplet, Flame, ThumbsUp, X as XIcon, Gift, Pause, Play } from "lucide-react";
+import { useNavigate } from "@tanstack/react-router";
+import { CYCLE_PAUSE_REASON_LABEL } from "@/lib/storage";
 import { ActionChips } from "@/components/ActionChips";
 import { OtherActionLog } from "@/components/OtherActionLog";
 import { MiniQuiz } from "@/components/MiniQuiz";
