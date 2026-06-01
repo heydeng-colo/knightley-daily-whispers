@@ -163,7 +163,7 @@ export function HomeScreen({ profile, setProfile, logs }: Props) {
       </div>
 
       {/* Reset cycle pill */}
-      <div className="flex justify-end -mt-2">
+      <div className="flex justify-end -mt-2 gap-2">
         <button
           onClick={() => setResetOpen(true)}
           className="inline-flex items-center gap-1.5 rounded-full bg-surface border border-border px-3 py-1.5 text-[11px] text-muted-foreground hover:text-gold hover:border-gold/40 transition"
@@ -172,12 +172,46 @@ export function HomeScreen({ profile, setProfile, logs }: Props) {
           <Droplet className="h-3 w-3" />
           Reset Her Cycle
         </button>
+        {isPaused ? (
+          <button
+            onClick={() => setResumeOpen(true)}
+            className="inline-flex items-center gap-1.5 rounded-full border border-gold/50 px-3 py-1.5 text-[11px] text-gold-foreground transition"
+            style={{ background: "var(--gold)" }}
+            aria-label="Resume her cycle"
+          >
+            <Play className="h-3 w-3" />
+            Resume Her Cycle
+          </button>
+        ) : (
+          <button
+            onClick={() => navigate({ to: "/pause-cycle" })}
+            className="inline-flex items-center gap-1.5 rounded-full bg-surface border border-border px-3 py-1.5 text-[11px] text-muted-foreground hover:text-gold hover:border-gold/40 transition"
+            aria-label="Pause her cycle"
+          >
+            <Pause className="h-3 w-3" />
+            Pause Her Cycle
+          </button>
+        )}
       </div>
+
+      {isPaused && (
+        <div className="flex justify-center -mt-1">
+          <span
+            className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] text-gold"
+            style={{ background: "rgba(201,168,76,0.12)", border: "1px solid rgba(201,168,76,0.35)" }}
+          >
+            <Pause className="h-3 w-3" />
+            Cycle paused
+          </span>
+        </div>
+      )}
 
       {/* Phase card */}
       <div
         className="rounded-3xl p-6 border border-border slide-up relative overflow-hidden"
-        style={{ background: `linear-gradient(160deg, color-mix(in oklab, ${meta.color} 28%, var(--surface)), var(--surface))` }}
+        style={{ background: isPaused
+          ? "linear-gradient(160deg, color-mix(in oklab, var(--gold) 14%, var(--surface)), var(--surface))"
+          : `linear-gradient(160deg, color-mix(in oklab, ${meta.color} 28%, var(--surface)), var(--surface))` }}
       >
         <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full opacity-30 blur-3xl" style={{ background: meta.color }} />
         <p className="text-sm text-muted-foreground">{profile.herName ? `${profile.herName}'s Cycle` : "Her Cycle"}</p>
