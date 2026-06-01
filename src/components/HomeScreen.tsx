@@ -441,6 +441,39 @@ export function HomeScreen({ profile, setProfile, logs }: Props) {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Resume Modal */}
+      <Dialog open={resumeOpen} onOpenChange={setResumeOpen}>
+        <DialogContent className="bg-surface border-border">
+          <DialogHeader>
+            <DialogTitle style={{ fontFamily: "Georgia, serif" }} className="text-white">Resume cycle attunement?</DialogTitle>
+          </DialogHeader>
+          <p className="text-sm text-muted-foreground">
+            Enter her last period date and Attuned will re-sync to her cycle. Your prompt history and feedback will be preserved.
+          </p>
+          <div className="space-y-1.5">
+            <label className="text-xs text-muted-foreground">Her last period date</label>
+            <Input
+              type="date"
+              value={resumeDate}
+              max={todayISO()}
+              onChange={(e) => setResumeDate(e.target.value)}
+            />
+          </div>
+          <DialogFooter>
+            <Button variant="secondary" onClick={() => setResumeOpen(false)}>Cancel</Button>
+            <Button
+              className="gold-gradient text-gold-foreground"
+              onClick={() => {
+                setProfile({ ...profile, cycleMode: "active", cyclePauseReason: null, lastPeriodStart: resumeDate });
+                setResumeOpen(false);
+              }}
+            >
+              Resume →
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
