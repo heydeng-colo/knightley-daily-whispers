@@ -1,13 +1,11 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { buildActionUrl, fillTemplate, isPaidAction, actionCost, type ActionDef, type DayActionGroup } from "@/lib/actions";
-import { addSpend, setProfile as saveProfile, getLogs, upsertLog, type Profile } from "@/lib/storage";
+import { addSpend, setProfile as saveProfile, type Profile } from "@/lib/storage";
 import { getEligibleChips, ACTION_KIND_TO_BRAND_KEY } from "@/lib/affiliatePartners";
-import { postFreeAlternative } from "@/lib/feedbackQueue";
-import { todayISO } from "@/lib/cycle";
 import type { Phase } from "@/lib/cycle";
 
 interface Props {
@@ -178,13 +176,9 @@ export function ActionChips({ group, profile, cycleDay, phase, hidePaid, hidePai
         </div>
       )}
 
-      {group.freeAlt && (
-        <FreeAlternativeRow
-          text={fillTemplate(group.freeAlt, profile)}
-          cycleDay={cycleDay}
-          phase={phase}
-        />
-      )}
+      <p className="mt-2.5 text-[11px] text-muted-foreground/80 leading-snug">
+        <span className="text-muted-foreground/60">Or do it yourself →</span> {fillTemplate(group.freeAlt, profile)}
+      </p>
 
       {hidePaid && hidePaidReason && (
         <p className="mt-1.5 text-[10px] text-muted-foreground/60 italic">{hidePaidReason}</p>
@@ -297,120 +291,5 @@ export function ActionChips({ group, profile, cycleDay, phase, hidePaid, hidePai
         </DialogContent>
       </Dialog>
     </>
-  );
-}
-
-interface FreeAlternativeRowProps {
-  text: string;
-  cycleDay: number;
-  phase: Phase;
-}
-
-function FreeAlternativeRow({ text, cycleDay, phase }: FreeAlternativeRowProps) {
-  const date = todayISO();
-  const [completed, setCompleted] = useState(false);
-  const [pulse, setPulse] = useState(false);
-
-  useEffect(() => {
-    const log = getLogs().find((l) => l.date === date);
-    setCompleted(!!log?.freeAlternativeCompleted);
-  }, [date]);
-
-  const toggle = () => {
-    const next = !completed;
-    setCompleted(next);
-    if (next) {
-      setPulse(true);
-      setTimeout(() => setPulse(false), 250);
-    }
-
-    const existing = getLogs().find((l) => l.date === date);
-    upsertLog({
-      date,
-      cycleDay,
-      phase,
-      variation: existing?.variation ?? 0,
-      prompt: existing?.prompt ?? "",
-      feedback: existing?.feedback,
-      notes: existing?.notes,
-      freeAlternativeCompleted: next,
-      freeAlternativeText: text,
-      executionMethod: next ? "free_alternative" : null,
-    });
-
-    // Append/update today's entry in the freeAlternativeLog array.
-    try {
-      const raw = localStorage.getItem("freeAlternativeLog");
-      const arr: Array<Record<string, unknown>> = raw ? JSON.parse(raw) : [];
-      const idx = arr.findIndex((e) => e.date === date);
-      const entry = {
-        date,
-        promptDay: cycleDay,
-        phase,
-        freeAlternativeCompleted: next,
-        freeAlternativeText: text,
-        executionMethod: "free_alternative",
-        timestamp: Date.now(),
-      };
-      if (idx >= 0) arr[idx] = entry;
-      else arr.push(entry);
-      localStorage.setItem("freeAlternativeLog", JSON.stringify(arr));
-    } catch {
-      // ignore storage errors
-    }
-
-    postFreeAlternative({
-      date,
-      promptDay: cycleDay,
-      phase,
-      freeAlternativeCompleted: next,
-      freeAlternativeText: text,
-      executionMethod: "free_alternative",
-    });
-  };
-
-
-  return (
-    <div
-      className="flex items-center justify-between gap-[10px]"
-      style={{ marginTop: 4 }}
-    >
-      <p
-        className="m-0 italic truncate"
-        style={{
-          flex: 1,
-          fontSize: 12,
-          color: completed ? "#C9A84C" : "#94A3B8",
-          transition: "color 0.2s ease",
-        }}
-      >
-        ↳ {text}
-      </p>
-      <button
-        type="button"
-        onClick={toggle}
-        aria-pressed={completed}
-        className="shrink-0"
-        style={{
-          borderRadius: 20,
-          border: `1px solid ${completed ? "#C9A84C" : "rgba(201,168,76,0.4)"}`,
-          background: completed ? "#C9A84C" : "transparent",
-          padding: "4px 12px",
-          fontSize: 10,
-          fontWeight: 700,
-          color: completed ? "#0E1E35" : "rgba(201,168,76,0.7)",
-          fontFamily: "'Courier New', monospace",
-          letterSpacing: "0.05em",
-          cursor: "pointer",
-          whiteSpace: "nowrap",
-          transform: pulse ? "scale(1.12)" : "scale(1)",
-          transition: "all 0.2s ease, transform 0.25s ease",
-          maxHeight: 26,
-          lineHeight: 1,
-        }}
-      >
-        {completed ? "✓ Done" : "I did this"}
-      </button>
-    </div>
   );
 }
