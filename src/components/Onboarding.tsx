@@ -13,6 +13,11 @@ const STEPS = ["About", "Her World", "Tracking", "Cycle", "Loves", "Account"];
 
 export function Onboarding({ onDone, initialProfile }: { onDone: () => void; initialProfile?: Profile }) {
   const [step, setStep] = useState(0);
+  const [trackingChoice, setTrackingChoice] = useState<"yes" | "no" | "unsure" | null>(
+    initialProfile?.cycleMode === "paused"
+      ? (initialProfile.cyclePauseReason === "no_cycle" ? "no" : initialProfile.cyclePauseReason === "other" ? "unsure" : null)
+      : initialProfile?.cycleMode === "active" ? "yes" : null
+  );
   const [data, setData] = useState<Partial<Profile>>({
     children: [],
     cycleLength: 28,
@@ -26,13 +31,28 @@ export function Onboarding({ onDone, initialProfile }: { onDone: () => void; ini
     spendTier: "50",
     brandPreference: "curated",
     brandAffinities: BRAND_PREF_AFFINITIES["curated"],
+    cycleMode: "active",
+    cyclePauseReason: null,
     ...initialProfile,
   });
 
   const update = (patch: Partial<Profile>) => setData((d) => ({ ...d, ...patch }));
 
-  const next = () => setStep((s) => Math.min(STEPS.length - 1, s + 1));
-  const back = () => setStep((s) => Math.max(0, s - 1));
+  const next = () => {
+    // When leaving the Tracking step (index 2), skip Cycle (index 3) if not tracking
+    if (step === 2 && trackingChoice && trackingChoice !== "yes") {
+      setStep(4);
+      return;
+    }
+    setStep((s) => Math.min(STEPS.length - 1, s + 1));
+  };
+  const back = () => {
+    if (step === 4 && trackingChoice && trackingChoice !== "yes") {
+      setStep(2);
+      return;
+    }
+    setStep((s) => Math.max(0, s - 1));
+  };
 
   const emailValid = !!(data.email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email.trim()));
 
