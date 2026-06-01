@@ -67,6 +67,7 @@ export function HomeScreen({ profile, setProfile, logs }: Props) {
   }
 
   const setFeedback = (f: Feedback) => {
+    const freeAltDone = !!todayLog?.freeAlternativeCompleted;
     upsertLog({
       date: today,
       cycleDay: day,
@@ -75,6 +76,9 @@ export function HomeScreen({ profile, setProfile, logs }: Props) {
       prompt: promptText,
       feedback: f,
       notes: todayLog?.notes,
+      freeAlternativeCompleted: todayLog?.freeAlternativeCompleted,
+      freeAlternativeText: todayLog?.freeAlternativeText,
+      executionMethod: freeAltDone ? "free_alternative" : null,
     });
   };
 
