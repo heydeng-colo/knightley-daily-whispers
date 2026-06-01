@@ -56,6 +56,7 @@ function Index() {
         {tab === "home" && <HomeScreen profile={profile} setProfile={saveProfile} logs={logs} />}
         {tab === "calendar" && <CalendarScreen profile={profile} logs={logs} />}
         {tab === "profile" && <ProfileScreen profile={profile} setProfile={saveProfile} onReviewIntake={() => setReviewIntake(true)} />}
+        {tab === "privacy" && <PrivacyScreen />}
         {tab === "help" && <HelpScreen />}
       </div>
       <BottomNav tab={tab} onChange={setTab} />
