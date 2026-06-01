@@ -297,3 +297,185 @@ export function ActionChips({ group, profile, cycleDay, phase, hidePaid, hidePai
     </>
   );
 }
+
+const FREE_ALT_LOG_KEY = "freeAlternativeLog";
+
+interface FreeAltLogEntry {
+  date: string;
+  promptDay: number;
+  phase: string;
+  freeAlternativeCompleted: boolean;
+  freeAlternativeText: string;
+  executionMethod: "free_alternative";
+  timestamp: number;
+}
+
+function todayISO() {
+  return new Date().toISOString().slice(0, 10);
+}
+
+function readLog(): FreeAltLogEntry[] {
+  if (typeof window === "undefined") return [];
+  try { return JSON.parse(localStorage.getItem(FREE_ALT_LOG_KEY) || "[]"); } catch { return []; }
+}
+
+function writeLog(arr: FreeAltLogEntry[]) {
+  try { localStorage.setItem(FREE_ALT_LOG_KEY, JSON.stringify(arr)); } catch { /* ignore */ }
+}
+
+function postFeedback(entry: FreeAltLogEntry) {
+  if (typeof window === "undefined") return;
+  const send = () =>
+    fetch("/api/v1/feedback/other", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(entry),
+    }).catch(() => {
+      // queue for retry
+      try {
+        const queueRaw = localStorage.getItem("freeAlternativeQueue");
+        const queue: FreeAltLogEntry[] = queueRaw ? JSON.parse(queueRaw) : [];
+        queue.push(entry);
+        localStorage.setItem("freeAlternativeQueue", JSON.stringify(queue));
+      } catch { /* ignore */ }
+    });
+  if (navigator.onLine) send();
+  else {
+    try {
+      const queueRaw = localStorage.getItem("freeAlternativeQueue");
+      const queue: FreeAltLogEntry[] = queueRaw ? JSON.parse(queueRaw) : [];
+      queue.push(entry);
+      localStorage.setItem("freeAlternativeQueue", JSON.stringify(queue));
+    } catch { /* ignore */ }
+  }
+}
+
+function FreeAlternativeRow({
+  text,
+  promptDay,
+  phase,
+}: {
+  text: string;
+  promptDay: number;
+  phase: Phase;
+}) {
+  const [done, setDone] = useState(false);
+  const [pulse, setPulse] = useState(false);
+
+  useEffect(() => {
+    const today = todayISO();
+    const entry = readLog().find((e) => e.date === today && e.promptDay === promptDay);
+    if (entry?.freeAlternativeCompleted) setDone(true);
+  }, [promptDay]);
+
+  // Retry queued posts when coming back online
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const flush = () => {
+      try {
+        const queueRaw = localStorage.getItem("freeAlternativeQueue");
+        const queue: FreeAltLogEntry[] = queueRaw ? JSON.parse(queueRaw) : [];
+        if (!queue.length) return;
+        localStorage.setItem("freeAlternativeQueue", "[]");
+        queue.forEach((e) => postFeedback(e));
+      } catch { /* ignore */ }
+    };
+    window.addEventListener("online", flush);
+    return () => window.removeEventListener("online", flush);
+  }, []);
+
+  const toggle = () => {
+    const next = !done;
+    setDone(next);
+    if (next) {
+      setPulse(true);
+      setTimeout(() => setPulse(false), 260);
+    }
+    const today = todayISO();
+    const log = readLog();
+    const idx = log.findIndex((e) => e.date === today && e.promptDay === promptDay);
+    const entry: FreeAltLogEntry = {
+      date: today,
+      promptDay,
+      phase,
+      freeAlternativeCompleted: next,
+      freeAlternativeText: text,
+      executionMethod: "free_alternative",
+      timestamp: Date.now(),
+    };
+    if (idx >= 0) log[idx] = entry;
+    else log.push(entry);
+    writeLog(log);
+
+    // Annotate today's feedback log, if present
+    try {
+      const raw = localStorage.getItem("attuned.logs");
+      if (raw) {
+        const logs = JSON.parse(raw);
+        if (Array.isArray(logs)) {
+          const li = logs.findIndex((l: any) => l.date === today);
+          if (li >= 0 && logs[li].feedback) {
+            logs[li].executionMethod = "free_alternative";
+            logs[li].freeAlternativeCompleted = next;
+            localStorage.setItem("attuned.logs", JSON.stringify(logs));
+          }
+        }
+      }
+    } catch { /* ignore */ }
+
+    postFeedback(entry);
+  };
+
+  return (
+    <div
+      onClick={toggle}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggle(); } }}
+      className="mt-1 flex items-center cursor-pointer select-none"
+      style={{ gap: 8 }}
+    >
+      <span
+        aria-hidden
+        style={{
+          width: 16,
+          height: 16,
+          borderRadius: 3,
+          border: done ? "1.5px solid #C9A84C" : "1.5px solid rgba(201,168,76,0.5)",
+          background: done ? "#C9A84C" : "transparent",
+          flexShrink: 0,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          transition: "all 0.2s ease",
+          transform: pulse ? "scale(1.15)" : "scale(1.0)",
+          fontSize: 10,
+          color: "#0E1E35",
+          lineHeight: 1,
+        }}
+      >
+        {done ? "✓" : ""}
+      </span>
+      <span
+        style={{
+          fontSize: 11,
+          color: done ? "#C9A84C" : "rgba(201,168,76,0.6)",
+          fontWeight: done ? 700 : 400,
+          whiteSpace: "nowrap",
+          cursor: "pointer",
+        }}
+      >
+        {done ? "Done" : "Mark as done"}
+      </span>
+      <span
+        className="leading-snug"
+        style={{
+          fontSize: 11,
+          color: done ? "#C9A84C" : "#94A3B8",
+        }}
+      >
+        ↳ {text}
+      </span>
+    </div>
+  );
+}
