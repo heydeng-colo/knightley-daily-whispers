@@ -12,6 +12,9 @@ export function ProfileScreen({ profile, setProfile, onReviewIntake }: { profile
   const navigate = useNavigate();
   const [p, setP] = useState<Profile>(profile);
   const [showLoves, setShowLoves] = useState(false);
+  const [resumeOpen, setResumeOpen] = useState(false);
+  const [resumeDate, setResumeDate] = useState(new Date().toISOString().slice(0, 10));
+  const isPaused = p.cycleMode === "paused";
 
   const update = (patch: Partial<Profile>) => {
     const next = { ...p, ...patch };
