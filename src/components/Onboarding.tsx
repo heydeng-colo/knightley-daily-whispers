@@ -130,7 +130,11 @@ export function Onboarding({ onDone, initialProfile }: { onDone: () => void; ini
             </Button>
           )}
           {step < STEPS.length - 1 ? (
-            <Button className="flex-1 gold-gradient text-gold-foreground hover:opacity-90" onClick={next}>
+            <Button
+              className="flex-1 gold-gradient text-gold-foreground hover:opacity-90"
+              onClick={next}
+              disabled={step === 2 && !trackingChoice}
+            >
               Next <ArrowRight className="h-4 w-4 ml-1" />
             </Button>
           ) : (
