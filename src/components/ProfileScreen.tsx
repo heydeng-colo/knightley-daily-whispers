@@ -4,7 +4,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { LOVES_PART_1, LOVES_PART_2 } from "@/lib/loves";
-import { clearAll, currentMonthSpend, getSpend, nextPollDate, SPEND_TIER_LABEL, type Profile, type SpendTier } from "@/lib/storage";
+import { clearAll, currentMonthSpend, getSpend, nextPollDate, setProfile as saveProfile, SPEND_TIER_LABEL, CYCLE_PAUSE_REASON_LABEL, type Profile, type SpendTier } from "@/lib/storage";
+import { Input as InputField } from "@/components/ui/input";
 import { BRAND_PREF_AFFINITIES, type BrandPreference } from "@/lib/affiliatePartners";
 import { useState } from "react";
 
