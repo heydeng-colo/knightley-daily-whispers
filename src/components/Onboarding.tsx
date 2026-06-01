@@ -601,3 +601,60 @@ function StepBrandPref({ data, update }: { data: Partial<Profile>; update: (p: P
     </div>
   );
 }
+
+function StepTracking({
+  choice,
+  setChoice,
+}: {
+  choice: "yes" | "no" | "unsure" | null;
+  setChoice: (c: "yes" | "no" | "unsure") => void;
+}) {
+  const tiles: Array<{
+    value: "yes" | "no" | "unsure";
+    label: string;
+    sub: string;
+    badge?: string;
+  }> = [
+    { value: "yes", label: "Yes, track her cycle (recommended)", sub: "Prompts will be timed to her biology for the most precise attunement", badge: "Recommended" },
+    { value: "no", label: "No, use a relationship rhythm", sub: "Prompts rotate on a consistent pattern — no cycle tracking needed" },
+    { value: "unsure", label: "I'm not sure yet", sub: "You can set this up later in your profile" },
+  ];
+  return (
+    <div className="space-y-5">
+      <h2 className="text-xl font-medium">Does she have a regular monthly cycle?</h2>
+      <p className="text-sm text-muted-foreground">
+        This tells us whether to time prompts to her biology or run on a steady relationship rhythm.
+      </p>
+      <div className="space-y-3">
+        {tiles.map((t) => {
+          const on = choice === t.value;
+          return (
+            <div key={t.value} className="space-y-2">
+              <button
+                onClick={() => setChoice(t.value)}
+                className={`w-full text-left rounded-2xl p-4 border transition ${
+                  on ? "bg-gold/10 border-gold text-foreground" : "bg-surface border-border text-foreground hover:border-gold/40"
+                }`}
+              >
+                <div className="flex items-center justify-between mb-1 gap-2">
+                  <span className="text-sm font-medium">{t.label}</span>
+                  {t.badge && (
+                    <span className="text-[10px] font-medium rounded-full px-2 py-0.5" style={{ background: "rgba(34,197,94,0.15)", color: "rgb(74,222,128)", border: "1px solid rgba(34,197,94,0.4)" }}>
+                      {t.badge}
+                    </span>
+                  )}
+                </div>
+                <p className="text-xs text-muted-foreground leading-relaxed">{t.sub}</p>
+              </button>
+              {t.value !== "yes" && (
+                <p className="text-[11px] italic text-gold/80 leading-snug pl-1">
+                  This disables attunement with her cycle. Prompts will still personalize based on your feedback and relationship history.
+                </p>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
