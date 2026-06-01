@@ -299,3 +299,98 @@ export function ActionChips({ group, profile, cycleDay, phase, hidePaid, hidePai
     </>
   );
 }
+
+interface FreeAlternativeRowProps {
+  text: string;
+  cycleDay: number;
+  phase: Phase;
+}
+
+function FreeAlternativeRow({ text, cycleDay, phase }: FreeAlternativeRowProps) {
+  const date = todayISO();
+  const [completed, setCompleted] = useState(false);
+  const [pulse, setPulse] = useState(false);
+
+  useEffect(() => {
+    const log = getLogs().find((l) => l.date === date);
+    setCompleted(!!log?.freeAlternativeCompleted);
+  }, [date]);
+
+  const toggle = () => {
+    const next = !completed;
+    setCompleted(next);
+    if (next) {
+      setPulse(true);
+      setTimeout(() => setPulse(false), 300);
+    }
+
+    const existing = getLogs().find((l) => l.date === date);
+    upsertLog({
+      date,
+      cycleDay,
+      phase,
+      variation: existing?.variation ?? 0,
+      prompt: existing?.prompt ?? "",
+      feedback: existing?.feedback,
+      notes: existing?.notes,
+      freeAlternativeCompleted: next,
+      freeAlternativeText: text,
+      executionMethod: next ? "free_alternative" : null,
+    });
+
+    if (next) {
+      postFreeAlternative({
+        date,
+        promptDay: cycleDay,
+        phase,
+        freeAlternativeCompleted: true,
+        freeAlternativeText: text,
+        executionMethod: "free_alternative",
+      });
+    }
+  };
+
+  const onKey = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      toggle();
+    }
+  };
+
+  return (
+    <div
+      role="button"
+      tabIndex={0}
+      onClick={toggle}
+      onKeyDown={onKey}
+      className="mt-2.5 flex items-center gap-[10px] cursor-pointer select-none"
+    >
+      <span
+        aria-label={completed ? "Mark free alternative incomplete" : "Mark free alternative complete"}
+        aria-pressed={completed}
+        className="flex items-center justify-center shrink-0"
+        style={{
+          width: 20,
+          height: 20,
+          borderRadius: "50%",
+          background: completed ? "#C9A84C" : "transparent",
+          border: completed ? "1.5px solid #C9A84C" : "1.5px solid rgba(201,168,76,0.35)",
+          transform: pulse ? "scale(1.2)" : "scale(1)",
+          transition: "all 0.2s ease",
+        }}
+      >
+        {completed && (
+          <svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true">
+            <path d="M1.5 5.2 L4 7.5 L8.5 2.5" stroke="#fff" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        )}
+      </span>
+      <p
+        className="text-[11px] leading-snug m-0"
+        style={{ color: completed ? "#C9A84C" : "#94A3B8", transition: "color 0.2s ease" }}
+      >
+        <span style={{ opacity: completed ? 1 : 0.75 }}>Or do it yourself →</span> {text}
+      </p>
+    </div>
+  );
+}
