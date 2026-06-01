@@ -110,6 +110,9 @@ export function setProfile(p: Profile | null) {
     const existing = read<Profile | null>(KEYS.profile, null);
     p = { ...p, activatedAt: existing?.activatedAt || new Date().toISOString().slice(0, 10) };
   }
+  if (p && p.cycleMode === undefined) {
+    p = { ...p, cycleMode: "active", cyclePauseReason: p.cyclePauseReason ?? null };
+  }
   write(KEYS.profile, p);
 }
 
