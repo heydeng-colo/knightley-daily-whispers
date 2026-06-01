@@ -1,5 +1,5 @@
 import { useNavigate } from "@tanstack/react-router";
-import { User, Lightbulb, TrendingUp } from "lucide-react";
+import { User, Lightbulb, TrendingUp, ShieldCheck, Lock } from "lucide-react";
 
 const C = {
   navy: "#0E1E35",
@@ -179,6 +179,26 @@ export function LandingPage({ onStart }: { onStart: () => void }) {
           Get Started for Free
         </button>
       </nav>
+
+      {/* Hero note bar */}
+      <div
+        style={{
+          marginTop: 52,
+          background: "rgba(14,30,53,0.95)",
+          padding: "12px 40px",
+          borderBottom: "1px solid rgba(255,255,255,0.05)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: 8,
+        }}
+      >
+        <Lock size={12} color={C.gold} />
+        <span style={{ fontFamily: SANS, fontSize: 12, color: C.gray4, textAlign: "center" }}>
+          <span style={{ color: C.gray3 }}>Her data stays private. We only know her initial.</span>
+          {" · No account for her · One optional anonymous text/month"}
+        </span>
+      </div>
 
       {/* Hero */}
       <section
@@ -371,7 +391,132 @@ export function LandingPage({ onStart }: { onStart: () => void }) {
 
       <div style={divider} />
 
+      {/* Privacy strip */}
+      <section
+        style={{
+          background: C.navy2,
+          padding: "44px 36px",
+          borderTop: "1px solid rgba(201,168,76,0.15)",
+          borderBottom: "1px solid rgba(201,168,76,0.15)",
+        }}
+      >
+        <div style={{ maxWidth: 900, margin: "0 auto" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 22 }}>
+            <div
+              style={{
+                width: 42,
+                height: 42,
+                borderRadius: "50%",
+                background: "rgba(201,168,76,0.1)",
+                border: "1px solid rgba(201,168,76,0.3)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                flexShrink: 0,
+              }}
+            >
+              <ShieldCheck size={20} color={C.gold} />
+            </div>
+            <h2
+              style={{
+                fontFamily: SERIF,
+                fontSize: 22,
+                fontWeight: 700,
+                color: C.gold2,
+                lineHeight: 1.2,
+                margin: 0,
+              }}
+            >
+              Anonymous and Private, Now and Always
+            </h2>
+          </div>
+          <p
+            style={{
+              fontFamily: SANS,
+              fontSize: 14,
+              color: C.gray3,
+              lineHeight: 1.65,
+              marginBottom: 28,
+              marginTop: 0,
+            }}
+          >
+            Attuned knows{" "}
+            <span style={{ color: C.off }}>
+              her coffee order, her favorite flowers, and what makes her feel seen
+            </span>
+            . It doesn't know her name, her age, or that it exists. Everything you share stays in your account only.
+          </p>
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(3, 1fr)",
+              gap: 14,
+            }}
+          >
+            {[
+              { label: "Her initial only", body: "No full name, date of birth, email, or identity. She has no account here." },
+              { label: "One anonymous text", body: "The optional check-in is one anonymous text per month. She doesn't know which app sent it." },
+              { label: "Never sold. Ever.", body: "We don't sell, share, or monetize personal data. Affiliate revenue comes only from actions you choose to take." },
+            ].map((c, i) => (
+              <div
+                key={i}
+                style={{
+                  background: "rgba(201,168,76,0.05)",
+                  border: "1px solid rgba(201,168,76,0.15)",
+                  borderRadius: 4,
+                  padding: "16px 18px",
+                }}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 8,
+                    marginBottom: 8,
+                  }}
+                >
+                  <span
+                    style={{
+                      width: 7,
+                      height: 7,
+                      borderRadius: "50%",
+                      background: C.gold,
+                      display: "inline-block",
+                    }}
+                  />
+                  <span
+                    style={{
+                      fontFamily: MONO,
+                      fontSize: 11,
+                      fontWeight: 700,
+                      color: C.gold2,
+                      letterSpacing: "0.08em",
+                      textTransform: "uppercase",
+                    }}
+                  >
+                    {c.label}
+                  </span>
+                </div>
+                <div
+                  style={{
+                    fontFamily: SANS,
+                    fontSize: 12,
+                    color: C.gray3,
+                    lineHeight: 1.6,
+                  }}
+                >
+                  {c.body}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <div style={divider} />
+
       {/* Steps */}
+
       <section id="how" style={{ padding: "56px 28px 100px" }}>
         <div style={sectionLabel}>Get Started for Free — Just 3 Steps</div>
         <div
