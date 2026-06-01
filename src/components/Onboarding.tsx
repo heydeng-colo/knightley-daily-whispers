@@ -6,7 +6,7 @@ import { GOALS, LOVES_PART_1, LOVES_PART_2 } from "@/lib/loves";
 import { LOVE_IMAGES } from "@/lib/loveImages";
 import { BRAND_PREF_AFFINITIES, type BrandPreference } from "@/lib/affiliatePartners";
 import { setProfile, type Profile, type SpendTier } from "@/lib/storage";
-import { ArrowLeft, ArrowRight, Heart, Star, X as XIcon, Check } from "lucide-react";
+import { ArrowLeft, ArrowRight, Heart, Star, X as XIcon, Check, Shield } from "lucide-react";
 
 const STEPS = ["About", "Her World", "Tracking", "Cycle", "Loves", "Account"];
 
