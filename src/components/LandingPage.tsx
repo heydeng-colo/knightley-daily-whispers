@@ -195,7 +195,7 @@ export function LandingPage({ onStart }: { onStart: () => void }) {
       >
         <Lock size={12} color={C.gold} />
         <span style={{ fontFamily: SANS, fontSize: 12, color: C.gray4, textAlign: "center" }}>
-          <span style={{ color: C.gray3 }}>Her data stays private. We only know her initial.</span>
+          <span style={{ color: C.gray3 }}>All data stays private. No names or full dates required.</span>
           {" · No account for her · One optional anonymous text/month"}
         </span>
       </div>
@@ -455,7 +455,7 @@ export function LandingPage({ onStart }: { onStart: () => void }) {
           >
             {[
               { label: "Her initial only", body: "No full name, date of birth, email, or identity. She has no account here." },
-              { label: "One anonymous text", body: "The optional check-in is one anonymous text per month. She doesn't know which app sent it." },
+              { label: "One anonymous text", body: "The optional check-in is one anonymous text per month. Everything else stays off her plate." },
               { label: "Never sold. Ever.", body: "We don't sell, share, or monetize personal data. Affiliate revenue comes only from actions you choose to take." },
             ].map((c, i) => (
               <div
