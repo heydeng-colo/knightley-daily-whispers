@@ -298,7 +298,7 @@ function Step1({ data, update }: { data: Partial<Profile>; update: (p: Partial<P
   );
 }
 
-function Step2({ data, update }: { data: Partial<Profile>; update: (p: Partial<Profile>) => void }) {
+function Step2({ data, update, onNext }: { data: Partial<Profile>; update: (p: Partial<Profile>) => void; onNext: () => void }) {
   const today = new Date();
   const start = data.lastPeriodStart ? new Date(data.lastPeriodStart) : today;
   const ms = 24 * 60 * 60 * 1000;
@@ -308,7 +308,10 @@ function Step2({ data, update }: { data: Partial<Profile>; update: (p: Partial<P
   const pct = Math.min(100, (day / length) * 100);
   return (
     <div className="space-y-6">
-      <h2 className="text-xl font-medium">Her cycle</h2>
+      <h2 className="text-xl font-medium">Set up her anonymous check-in</h2>
+      <p className="text-sm text-muted-foreground leading-relaxed">
+        Once a month, she'll receive a short anonymous text asking how things have been going. Her reply goes straight to your algorithm — not to you.
+      </p>
       <Field label="When did her last period start? If you don't know, guess.">
         <Input
           type="date"
@@ -342,17 +345,60 @@ function Step2({ data, update }: { data: Partial<Profile>; update: (p: Partial<P
           </div>
         </div>
       )}
-      <Field label="Her cellphone (optional)">
+      <Field label="Her mobile number (optional)">
         <Input
           type="tel"
           value={data.herPhone || ""}
           onChange={(e) => update({ herPhone: e.target.value })}
           placeholder="(555) 123-4567"
         />
-        <p className="text-xs text-muted-foreground mt-1">
-          Optional. Used to poll her anonymously for relationship feedback.
-        </p>
       </Field>
+
+      <div
+        className="flex items-start gap-[9px]"
+        style={{
+          background: "rgba(201,168,76,0.07)",
+          border: "1px solid rgba(201,168,76,0.2)",
+          borderRadius: 4,
+          padding: "11px 13px",
+        }}
+      >
+        <Shield
+          className="flex-shrink-0 mt-[1px]"
+          size={13}
+          color="#C9A84C"
+          strokeWidth={2}
+        />
+        <p
+          className="leading-[1.6]"
+          style={{ fontFamily: "sans-serif", fontSize: 11.5 }}
+        >
+          <span style={{ color: "#F0C96A", fontStyle: "normal" }}>
+            All data stays private. No names or full dates required.
+          </span>{" "}
+          <span style={{ color: "#C9A84C", fontStyle: "italic" }}>
+            The message doesn't mention Attuned or identify you. We never store, sell, or share her number. Everything else stays off her plate.
+          </span>
+        </p>
+      </div>
+
+      <div className="text-center">
+        <button
+          onClick={() => {
+            update({ herPhone: "" });
+            onNext();
+          }}
+          className="text-[12px] italic cursor-pointer"
+          style={{
+            fontFamily: "sans-serif",
+            color: "#475569",
+            textDecoration: "underline",
+            textUnderlineOffset: 3,
+          }}
+        >
+          Skip for now — add this later in Settings
+        </button>
+      </div>
 
       <div className="space-y-3 pt-2">
         <Label className="text-sm text-muted-foreground">Monthly spend comfort</Label>
