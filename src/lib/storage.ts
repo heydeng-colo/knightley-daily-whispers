@@ -24,7 +24,20 @@ export interface SpendEntry {
   cost: number;
 }
 
+export type CycleMode = "active" | "paused";
+export type CyclePauseReason = "pregnancy" | "menopause" | "irregular" | "no_cycle" | "other";
+
+export const CYCLE_PAUSE_REASON_LABEL: Record<CyclePauseReason, string> = {
+  pregnancy: "Pregnancy",
+  menopause: "Menopause",
+  irregular: "Irregular cycle",
+  no_cycle: "No cycle tracking",
+  other: "Other",
+};
+
 export interface Profile {
+  cycleMode?: CycleMode;
+  cyclePauseReason?: CyclePauseReason | null;
   email?: string;
   herName: string;
   herBirthday: string;
