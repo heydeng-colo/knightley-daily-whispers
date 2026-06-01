@@ -33,11 +33,15 @@ interface Props {
 }
 
 export function HomeScreen({ profile, setProfile, logs }: Props) {
+  const navigate = useNavigate();
   const [resetOpen, setResetOpen] = useState(false);
   const [resetDate, setResetDate] = useState(todayISO());
+  const [resumeOpen, setResumeOpen] = useState(false);
+  const [resumeDate, setResumeDate] = useState(todayISO());
   const [showAll, setShowAll] = useState(false);
   const [noteDraft, setNoteDraft] = useState<string | null>(null);
   const [noteSaved, setNoteSaved] = useState(false);
+  const isPaused = profile.cycleMode === "paused";
 
   const today = todayISO();
   // Default the homescreen to Day 14 (peak ovulation) so the example
