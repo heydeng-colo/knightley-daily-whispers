@@ -78,6 +78,9 @@ export interface PromptLog {
   prompt: string;
   feedback?: Feedback;
   notes?: string;
+  freeAlternativeCompleted?: boolean;
+  freeAlternativeText?: string;
+  executionMethod?: "free_alternative" | null;
 }
 
 const KEYS = {
