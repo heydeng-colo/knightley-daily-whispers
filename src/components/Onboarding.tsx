@@ -116,7 +116,7 @@ export function Onboarding({ onDone, initialProfile }: { onDone: () => void; ini
           {step === 0 && <Step1 data={data} update={update} />}
           {step === 1 && <StepBrandPref data={data} update={update} />}
           {step === 2 && <StepTracking choice={trackingChoice} setChoice={setTrackingChoice} />}
-          {step === 3 && <Step2 data={data} update={update} />}
+          {step === 3 && <Step2 data={data} update={update} onNext={next} />}
           {step === 4 && <StepLovesSwipe data={data} update={update} onFinish={next} />}
           {step === 5 && <StepAccount data={data} update={update} />}
         </div>
