@@ -321,7 +321,7 @@ function FreeAlternativeRow({ text, cycleDay, phase }: FreeAlternativeRowProps) 
     setCompleted(next);
     if (next) {
       setPulse(true);
-      setTimeout(() => setPulse(false), 300);
+      setTimeout(() => setPulse(false), 250);
     }
 
     const existing = getLogs().find((l) => l.date === date);
@@ -338,59 +338,79 @@ function FreeAlternativeRow({ text, cycleDay, phase }: FreeAlternativeRowProps) 
       executionMethod: next ? "free_alternative" : null,
     });
 
-    if (next) {
-      postFreeAlternative({
+    // Append/update today's entry in the freeAlternativeLog array.
+    try {
+      const raw = localStorage.getItem("freeAlternativeLog");
+      const arr: Array<Record<string, unknown>> = raw ? JSON.parse(raw) : [];
+      const idx = arr.findIndex((e) => e.date === date);
+      const entry = {
         date,
         promptDay: cycleDay,
         phase,
-        freeAlternativeCompleted: true,
+        freeAlternativeCompleted: next,
         freeAlternativeText: text,
         executionMethod: "free_alternative",
-      });
+        timestamp: Date.now(),
+      };
+      if (idx >= 0) arr[idx] = entry;
+      else arr.push(entry);
+      localStorage.setItem("freeAlternativeLog", JSON.stringify(arr));
+    } catch {
+      // ignore storage errors
     }
+
+    postFreeAlternative({
+      date,
+      promptDay: cycleDay,
+      phase,
+      freeAlternativeCompleted: next,
+      freeAlternativeText: text,
+      executionMethod: "free_alternative",
+    });
   };
 
-  const onKey = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter" || e.key === " ") {
-      e.preventDefault();
-      toggle();
-    }
-  };
 
   return (
     <div
-      role="button"
-      tabIndex={0}
-      onClick={toggle}
-      onKeyDown={onKey}
-      className="mt-2.5 flex items-center gap-[10px] cursor-pointer select-none"
+      className="flex items-center justify-between gap-[10px]"
+      style={{ marginTop: 4 }}
     >
-      <span
-        aria-label={completed ? "Mark free alternative incomplete" : "Mark free alternative complete"}
-        aria-pressed={completed}
-        className="flex items-center justify-center shrink-0"
+      <p
+        className="m-0 italic truncate"
         style={{
-          width: 20,
-          height: 20,
-          borderRadius: "50%",
-          background: completed ? "#C9A84C" : "transparent",
-          border: completed ? "1.5px solid #C9A84C" : "1.5px solid rgba(201,168,76,0.35)",
-          transform: pulse ? "scale(1.2)" : "scale(1)",
-          transition: "all 0.2s ease",
+          flex: 1,
+          fontSize: 12,
+          color: completed ? "#C9A84C" : "#94A3B8",
+          transition: "color 0.2s ease",
         }}
       >
-        {completed && (
-          <svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true">
-            <path d="M1.5 5.2 L4 7.5 L8.5 2.5" stroke="#fff" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-        )}
-      </span>
-      <p
-        className="text-[11px] leading-snug m-0"
-        style={{ color: completed ? "#C9A84C" : "#94A3B8", transition: "color 0.2s ease" }}
-      >
-        <span style={{ opacity: completed ? 1 : 0.75 }}>Or do it yourself →</span> {text}
+        ↳ {text}
       </p>
+      <button
+        type="button"
+        onClick={toggle}
+        aria-pressed={completed}
+        className="shrink-0"
+        style={{
+          borderRadius: 20,
+          border: `1px solid ${completed ? "#C9A84C" : "rgba(201,168,76,0.4)"}`,
+          background: completed ? "#C9A84C" : "transparent",
+          padding: "4px 12px",
+          fontSize: 10,
+          fontWeight: 700,
+          color: completed ? "#0E1E35" : "rgba(201,168,76,0.7)",
+          fontFamily: "'Courier New', monospace",
+          letterSpacing: "0.05em",
+          cursor: "pointer",
+          whiteSpace: "nowrap",
+          transform: pulse ? "scale(1.12)" : "scale(1)",
+          transition: "all 0.2s ease, transform 0.25s ease",
+          maxHeight: 26,
+          lineHeight: 1,
+        }}
+      >
+        {completed ? "✓ Done" : "I did this"}
+      </button>
     </div>
   );
 }
