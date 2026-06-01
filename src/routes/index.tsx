@@ -5,6 +5,7 @@ import { HomeScreen } from "@/components/HomeScreen";
 import { CalendarScreen } from "@/components/CalendarScreen";
 import { ProfileScreen } from "@/components/ProfileScreen";
 import { HelpScreen } from "@/components/HelpScreen";
+import { PrivacyScreen } from "@/components/PrivacyScreen";
 import { Onboarding } from "@/components/Onboarding";
 import { LandingPage } from "@/components/LandingPage";
 import {
