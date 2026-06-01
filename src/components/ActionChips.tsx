@@ -1,11 +1,13 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { buildActionUrl, fillTemplate, isPaidAction, actionCost, type ActionDef, type DayActionGroup } from "@/lib/actions";
-import { addSpend, setProfile as saveProfile, type Profile } from "@/lib/storage";
+import { addSpend, setProfile as saveProfile, getLogs, upsertLog, type Profile } from "@/lib/storage";
 import { getEligibleChips, ACTION_KIND_TO_BRAND_KEY } from "@/lib/affiliatePartners";
+import { postFreeAlternative } from "@/lib/feedbackQueue";
+import { todayISO } from "@/lib/cycle";
 import type { Phase } from "@/lib/cycle";
 
 interface Props {
