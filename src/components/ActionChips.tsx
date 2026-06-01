@@ -178,9 +178,13 @@ export function ActionChips({ group, profile, cycleDay, phase, hidePaid, hidePai
         </div>
       )}
 
-      <p className="mt-2.5 text-[11px] text-muted-foreground/80 leading-snug">
-        <span className="text-muted-foreground/60">Or do it yourself →</span> {fillTemplate(group.freeAlt, profile)}
-      </p>
+      {group.freeAlt && (
+        <FreeAlternativeRow
+          text={fillTemplate(group.freeAlt, profile)}
+          cycleDay={cycleDay}
+          phase={phase}
+        />
+      )}
 
       {hidePaid && hidePaidReason && (
         <p className="mt-1.5 text-[10px] text-muted-foreground/60 italic">{hidePaidReason}</p>
