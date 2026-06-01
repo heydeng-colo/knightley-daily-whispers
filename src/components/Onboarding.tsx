@@ -85,6 +85,8 @@ export function Onboarding({ onDone, initialProfile }: { onDone: () => void; ini
       monthlyBudgetCap: data.monthlyBudgetCap,
       brandPreference: data.brandPreference || "curated",
       brandAffinities: data.brandAffinities || BRAND_PREF_AFFINITIES[data.brandPreference || "curated"],
+      cycleMode: trackingChoice === "yes" ? "active" : "paused",
+      cyclePauseReason: trackingChoice === "no" ? "no_cycle" : trackingChoice === "unsure" ? "other" : null,
     };
     setProfile(profile);
     onDone();
