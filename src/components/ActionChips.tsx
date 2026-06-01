@@ -321,7 +321,7 @@ function FreeAlternativeRow({ text, cycleDay, phase }: FreeAlternativeRowProps) 
     setCompleted(next);
     if (next) {
       setPulse(true);
-      setTimeout(() => setPulse(false), 300);
+      setTimeout(() => setPulse(false), 250);
     }
 
     const existing = getLogs().find((l) => l.date === date);
@@ -338,16 +338,35 @@ function FreeAlternativeRow({ text, cycleDay, phase }: FreeAlternativeRowProps) 
       executionMethod: next ? "free_alternative" : null,
     });
 
-    if (next) {
-      postFreeAlternative({
+    // Append/update today's entry in the freeAlternativeLog array.
+    try {
+      const raw = localStorage.getItem("freeAlternativeLog");
+      const arr: Array<Record<string, unknown>> = raw ? JSON.parse(raw) : [];
+      const idx = arr.findIndex((e) => e.date === date);
+      const entry = {
         date,
         promptDay: cycleDay,
         phase,
-        freeAlternativeCompleted: true,
+        freeAlternativeCompleted: next,
         freeAlternativeText: text,
         executionMethod: "free_alternative",
-      });
+        timestamp: Date.now(),
+      };
+      if (idx >= 0) arr[idx] = entry;
+      else arr.push(entry);
+      localStorage.setItem("freeAlternativeLog", JSON.stringify(arr));
+    } catch {
+      // ignore storage errors
     }
+
+    postFreeAlternative({
+      date,
+      promptDay: cycleDay,
+      phase,
+      freeAlternativeCompleted: next,
+      freeAlternativeText: text,
+      executionMethod: "free_alternative",
+    });
   };
 
   const onKey = (e: React.KeyboardEvent) => {
