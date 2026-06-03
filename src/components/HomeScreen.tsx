@@ -139,11 +139,46 @@ export function HomeScreen({ profile, setProfile, logs }: Props) {
   return (
     <div className="space-y-5">
       <MiniQuiz profile={profile} />
-      {/* Top bar */}
-      <div className="flex items-center justify-between pt-2">
-        <div className="flex items-baseline gap-2">
-          <span className="text-2xl font-semibold tracking-tight">Knightley</span>
-          <span className="text-xs text-muted-foreground">·  daily</span>
+      {/* Logo */}
+      <div className="flex justify-center pt-2">
+        <img
+          src={knightleyLogo.url}
+          alt="Knightley"
+          className="h-auto w-full max-w-[280px]"
+        />
+      </div>
+
+      {/* Cycle controls + Refer a friend */}
+      <div className="flex items-center justify-between gap-2 flex-wrap">
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setResetOpen(true)}
+            className="inline-flex items-center gap-1.5 rounded-full bg-surface border border-border px-3 py-1.5 text-[11px] text-muted-foreground hover:text-gold hover:border-gold/40 transition"
+            aria-label="Reset her cycle"
+          >
+            <Droplet className="h-3 w-3" />
+            Reset Her Cycle
+          </button>
+          {isPaused ? (
+            <button
+              onClick={() => setResumeOpen(true)}
+              className="inline-flex items-center gap-1.5 rounded-full border border-gold/50 px-3 py-1.5 text-[11px] text-gold-foreground transition"
+              style={{ background: "var(--gold)" }}
+              aria-label="Resume her cycle"
+            >
+              <Play className="h-3 w-3" />
+              Resume Her Cycle
+            </button>
+          ) : (
+            <button
+              onClick={() => navigate({ to: "/pause-cycle" })}
+              className="inline-flex items-center gap-1.5 rounded-full bg-surface border border-border px-3 py-1.5 text-[11px] text-muted-foreground hover:text-gold hover:border-gold/40 transition"
+              aria-label="Pause her cycle"
+            >
+              <Pause className="h-3 w-3" />
+              Pause Her Cycle
+            </button>
+          )}
         </div>
         <button
           onClick={() => {
@@ -161,38 +196,6 @@ export function HomeScreen({ profile, setProfile, logs }: Props) {
           <Gift className="h-3.5 w-3.5" />
           Refer a friend · 2 months free
         </button>
-      </div>
-
-      {/* Reset cycle pill */}
-      <div className="flex justify-end -mt-2 gap-2">
-        <button
-          onClick={() => setResetOpen(true)}
-          className="inline-flex items-center gap-1.5 rounded-full bg-surface border border-border px-3 py-1.5 text-[11px] text-muted-foreground hover:text-gold hover:border-gold/40 transition"
-          aria-label="Reset her cycle"
-        >
-          <Droplet className="h-3 w-3" />
-          Reset Her Cycle
-        </button>
-        {isPaused ? (
-          <button
-            onClick={() => setResumeOpen(true)}
-            className="inline-flex items-center gap-1.5 rounded-full border border-gold/50 px-3 py-1.5 text-[11px] text-gold-foreground transition"
-            style={{ background: "var(--gold)" }}
-            aria-label="Resume her cycle"
-          >
-            <Play className="h-3 w-3" />
-            Resume Her Cycle
-          </button>
-        ) : (
-          <button
-            onClick={() => navigate({ to: "/pause-cycle" })}
-            className="inline-flex items-center gap-1.5 rounded-full bg-surface border border-border px-3 py-1.5 text-[11px] text-muted-foreground hover:text-gold hover:border-gold/40 transition"
-            aria-label="Pause her cycle"
-          >
-            <Pause className="h-3 w-3" />
-            Pause Her Cycle
-          </button>
-        )}
       </div>
 
       {isPaused && (
