@@ -1,5 +1,6 @@
 import { useNavigate } from "@tanstack/react-router";
 import { User, Lightbulb, TrendingUp, ShieldCheck, Lock } from "lucide-react";
+import knightleyLogo from "@/assets/knightley-logo.png.asset.json";
 
 const C = {
   navy: "#0E1E35",
