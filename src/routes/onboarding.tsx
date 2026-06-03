@@ -5,8 +5,8 @@ import { getProfile, useClientReady } from "@/lib/storage";
 export const Route = createFileRoute("/onboarding")({
   head: () => ({
     meta: [
-      { title: "Get Started — Attuned" },
-      { name: "description", content: "Set up your Attuned profile in 3 minutes." },
+      { title: "Get Started — Knightley" },
+      { name: "description", content: "Set up your Knightley profile in 3 minutes." },
     ],
   }),
   component: OnboardingRoute,

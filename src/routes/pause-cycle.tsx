@@ -5,7 +5,7 @@ import { getProfile, setProfile, useClientReady, CYCLE_PAUSE_REASON_LABEL, type 
 import { Calendar, Clock, Star, AlertTriangle } from "lucide-react";
 
 export const Route = createFileRoute("/pause-cycle")({
-  head: () => ({ meta: [{ title: "Pause cycle attunement — Attuned" }] }),
+  head: () => ({ meta: [{ title: "Pause cycle attunement — Knightley" }] }),
   component: PauseCycleRoute,
 });
 
@@ -98,7 +98,7 @@ function PauseCycleRoute() {
               <ExplainerCard
                 icon={<Clock className="h-4 w-4 text-gold" />}
                 title="Interval awareness"
-                body="Attuned will watch for patterns — if it's been a while since a date night, a meaningful conversation, or a gesture she loves, it'll surface that naturally."
+                body="Knightley will watch for patterns — if it's been a while since a date night, a meaningful conversation, or a gesture she loves, it'll surface that naturally."
               />
               <ExplainerCard
                 icon={<Star className="h-4 w-4 text-gold" />}

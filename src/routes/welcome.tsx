@@ -3,7 +3,7 @@ import { LandingPage } from "@/components/LandingPage";
 
 export const Route = createFileRoute("/welcome")({
   head: () => ({
-    meta: [{ title: "Attuned — Show up for her, every day" }],
+    meta: [{ title: "Knightley — Show up for her, every day" }],
   }),
   component: WelcomeRoute,
 });

@@ -81,10 +81,10 @@ export interface PromptLog {
 }
 
 const KEYS = {
-  profile: "attuned.profile",
-  logs: "attuned.logs",
-  variations: "attuned.variations", // map date -> variation
-  spend: "attuned.spend",
+  profile: "knightley.profile",
+  logs: "knightley.logs",
+  variations: "knightley.variations", // map date -> variation
+  spend: "knightley.spend",
 };
 
 const isClient = typeof window !== "undefined";
@@ -101,7 +101,7 @@ function read<T>(key: string, fallback: T): T {
 function write<T>(key: string, value: T) {
   if (!isClient) return;
   localStorage.setItem(key, JSON.stringify(value));
-  window.dispatchEvent(new CustomEvent("attuned:storage"));
+  window.dispatchEvent(new CustomEvent("knightley:storage"));
 }
 
 export function getProfile(): Profile | null { return read<Profile | null>(KEYS.profile, null); }
@@ -165,17 +165,17 @@ export function getOrAssignVariation(dateISO: string): number {
 export function clearAll() {
   if (!isClient) return;
   Object.values(KEYS).forEach((k) => localStorage.removeItem(k));
-  window.dispatchEvent(new CustomEvent("attuned:storage"));
+  window.dispatchEvent(new CustomEvent("knightley:storage"));
 }
 
 export function useStorageVersion() {
   const [v, setV] = useState(0);
   useEffect(() => {
     const fn = () => setV((x) => x + 1);
-    window.addEventListener("attuned:storage", fn);
+    window.addEventListener("knightley:storage", fn);
     window.addEventListener("storage", fn);
     return () => {
-      window.removeEventListener("attuned:storage", fn);
+      window.removeEventListener("knightley:storage", fn);
       window.removeEventListener("storage", fn);
     };
   }, []);

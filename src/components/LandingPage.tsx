@@ -83,7 +83,7 @@ export function LandingPage({ onStart }: { onStart: () => void }) {
 
   const quotes = [
     {
-      text: "I'd tell every newlywed and young couple about Attuned.",
+      text: "I'd tell every newlywed and young couple about Knightley.",
       attr: "Survey respondent",
       accent: false,
     },
@@ -173,7 +173,7 @@ export function LandingPage({ onStart }: { onStart: () => void }) {
             letterSpacing: "0.22em",
           }}
         >
-          ATTUNED
+          KNIGHTLEY
         </span>
         <button style={navBtn} onClick={scrollToHow}>
           Get Started for Free
@@ -259,7 +259,7 @@ export function LandingPage({ onStart }: { onStart: () => void }) {
                 Most relationship friction isn't about love. It's about timing.
               </span>
               <br />
-              <span style={{ color: C.off }}>Get your daily edge with Attuned.</span>
+              <span style={{ color: C.off }}>Get your daily edge with Knightley.</span>
             </p>
             <button style={heroCta} onClick={goStart}>
               Get Started for Free →
@@ -440,7 +440,7 @@ export function LandingPage({ onStart }: { onStart: () => void }) {
               marginTop: 0,
             }}
           >
-            Attuned knows{" "}
+            Knightley knows{" "}
             <span style={{ color: C.off }}>
               her coffee order, her favorite flowers, and what makes her feel seen
             </span>
@@ -666,10 +666,10 @@ export function LandingPage({ onStart }: { onStart: () => void }) {
             letterSpacing: "0.2em",
           }}
         >
-          ATTUNED
+          KNIGHTLEY
         </span>
         <span style={{ fontFamily: SANS, fontSize: 11, color: C.gray4, textAlign: "center" }}>
-          attuned.in · Built by men, for men, for real-life relationships
+          knightley.in · Built by men, for men, for real-life relationships
         </span>
         <span style={{ fontFamily: SANS, fontSize: 11, color: C.gray4 }}>© 2026</span>
       </footer>

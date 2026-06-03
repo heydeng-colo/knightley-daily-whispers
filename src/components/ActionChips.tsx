@@ -19,7 +19,7 @@ interface Props {
 
 type ChipCategory = "dining" | "flowers" | "coffee" | "snack" | "phone";
 
-const ASKED_KEY = "attuned.askedCategories";
+const ASKED_KEY = "knightley.askedCategories";
 
 function getAsked(): Record<string, boolean> {
   if (typeof window === "undefined") return {};
@@ -409,7 +409,7 @@ function FreeAlternativeRow({
 
     // Annotate today's feedback log, if present
     try {
-      const raw = localStorage.getItem("attuned.logs");
+      const raw = localStorage.getItem("knightley.logs");
       if (raw) {
         const logs = JSON.parse(raw);
         if (Array.isArray(logs)) {
@@ -417,7 +417,7 @@ function FreeAlternativeRow({
           if (li >= 0 && logs[li].feedback) {
             logs[li].executionMethod = "free_alternative";
             logs[li].freeAlternativeCompleted = next;
-            localStorage.setItem("attuned.logs", JSON.stringify(logs));
+            localStorage.setItem("knightley.logs", JSON.stringify(logs));
           }
         }
       }

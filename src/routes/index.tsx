@@ -19,7 +19,7 @@ import {
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Attuned — Show up for her, every day" },
+      { title: "Knightley — Show up for her, every day" },
       { name: "description", content: "One daily prompt, timed to her cycle. Built by men, for men, for real-life relationships." },
     ],
   }),

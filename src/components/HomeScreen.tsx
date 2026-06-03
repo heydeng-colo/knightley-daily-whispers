@@ -141,15 +141,15 @@ export function HomeScreen({ profile, setProfile, logs }: Props) {
       {/* Top bar */}
       <div className="flex items-center justify-between pt-2">
         <div className="flex items-baseline gap-2">
-          <span className="text-2xl font-semibold tracking-tight">Attuned</span>
+          <span className="text-2xl font-semibold tracking-tight">Knightley</span>
           <span className="text-xs text-muted-foreground">·  daily</span>
         </div>
         <button
           onClick={() => {
-            const url = typeof window !== "undefined" ? window.location.origin : "https://attuned.app";
-            const text = `I've been using Attuned to show up better in my relationship — you should try it. ${url}`;
+            const url = typeof window !== "undefined" ? window.location.origin : "https://knightley.app";
+            const text = `I've been using Knightley to show up better in my relationship — you should try it. ${url}`;
             if (typeof navigator !== "undefined" && (navigator as any).share) {
-              (navigator as any).share({ title: "Attuned", text, url }).catch(() => {});
+              (navigator as any).share({ title: "Knightley", text, url }).catch(() => {});
             } else if (typeof navigator !== "undefined" && navigator.clipboard) {
               navigator.clipboard.writeText(text);
               alert("Invite link copied — share it with a friend to earn 2 months free!");
@@ -361,7 +361,7 @@ export function HomeScreen({ profile, setProfile, logs }: Props) {
         <div className="mt-4 rounded-2xl bg-surface-elevated p-4 border border-border">
           <p className="text-xs text-muted-foreground mb-1">SMS preview</p>
           <p className="text-sm leading-relaxed">
-            Hi {profile.herName || "Sarah"} 👋 Quick anonymous check-in from Attuned — how is {profile.yourName || "he"} doing lately? Reply 1–5. (5 = amazing) Also — is he getting your coffee right? You take: {profile.coffeeOrder || "—"}. Reply Y or N.
+            Hi {profile.herName || "Sarah"} 👋 Quick anonymous check-in from Knightley — how is {profile.yourName || "he"} doing lately? Reply 1–5. (5 = amazing) Also — is he getting your coffee right? You take: {profile.coffeeOrder || "—"}. Reply Y or N.
           </p>
         </div>
       </div>
@@ -449,7 +449,7 @@ export function HomeScreen({ profile, setProfile, logs }: Props) {
             <DialogTitle style={{ fontFamily: "Georgia, serif" }} className="text-white">Resume cycle attunement?</DialogTitle>
           </DialogHeader>
           <p className="text-sm text-muted-foreground">
-            Enter her last period date and Attuned will re-sync to her cycle. Your prompt history and feedback will be preserved.
+            Enter her last period date and Knightley will re-sync to her cycle. Your prompt history and feedback will be preserved.
           </p>
           <div className="space-y-1.5">
             <label className="text-xs text-muted-foreground">Her last period date</label>
