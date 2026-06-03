@@ -138,7 +138,7 @@ export function ProfileScreen({ profile, setProfile, onReviewIntake }: { profile
         <Toggle label="Monthly check-in poll" checked={p.smsPolling} onChange={(v) => update({ smsPolling: v })} />
         <p className="text-xs text-muted-foreground">Sends every 30 days. Next: {nextPollDate(p.activatedAt).toLocaleDateString()}</p>
         <div className="rounded-2xl bg-surface-elevated p-3 border border-border text-sm leading-relaxed">
-          Hi {p.herName} 👋 Quick anonymous check-in from Attuned — how is he doing lately? Reply 1–5. Also — is he getting your coffee right? You take: {p.coffeeOrder || "—"}. Reply Y or N.
+          Hi {p.herName} 👋 Quick anonymous check-in from Knightley — how is he doing lately? Reply 1–5. Also — is he getting your coffee right? You take: {p.coffeeOrder || "—"}. Reply Y or N.
         </div>
       </Section>
 
@@ -180,7 +180,7 @@ export function ProfileScreen({ profile, setProfile, onReviewIntake }: { profile
           >
             <h2 className="text-lg text-white" style={{ fontFamily: "Georgia, serif" }}>Resume cycle attunement?</h2>
             <p className="text-sm text-muted-foreground">
-              Enter her last period date and Attuned will re-sync to her cycle. Your prompt history and feedback will be preserved.
+              Enter her last period date and Knightley will re-sync to her cycle. Your prompt history and feedback will be preserved.
             </p>
             <div className="space-y-1.5">
               <Label className="text-xs text-muted-foreground">Her last period date</Label>
@@ -271,7 +271,7 @@ function SpendDashboard({ cap }: { cap?: number }) {
   return (
     <div className="space-y-3">
       <button onClick={() => setOpen((o) => !o)} className="w-full text-left">
-        <p className="text-xs text-muted-foreground">This month's Attuned spend</p>
+        <p className="text-xs text-muted-foreground">This month's Knightley spend</p>
         <p className="text-3xl font-semibold mt-1">${total}</p>
         {cap ? (
           <>

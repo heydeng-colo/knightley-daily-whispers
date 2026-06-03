@@ -162,7 +162,7 @@ export function PrivacyScreen() {
             margin: "0 auto",
           }}
         >
-          Here's exactly what Attuned collects — and what it doesn't.
+          Here's exactly what Knightley collects — and what it doesn't.
         </p>
       </div>
 
@@ -205,7 +205,7 @@ export function PrivacyScreen() {
         <RowCard
           Icon={MessageSquare}
           title="She receives one anonymous text per month"
-          body="The message doesn't mention Attuned. It doesn't identify you as the sender. Everything else stays off her plate."
+          body="The message doesn't mention Knightley. It doesn't identify you as the sender. Everything else stays off her plate."
         />
         <RowCard
           Icon={Lock}
@@ -227,7 +227,7 @@ export function PrivacyScreen() {
         <RowCard
           Icon={Ban}
           title="We never sell your data"
-          body="Attuned earns revenue through optional affiliate actions you choose to take and through subscription tiers. Never through your personal information."
+          body="Knightley earns revenue through optional affiliate actions you choose to take and through subscription tiers. Never through your personal information."
         />
       </div>
 
@@ -244,7 +244,7 @@ export function PrivacyScreen() {
           lineHeight: 1.6,
         }}
       >
-        Questions about your data? Contact us at privacy@attuned.in
+        Questions about your data? Contact us at privacy@knightley.in
         <br />
         This policy applies now and always — it will never change without your explicit consent.
       </div>

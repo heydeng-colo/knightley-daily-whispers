@@ -97,7 +97,7 @@ export function Onboarding({ onDone, initialProfile }: { onDone: () => void; ini
       <div className="mx-auto max-w-md px-5 pt-10 pb-28">
         <div className="flex items-center gap-2 mb-2">
           <Heart className="h-5 w-5 text-gold" />
-          <span className="text-sm tracking-widest uppercase text-muted-foreground">Attuned</span>
+          <span className="text-sm tracking-widest uppercase text-muted-foreground">Knightley</span>
         </div>
         <h1 className="text-2xl font-semibold mb-6">Let's get you set up</h1>
 
@@ -194,7 +194,7 @@ function Step1({ data, update }: { data: Partial<Profile>; update: (p: Partial<P
     <div className="space-y-5">
       <h2 className="text-xl font-medium">About your relationship</h2>
       <p className="text-xs text-muted-foreground leading-relaxed">
-        At Attuned, we value your privacy. We only ask for needed info, and even then, it's optional. We never share your data, with anyone.
+        At Knightley, we value your privacy. We only ask for needed info, and even then, it's optional. We never share your data, with anyone.
       </p>
       <Field label="Her first initial (the first letter of her first name)">
         <Input
@@ -377,7 +377,7 @@ function Step2({ data, update, onNext }: { data: Partial<Profile>; update: (p: P
             All data stays private. No names or full dates required.
           </span>{" "}
           <span style={{ color: "#C9A84C", fontStyle: "italic" }}>
-            The message doesn't mention Attuned or identify you. We never store, sell, or share her number. Everything else stays off her plate.
+            The message doesn't mention Knightley or identify you. We never store, sell, or share her number. Everything else stays off her plate.
           </span>
         </p>
       </div>

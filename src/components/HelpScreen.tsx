@@ -10,7 +10,7 @@ export function HelpScreen() {
           Help center coming soon. Tap a daily prompt and try it. Log how it went.
           Patterns will emerge over the first few cycles.
         </p>
-        <a href="mailto:hello@attuned.app" className="inline-flex items-center gap-2 mt-5 text-sm text-gold">
+        <a href="mailto:hello@knightley.app" className="inline-flex items-center gap-2 mt-5 text-sm text-gold">
           <Mail className="h-4 w-4" /> Contact support
         </a>
       </div>
