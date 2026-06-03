@@ -19,6 +19,7 @@ import {
 } from "@/lib/storage";
 import { Droplet, Flame, ThumbsUp, X as XIcon, Gift, Pause, Play } from "lucide-react";
 import { useNavigate } from "@tanstack/react-router";
+import knightleyLogo from "@/assets/knightley-logo.png.asset.json";
 
 import { ActionChips } from "@/components/ActionChips";
 import { OtherActionLog } from "@/components/OtherActionLog";
