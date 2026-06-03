@@ -173,10 +173,10 @@ export function HomeScreen({ profile, setProfile, logs }: Props) {
             <button
               onClick={() => navigate({ to: "/pause-cycle" })}
               className="inline-flex items-center gap-1.5 rounded-full bg-surface border border-border px-3 py-1.5 text-[11px] text-muted-foreground hover:text-gold hover:border-gold/40 transition"
-              aria-label="Pause her cycle"
+              aria-label="Pause cycle"
             >
               <Pause className="h-3 w-3" />
-              Pause Her Cycle
+              Pause Cycle
             </button>
           )}
         </div>
