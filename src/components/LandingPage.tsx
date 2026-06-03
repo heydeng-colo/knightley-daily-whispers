@@ -1,5 +1,6 @@
 import { useNavigate } from "@tanstack/react-router";
 import { User, Lightbulb, TrendingUp, ShieldCheck, Lock } from "lucide-react";
+import knightleyLogo from "@/assets/knightley-logo.png.asset.json";
 
 const C = {
   navy: "#0E1E35",
@@ -220,6 +221,13 @@ export function LandingPage({ onStart }: { onStart: () => void }) {
           }}
         >
           <div>
+            <div style={{ display: "flex", justifyContent: "center", marginBottom: 28 }}>
+              <img
+                src={knightleyLogo.url}
+                alt="Knightley — Your Edge in Life and Love"
+                style={{ width: "100%", maxWidth: 360, height: "auto", display: "block" }}
+              />
+            </div>
             <div
               style={{
                 fontFamily: MONO,
