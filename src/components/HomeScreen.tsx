@@ -194,7 +194,7 @@ export function HomeScreen({ profile, setProfile, logs }: Props) {
           className="inline-flex items-center gap-1.5 rounded-full bg-gold/10 border border-gold/40 text-gold px-3 py-1.5 text-[11px] font-medium hover:bg-gold/20 transition"
         >
           <Gift className="h-3.5 w-3.5" />
-          Refer a friend · 2 months free
+          Refer a friend · 60 days free
         </button>
       </div>
 
