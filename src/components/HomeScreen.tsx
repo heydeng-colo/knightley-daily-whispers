@@ -188,13 +188,13 @@ export function HomeScreen({ profile, setProfile, logs }: Props) {
               (navigator as any).share({ title: "Knightley", text, url }).catch(() => {});
             } else if (typeof navigator !== "undefined" && navigator.clipboard) {
               navigator.clipboard.writeText(text);
-              alert("Invite link copied — share it with a friend to earn 2 months free!");
+              alert("Invite link copied — share it with a friend to earn 60 days free!");
             }
           }}
           className="inline-flex items-center gap-1.5 rounded-full bg-gold/10 border border-gold/40 text-gold px-3 py-1.5 text-[11px] font-medium hover:bg-gold/20 transition"
         >
           <Gift className="h-3.5 w-3.5" />
-          Refer a friend · 2 months free
+          Refer a friend · 60 days free
         </button>
       </div>
 
